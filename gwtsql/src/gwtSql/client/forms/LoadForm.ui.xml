@@ -1,0 +1,7 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<g:HTMLPanel>
+		<img src="images/progressbarblue.gif" alt="loading" width="260" height="40"/>
+<!-- 		<g:Label ui:field="lbcounter"/> -->
+	</g:HTMLPanel>
+</ui:UiBinder>

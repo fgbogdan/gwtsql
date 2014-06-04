@@ -1,0 +1,14 @@
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+	<g:HTMLPanel>
+		<table>
+			<tr>
+				<td>
+					<g:Composite ui:field="dateBox"></g:Composite>
+				</td>
+				<!-- <td align="left"> <g:Button ui:field="btnDel">X</g:Button> </td> -->
+			</tr>
+		</table>
+	</g:HTMLPanel>
+
+</ui:UiBinder>
