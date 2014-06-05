@@ -1,0 +1,2 @@
+serviceClass: gwtSql.client.DBService
+path: 01BF223F26215835C2BDF9820E713B8B.gwt.rpc
