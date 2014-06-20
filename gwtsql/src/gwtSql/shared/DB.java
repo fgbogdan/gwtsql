@@ -382,7 +382,7 @@ public class DB {
 		}
 
 		con.ReleaseMe();
-		
+
 		oRecord.isChanged = false;
 	}
 
@@ -588,7 +588,7 @@ public class DB {
 			e.printStackTrace();
 
 		}
-		
+
 		oRecord.isChanged = false;
 
 	}
@@ -939,8 +939,16 @@ public class DB {
 									System.out.println(strColvalue.getClass().getName());
 									break;
 
-								}
+								} // switch
 							}// if( strColvalue != null)
+							else {
+								try {
+									rs.updateDate(intCount, null);
+								} catch (Exception e) {
+									System.out.println("SaveDBRecord with null ...");
+									strErrorMessage = e.toString();
+								}
+							}
 						} catch (Exception e) {
 							System.out.println("Save ... conversion");
 							System.out.println(strColname);
@@ -993,10 +1001,10 @@ public class DB {
 		}
 
 		con.ReleaseMe();
-		
-		if(strErrorMessage.isEmpty())
+
+		if (strErrorMessage.isEmpty())
 			oRecord.isChanged = false;
-			
+
 		return strErrorMessage;
 
 	}
@@ -1004,9 +1012,10 @@ public class DB {
 	/*
 	 * sterge un record din baza de date pe baza tabelei, si cheii
 	 */
-	public void deleteDBRecord(String tableName, String colName, String colValue) {
+	public String deleteDBRecord(String tableName, String colName, String colValue) {
 
 		DBConnection con = this.getConn();
+		String strErrorMessage = "";
 
 		try {
 
@@ -1030,9 +1039,12 @@ public class DB {
 		} catch (SQLException e) {
 			System.out.println("DeleteDBRecord ... get connection");
 			e.printStackTrace();
+			strErrorMessage = e.toString();
 		}
 
 		con.ReleaseMe();
+
+		return strErrorMessage;
 	}
 
 	/*
@@ -1050,9 +1062,10 @@ public class DB {
 	/*
 	 * sterge un record din baza de date pe bazaunei comenzi sql de select
 	 */
-	public void deleteDBRecord(String strSQLCommand) {
+	public String deleteDBRecord(String strSQLCommand) {
 
 		DBConnection con = this.getConn();
+		String strErrorMessage = "";
 
 		try {
 
@@ -1076,9 +1089,12 @@ public class DB {
 		} catch (SQLException e) {
 			System.out.println("DeleteDBRecord ... get connection");
 			e.printStackTrace();
+			strErrorMessage = e.toString();
 		}
 
 		con.ReleaseMe();
+
+		return strErrorMessage;
 	}
 
 	/*

@@ -24,14 +24,33 @@ import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 @SuppressWarnings("serial")
 public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 
-	public String deleteDBRecord(String p_TableName, String p_KeyColumnName, String p_KeyColumnValue) {
-		DbManager.getDB().deleteDBRecord(p_TableName, p_KeyColumnName, p_KeyColumnValue);
-		return "ok";
+	public String deleteDBRecord(String p_TableName, String p_KeyColumnName, String p_KeyColumnValue) throws DBException {
+		String strErrorMessage = "";
+		try {
+
+			strErrorMessage = DbManager.getDB().deleteDBRecord(p_TableName, p_KeyColumnName, p_KeyColumnValue);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (!strErrorMessage.isEmpty())
+			throw new DBException(strErrorMessage);
+
+		return strErrorMessage;
 	}
 
-	public String deleteDBRecord(String p_strSQLCommand) {
-		DbManager.getDB().deleteDBRecord(p_strSQLCommand);
-		return "ok";
+	public String deleteDBRecord(String p_strSQLCommand) throws DBException {
+		String strErrorMessage = "";
+		try {
+
+			strErrorMessage = DbManager.getDB().deleteDBRecord(p_strSQLCommand);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (!strErrorMessage.isEmpty())
+			throw new DBException(strErrorMessage);
+
+		return strErrorMessage;
 	}
 
 	public DBRecord GetDBRecord(String p_tableName, String p_colName, String p_colValue) {
@@ -46,7 +65,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		return oRecord;
 	}
 
-	public DBRecord GetDBRecordForConditon( String p_sqlCond) {
+	public DBRecord GetDBRecordForConditon(String p_sqlCond) {
 		DBRecord oRecord = new DBRecord();
 		try {
 			DbManager.getDB().GetDBRecordForConditon(oRecord, p_sqlCond);
@@ -56,7 +75,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		}
 		return oRecord;
 	}
-	
+
 	public DBRecord GetDBRecordForConditon(String p_tableName, String p_sqlCond) {
 		DBRecord oRecord = new DBRecord();
 		try {
@@ -97,31 +116,8 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		return strErrorMessage;
 	}
 
-	// public String ReadWriteConf(String key, String value) {
-	//
-	// String strRetVal = "";
-	// // String tableName = DBConnection.sqlDatabase+"..CONFIG";
-	// String tableName = "CONFIG";
-	// System.out.println("Database=" + tableName);
-	// try {
-	// // citesc din conffirme
-	// strRetVal = DbManager.getDB().GetDBFieldString(tableName, "c_Val",
-	// "denumire", key);
-	// if (strRetVal == null) {
-	// // scriu in conffirme
-	// DBRecord oRecord = new DBRecord();
-	// DbManager.getDB().GetBlankDBRecord(oRecord, tableName, "denumire", key,
-	// "CFID");
-	// oRecord.put(key, value);
-	// }
-	// } catch (Exception e) {
-	// e.printStackTrace();
-	// }
-	// return strRetVal;
-	// }
-
 	public DBTable getDBTable(String p_strTableName, String p_strKeyName, String p_strFilterCondition, String p_strOrderCondition) throws DBException {
-		
+
 		String strErrorMessage = "";
 		DBTable oTable = new DBTable();
 		try {
@@ -139,7 +135,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	}
 
 	public DBTable getDBTable(String p_strTableName, String p_strKeyName, String p_strFilterCondition) throws DBException {
-		
+
 		String strErrorMessage = "";
 		DBTable oTable = new DBTable();
 		try {
@@ -157,7 +153,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	}
 
 	public DBTable getDBTable(String p_strSQLCommand) throws DBException {
-		
+
 		String strErrorMessage = "";
 		DBTable oTable = new DBTable();
 		try {
@@ -190,14 +186,17 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		DbManager.iniFileName = strIniFileName;
 	}
 
-	public String deleteForCondition(String p_tableName, String p_sqlCond) {
+	public String deleteForCondition(String p_tableName, String p_sqlCond) throws DBException {
 		String strErrorMessage = "";
 		try {
 			strErrorMessage = DbManager.getDB().deleteForCondition(p_tableName, p_sqlCond);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		if (!strErrorMessage.isEmpty())
+			throw new DBException(strErrorMessage);
 		return strErrorMessage;
+
 	}
 
 	public String GETNNEWID(String p_idname) {
@@ -210,23 +209,27 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		return strErrorMessage;
 	}
 
-	public String executeNoResultSet(String p_sqlCommand) {
+	public String executeNoResultSet(String p_sqlCommand) throws DBException{
 		String strErrorMessage = "";
 		try {
 			strErrorMessage = DbManager.getDB().executeNoResultSet(p_sqlCommand);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		if (!strErrorMessage.isEmpty())
+			throw new DBException(strErrorMessage);
 		return strErrorMessage;
 	}
 
-	public String executeResultSetNoOutput(String p_sqlCommand) {
+	public String executeResultSetNoOutput(String p_sqlCommand) throws DBException {
 		String strErrorMessage = "";
 		try {
 			strErrorMessage = DbManager.getDB().executeResultSetNoOutput(p_sqlCommand);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		if (!strErrorMessage.isEmpty())
+			throw new DBException(strErrorMessage);
 		return strErrorMessage;
 	}
 

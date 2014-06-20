@@ -13,12 +13,12 @@ import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 @RemoteServiceRelativePath("DBService")
 public interface DBService extends RemoteService {
 
-	String deleteDBRecord(String p_TableName, String p_KeyColumnName, String p_KeyColumnValue);
+	String deleteDBRecord(String p_TableName, String p_KeyColumnName, String p_KeyColumnValue) throws DBException;
 
-	String deleteDBRecord(String p_SQLCommand);
+	String deleteDBRecord(String p_SQLCommand) throws DBException;
 
 	DBRecord GetDBRecord(String p_tableName, String p_colName, String p_colValue);
-	
+
 	DBRecord GetDBRecordForConditon(String p_sqlCond);
 
 	DBRecord GetDBRecordForConditon(String p_tableName, String p_sqlCond);
@@ -39,11 +39,11 @@ public interface DBService extends RemoteService {
 
 	DBTable saveDBTable(DBTable oTable);
 
-	String deleteForCondition(String p_tableName, String p_sqlCond);
+	String deleteForCondition(String p_tableName, String p_sqlCond) throws DBException;
 
-	String executeNoResultSet(String p_sqlCommand);
+	String executeNoResultSet(String p_sqlCommand) throws DBException;
 
-	String executeResultSetNoOutput(String p_sqlCommand);
+	String executeResultSetNoOutput(String p_sqlCommand) throws DBException;
 
 	void SetIniFileName(String strIniFileName);
 
@@ -59,6 +59,6 @@ public interface DBService extends RemoteService {
 
 	ListXD LoadListXDFromData(String strTableName, String strShowField, String strKeyField, String strFilterCondition, String strOrder);
 
-	public String getReport(String fileName, HashMap<String, Object> param, String type)throws DBException;
+	public String getReport(String fileName, HashMap<String, Object> param, String type) throws DBException;
 
 }
