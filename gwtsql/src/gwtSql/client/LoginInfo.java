@@ -16,6 +16,8 @@ public class LoginInfo implements Serializable {
 	
 	public String sqlServerName = "", sqlDatabase = "", sqlSufix = "", sqlIDFirma = "";
 
+	public String UserID;
+
 	public boolean isLoggedIn() {
 		return loggedIn;
 	}

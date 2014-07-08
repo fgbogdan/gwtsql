@@ -7,6 +7,7 @@ import java.util.Date;
 public class DBConnection {
 	
 	public Connection con=null;
+	public String UserID="";
 	public Date bornDate=new Date();
 	public boolean isinuse=false;
 	public static String sqlServerName;

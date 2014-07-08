@@ -14,6 +14,9 @@ import java.security.SecureRandom;
 import java.sql.Connection;
 import java.util.HashMap;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
@@ -28,7 +31,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		String strErrorMessage = "";
 		try {
 
-			strErrorMessage = DbManager.getDB().deleteDBRecord(p_TableName, p_KeyColumnName, p_KeyColumnValue);
+			strErrorMessage = DbManager.getDB().deleteDBRecord(this.getUser(), p_TableName, p_KeyColumnName, p_KeyColumnValue);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -43,7 +46,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		String strErrorMessage = "";
 		try {
 
-			strErrorMessage = DbManager.getDB().deleteDBRecord(p_strSQLCommand);
+			strErrorMessage = DbManager.getDB().deleteDBRecord(this.getUser(), p_strSQLCommand);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -57,7 +60,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 
 		DBRecord oRecord = new DBRecord();
 		try {
-			DbManager.getDB().GetDBRecord(oRecord, p_tableName, p_colName, p_colValue);
+			DbManager.getDB().GetDBRecord(this.getUser(), oRecord, p_tableName, p_colName, p_colValue);
 			return oRecord;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -68,7 +71,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	public DBRecord GetDBRecordForConditon(String p_sqlCond) {
 		DBRecord oRecord = new DBRecord();
 		try {
-			DbManager.getDB().GetDBRecordForConditon(oRecord, p_sqlCond);
+			DbManager.getDB().GetDBRecordForConditon(this.getUser(), oRecord, p_sqlCond);
 			return oRecord;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -79,7 +82,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	public DBRecord GetDBRecordForConditon(String p_tableName, String p_sqlCond) {
 		DBRecord oRecord = new DBRecord();
 		try {
-			DbManager.getDB().GetDBRecordForConditon(oRecord, p_tableName, p_sqlCond);
+			DbManager.getDB().GetDBRecordForConditon(this.getUser(), oRecord, p_tableName, p_sqlCond);
 			return oRecord;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -96,7 +99,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 
 		DBRecord oRecord = new DBRecord();
 		try {
-			DbManager.getDB().GetBlankDBRecord(oRecord, p_tableName, p_colName, p_colValue, p_colKeyName, p_MethodName);
+			DbManager.getDB().GetBlankDBRecord(this.getUser(), oRecord, p_tableName, p_colName, p_colValue, p_colKeyName, p_MethodName);
 			return oRecord;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -107,7 +110,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	public String saveDBRecord(DBRecord R) throws DBException {
 		String strErrorMessage = "";
 		try {
-			strErrorMessage = DbManager.getDB().saveDBRecord(R);
+			strErrorMessage = DbManager.getDB().saveDBRecord(this.getUser(), R);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -122,7 +125,8 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		DBTable oTable = new DBTable();
 		try {
 
-			strErrorMessage = DbManager.getDB().getDBTable(oTable, p_strTableName, p_strKeyName, p_strFilterCondition, p_strOrderCondition);
+			strErrorMessage = DbManager.getDB().getDBTable(this.getUser(), oTable, p_strTableName, p_strKeyName, p_strFilterCondition,
+					p_strOrderCondition);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -140,7 +144,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		DBTable oTable = new DBTable();
 		try {
 
-			strErrorMessage = DbManager.getDB().getDBTable(oTable, p_strTableName, p_strKeyName, p_strFilterCondition);
+			strErrorMessage = DbManager.getDB().getDBTable(this.getUser(), oTable, p_strTableName, p_strKeyName, p_strFilterCondition);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -158,7 +162,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		DBTable oTable = new DBTable();
 		try {
 
-			strErrorMessage = DbManager.getDB().getDBTable(oTable, p_strSQLCommand);
+			strErrorMessage = DbManager.getDB().getDBTable(this.getUser(), oTable, p_strSQLCommand);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -174,7 +178,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 
 		DBTable T = oTable;
 		try {
-			T = DbManager.getDB().saveDBTable(oTable);
+			T = DbManager.getDB().saveDBTable(this.getUser(), oTable);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -189,7 +193,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	public String deleteForCondition(String p_tableName, String p_sqlCond) throws DBException {
 		String strErrorMessage = "";
 		try {
-			strErrorMessage = DbManager.getDB().deleteForCondition(p_tableName, p_sqlCond);
+			strErrorMessage = DbManager.getDB().deleteForCondition(this.getUser(), p_tableName, p_sqlCond);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -202,17 +206,17 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	public String GETNNEWID(String p_idname) {
 		String strErrorMessage = "";
 		try {
-			strErrorMessage = DbManager.getDB().GETNNEWID(p_idname);
+			strErrorMessage = DbManager.getDB().GETNNEWID(this.getUser(), p_idname);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return strErrorMessage;
 	}
 
-	public String executeNoResultSet(String p_sqlCommand) throws DBException{
+	public String executeNoResultSet(String p_sqlCommand) throws DBException {
 		String strErrorMessage = "";
 		try {
-			strErrorMessage = DbManager.getDB().executeNoResultSet(p_sqlCommand);
+			strErrorMessage = DbManager.getDB().executeNoResultSet(this.getUser(), p_sqlCommand);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -224,7 +228,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	public String executeResultSetNoOutput(String p_sqlCommand) throws DBException {
 		String strErrorMessage = "";
 		try {
-			strErrorMessage = DbManager.getDB().executeResultSetNoOutput(p_sqlCommand);
+			strErrorMessage = DbManager.getDB().executeResultSetNoOutput(this.getUser(), p_sqlCommand);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -245,6 +249,12 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		DBRecord oRecord = new DBRecord();
 		try {
 			DbManager.getDB().DoLogin(oRecord, p_strAlias, p_strPassword);
+
+			/* store the user in session */
+			HttpServletRequest httpServletRequest = this.getThreadLocalRequest();
+			HttpSession session = httpServletRequest.getSession(true);
+			session.setAttribute("User", oRecord);
+
 			return oRecord;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -256,7 +266,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 
 		ListXD oList = new ListXD();
 		try {
-			DbManager.getDB().GetList2D(oList, strTableName, strShowField, strKeyField, strFilterCondition, strOrder);
+			DbManager.getDB().GetList2D(this.getUser(), oList, strTableName, strShowField, strKeyField, strFilterCondition, strOrder);
 			return oList;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -268,7 +278,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 
 		ListXD oList = new ListXD();
 		try {
-			DbManager.getDB().GetListXD(oList, strSQLCommand, strFilterCondition);
+			DbManager.getDB().GetListXD(this.getUser(), oList, strSQLCommand, strFilterCondition);
 			return oList;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -320,7 +330,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 			// Connection con =
 			// DriverManager.getConnection("jdbc:mysql://localhost:3306/sales",
 			// "sa", "bcmanager");
-			Connection con = DbManager.getDB().getConn().con;
+			Connection con = DbManager.getDB().getConn(this.getUser()).con;
 			String fileNamewithPath = getServletConfig().getServletContext().getRealPath("reports\\" + fileName);
 			System.out.println("++++++++ report file +++++++");
 			System.out.println(fileNamewithPath);
@@ -364,4 +374,43 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		}
 
 	}
+
+	// public String put(String key, String value) {
+	//
+	// HttpServletRequest request = this.getThreadLocalRequest();
+	// HttpSession session = request.getSession();
+	//
+	// if (session.getAttribute(key) == null) {
+	// session.setAttribute(key, new HashMap<String, String>());
+	// }
+	// @SuppressWarnings("unchecked")
+	// HashMap<String, String> mapOfResults = (HashMap<String, String>)
+	// session.getAttribute(key);
+	// mapOfResults.put(key, value);
+	// return "ok";
+	//
+	// }
+	//
+	// public String get(String key) {
+	//
+	// HttpServletRequest request = this.getThreadLocalRequest();
+	// HttpSession session = request.getSession();
+	//
+	// if (session.getAttribute(key) == null) {
+	// session.setAttribute(key, new HashMap<String, String>());
+	// }
+	// @SuppressWarnings("unchecked")
+	// HashMap<String, String> mapOfResults = (HashMap<String, String>)
+	// session.getAttribute(key);
+	// return mapOfResults.get(key);
+	// }
+
+	public DBRecord getUser() {
+		HttpServletRequest request = this.getThreadLocalRequest();
+		HttpSession session = request.getSession();
+
+		return (DBRecord) session.getAttribute("User");
+
+	}
+
 }

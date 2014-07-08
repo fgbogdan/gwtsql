@@ -24,51 +24,91 @@ public class DB {
 	 * ruleaza
 	 */
 
-	public DBConnection getConn() {
+	public DBConnection getConn(DBRecord oUser) {
 		/*
 		 * returneaza o conexiune din Pool-ul de conexiuni ... o sa fie
 		 * implementat si daca nu e niciuna ... creeaza una
 		 */
 
+		String UserID = null;
+		try {
+			UserID = oUser.getString("USERID");
+		} catch (Exception e) {
+		}
+
 		DBConnection con = null;
+
+		String p_UserID;
+
+		if (UserID == null)
+			p_UserID = "";
+		else
+			p_UserID = UserID;
+
+		// System.out.println("Connection for: " + p_UserID);
 
 		for (int i = 0; i < connections.size(); i++) {
 			con = (DBConnection) connections.get(i);
-			if (con.isinuse) {
-				/* do nothing */
+			/* only if not logged in or - a connection from the same user */
+			if ("".equals(con.UserID) || p_UserID.equals(con.UserID)) {
+				if (con.isinuse) {
+					/* do nothing */
 
-				// System.out.println(i);
-				// System.out.println(con);
-				// System.out.println("Connection in use ...");
-				// System.out.println(con.bornDate);
-
-			}
-			if (!con.isinuse) {
-				// i found a good one !
-				// System.out.println("Found connection "+i);
-				con.UseMe();
-				break;
-			} else if (con.isDead()) {
-				// if this connection is too old then remove it from the list
-				connections.remove(i);
-				System.out.println("Connection is dead ... remove ...");
-				i--;
+					// System.out.println(i);
+					// System.out.println(con);
+					// System.out.println("Connection in use ...");
+					// System.out.println(con.bornDate);
+				}
+				if (!con.isinuse) {
+					// i found a good one !
+					// System.out.println("Found connection " + i);
+					con.UseMe();
+					break;
+				} else if (con.isDead()) {
+					// if this connection is too old then remove it from the list
+					connections.remove(i);
+					System.out.println("Connection is dead ... remove ...");
+					i--;
+					con = null;
+				} else {
+					con = null;
+				}
+			} else
 				con = null;
-			} else {
-				con = null;
-			}
 		}
 
 		if (null == con) {
 			// there are not enough connections !
+			// System.out.println("New connection !");
 			try {
 				con = new DBConnection();
-				con.con = getSQLConnection();
+				con.con = getSQLConnection(oUser);
 				con.UseMe();
 				connections.add(con);
+				// System.out.println("New connection" + "@" + p_UserID + "#");
+				// System.out.println(con);
 			} catch (Exception e) {
 				con = null;
 				System.out.println("cannnot make a connection");
+				e.printStackTrace();
+			}
+		}
+		// System.out.println("Not null");
+
+		// System.out.println("Connection old user ! " + con.UserID);
+		if (!p_UserID.equals(con.UserID)) {
+			con.UserID = p_UserID;
+			System.out.println("Connection used for new user ! " + con.UserID);
+			// update
+			Statement st;
+			try {
+				st = con.con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+				String strSQLCommand = "UPDATE userspid SET UserID='" + p_UserID + "' WHERE spid=@@spid";
+				st.execute(strSQLCommand);
+				System.out.println("SPID - set !");
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
 			}
 		}
 
@@ -76,7 +116,7 @@ public class DB {
 
 	}
 
-	public Connection getSQLConnection() {
+	public Connection getSQLConnection(DBRecord oUser) {
 
 		System.out.println("Create a new connection");
 
@@ -152,7 +192,7 @@ public class DB {
 			 * if the connection is succesfull and TheApp.loginInfo.R is not null -
 			 * set the information in UserSpid
 			 */
-			SetUserSPID(conn);
+			SetUserSPID(oUser, conn);
 
 		} catch (SQLException e) {
 			System.out.println("getConn ... get connection(url)");
@@ -165,10 +205,10 @@ public class DB {
 	/*
 	 * intoarce un camp din baza de date
 	 */
-	public String GetDBFieldString(String p_tableName, String p_colName, String p_KeycolName, String p_KeycolValue) {
+	public String GetDBFieldString(DBRecord oUser, String p_tableName, String p_colName, String p_KeycolName, String p_KeycolValue) {
 		String strRetVal = null;
 
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 
 		try {
 
@@ -206,9 +246,9 @@ public class DB {
 	 * GETNNEWID
 	 */
 
-	public String GETNNEWID(String IDNAME) {
+	public String GETNNEWID(DBRecord oUser, String IDNAME) {
 		String strRetVal = "";
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 		try {
 
 			/*
@@ -252,10 +292,10 @@ public class DB {
 	/*
 	 * intoarce un record din baza de date pe baza unei chei
 	 */
-	public void GetDBRecord(DBRecord oRecord, String tableName, String colName, String colValue) {
+	public void GetDBRecord(DBRecord oUser, DBRecord oRecord, String tableName, String colName, String colValue) {
 		// System.out.println("GetRecord");
 		// System.out.println(tableName);
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 		try {
 
 			/*
@@ -390,13 +430,13 @@ public class DB {
 	 * intoarce un record din baza de date pe baza unei conditii (sql) poate fi
 	 * apelat cu tabela sau nu
 	 */
-	public void GetDBRecordForConditon(DBRecord oRecord, String strSQLCommand) {
-		GetDBRecordForConditon(oRecord, "", strSQLCommand);
+	public void GetDBRecordForConditon(DBRecord oUser, DBRecord oRecord, String strSQLCommand) {
+		GetDBRecordForConditon(oUser, oRecord, "", strSQLCommand);
 	}
 
-	public void GetDBRecordForConditon(DBRecord oRecord, String tableName, String strSQLCond) {
+	public void GetDBRecordForConditon(DBRecord oUser, DBRecord oRecord, String tableName, String strSQLCond) {
 
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 
 		try {
 
@@ -598,13 +638,14 @@ public class DB {
 	 */
 
 	/* supraincarcare pentru a putea executa o metoda dupa AppendBlank */
-	public void GetBlankDBRecord(DBRecord oRecord, String tableName, String colName, String colValue, String colKeyName) {
-		GetBlankDBRecord(oRecord, tableName, colName, colValue, colKeyName, "");
+	public void GetBlankDBRecord(DBRecord oUser, DBRecord oRecord, String tableName, String colName, String colValue, String colKeyName) {
+		GetBlankDBRecord(oUser, oRecord, tableName, colName, colValue, colKeyName, "");
 	}
 
-	public void GetBlankDBRecord(DBRecord oRecord, String tableName, String colName, String colValue, String colKeyName, String functionName) {
+	public void GetBlankDBRecord(DBRecord oUser, DBRecord oRecord, String tableName, String colName, String colValue, String colKeyName,
+			String functionName) {
 
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 
 		try {
 
@@ -641,7 +682,7 @@ public class DB {
 					if (!colValue.isEmpty())
 						oRecord.KeyValue = colValue;
 					else if (!colKeyName.isEmpty())
-						oRecord.KeyValue = GETNNEWID(colKeyName);
+						oRecord.KeyValue = GETNNEWID(oUser, colKeyName);
 
 					oRecord.isNew = true;
 
@@ -726,7 +767,7 @@ public class DB {
 
 				// ma reapelez ...
 				try {
-					DB.this.GetBlankDBRecord(oRecord, tableName, colName, colValue, colKeyName);
+					DB.this.GetBlankDBRecord(oUser, oRecord, tableName, colName, colValue, colKeyName);
 					// setez ca este primul
 					oRecord.isFirst = true;
 				} catch (Exception e) {
@@ -759,11 +800,11 @@ public class DB {
 	 * 
 	 * Save a record in the database
 	 */
-	public String saveDBRecord(DBRecord oRecord) {
+	public String saveDBRecord(DBRecord oUser, DBRecord oRecord) {
 
 		// string de return
 		String strErrorMessage = "";
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 
 		try {
 
@@ -1012,9 +1053,9 @@ public class DB {
 	/*
 	 * sterge un record din baza de date pe baza tabelei, si cheii
 	 */
-	public String deleteDBRecord(String tableName, String colName, String colValue) {
+	public String deleteDBRecord(DBRecord oUser, String tableName, String colName, String colValue) {
 
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 		String strErrorMessage = "";
 
 		try {
@@ -1050,9 +1091,9 @@ public class DB {
 	/*
 	 * sterge un record din baza de date pe baza unui obiect de tip DBRecord
 	 */
-	public void deleteDBRecord(DBRecord oRecord) {
+	public void deleteDBRecord(DBRecord oUser, DBRecord oRecord) {
 		try {
-			deleteDBRecord(oRecord.tableName, oRecord.KeyName, oRecord.KeyValue);
+			deleteDBRecord(oUser, oRecord.tableName, oRecord.KeyName, oRecord.KeyValue);
 		} catch (Exception e) {
 			System.out.println("DeleteDBRecord DBRecord ... get connection");
 			e.printStackTrace();
@@ -1062,9 +1103,9 @@ public class DB {
 	/*
 	 * sterge un record din baza de date pe bazaunei comenzi sql de select
 	 */
-	public String deleteDBRecord(String strSQLCommand) {
+	public String deleteDBRecord(DBRecord oUser, String strSQLCommand) {
 
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 		String strErrorMessage = "";
 
 		try {
@@ -1102,13 +1143,13 @@ public class DB {
 	 */
 
 	// apel cu tabela, camp, cheie, filtru
-	public void GetList2D(ListXD oList, String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition) {
-		GetList2D(oList, p_strTableName, p_strShowField, p_strKeyField, p_strFilterCondition, "");
+	public void GetList2D(DBRecord oUser, ListXD oList, String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition) {
+		GetList2D(oUser, oList, p_strTableName, p_strShowField, p_strKeyField, p_strFilterCondition, "");
 	}
 
 	// apel cu tabela, camp, cheie, filtru, order
-	public void GetList2D(ListXD oList, String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition,
-			String p_strOrder) {
+	public void GetList2D(DBRecord oUser, ListXD oList, String p_strTableName, String p_strShowField, String p_strKeyField,
+			String p_strFilterCondition, String p_strOrder) {
 
 		String strSQLCommand = " SELECT " + p_strShowField + " as ShowFld, " + p_strKeyField + " as KeyFld FROM " + p_strTableName + " WITH (NOLOCK) ";
 
@@ -1119,14 +1160,14 @@ public class DB {
 			p_strOrder = p_strShowField;
 		strSQLCommand = strSQLCommand + " ORDER BY " + p_strOrder;
 
-		GetListXD(oList, strSQLCommand, "");
+		GetListXD(oUser, oList, strSQLCommand, "");
 
 	}
 
 	// apel cu comanda sql (liber definibila)
-	public void GetListXD(ListXD oList, String strSQLCommand, String strFilterCondition) {
+	public void GetListXD(DBRecord oUser, ListXD oList, String strSQLCommand, String strFilterCondition) {
 
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 
 		try {
 
@@ -1201,11 +1242,11 @@ public class DB {
 	/*
 	 * intoarce o valoare numerica din baza de date
 	 */
-	public Double GetDBDouble(String p_SQLCommand, String p_ReturnName) {
+	public Double GetDBDouble(DBRecord oUser, String p_SQLCommand, String p_ReturnName) {
 		Double dRetVal = 0d;
 
 		// System.out.println(p_SQLCommand);
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 		try {
 
 			Connection conn = con.con;
@@ -1242,22 +1283,23 @@ public class DB {
 	/*
 	 * intoarce un result set din baza de date pe baza unei comenzi
 	 */
-	public String getDBTable(DBTable oTable, String p_strSQLCommand) {
-		return getDBTable(oTable, "", "", p_strSQLCommand);
+	public String getDBTable(DBRecord oUser, DBTable oTable, String p_strSQLCommand) {
+		return getDBTable(oUser, oTable, "", "", p_strSQLCommand);
 	}
 
-	public String getDBTable(DBTable oTable, String p_strTableName, String p_strKeyName, String p_strFilterCondition) {
-		return getDBTable(oTable, p_strTableName, p_strKeyName, p_strFilterCondition, "");
+	public String getDBTable(DBRecord oUser, DBTable oTable, String p_strTableName, String p_strKeyName, String p_strFilterCondition) {
+		return getDBTable(oUser, oTable, p_strTableName, p_strKeyName, p_strFilterCondition, "");
 	}
 
-	public String getDBTable(DBTable oTable, String p_strTableName, String p_strKeyName, String p_strFilterCondition, String p_strOrderCondition) {
+	public String getDBTable(DBRecord oUser, DBTable oTable, String p_strTableName, String p_strKeyName, String p_strFilterCondition,
+			String p_strOrderCondition) {
 
 		// string de return
 		String strErrorMessage = "";
 
 		// empty the table
 		oTable.clear();
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 		try {
 
 			Connection conn = con.con;
@@ -1376,7 +1418,7 @@ public class DB {
 	 * 
 	 * Save a DBTable in the database
 	 */
-	public DBTable saveDBTable(DBTable oTable) {
+	public DBTable saveDBTable(DBRecord oUser, DBTable oTable) {
 		String strErrorMessage = "";
 		// if the Table is not updatable ...
 		if (oTable.tableName.isEmpty())
@@ -1386,12 +1428,12 @@ public class DB {
 		// database
 		// update and insert
 		for (int i = 0; i < oTable.Records.size(); i++) {
-			strErrorMessage += DB.this.saveDBRecord(oTable.get(i));
+			strErrorMessage += DB.this.saveDBRecord(oUser, oTable.get(i));
 			oTable.get(i).isNew = false;
 		}
 		// delete
 		for (int i = 0; i < oTable.DeletedRecords.size(); i++) {
-			DB.this.deleteDBRecord(oTable.DeletedRecords.get(i));
+			DB.this.deleteDBRecord(oUser, oTable.DeletedRecords.get(i));
 		}
 		System.out.println(strErrorMessage);
 		return oTable;
@@ -1402,7 +1444,7 @@ public class DB {
 	 * Set in the UserSpid the user credentials
 	 */
 
-	public void SetUserSPID(Connection conn) {
+	public void SetUserSPID(DBRecord oUser, Connection conn) {
 
 		/*
 		 * if the connection is succesfull and TheApp.loginInfo.R is not null -
@@ -1410,56 +1452,49 @@ public class DB {
 		 */
 		System.out.println("Set user SPID");
 
-		// DBConnection con = null;
-		//
-		// if (conn == null) {
-		// con = this.getConn();
-		// conn = con.con;
-		// }
-		//
-		// if (TheApp.loginInfo.isLoggedIn()) {
-		// try {
-		//
-		// Statement st = conn.createStatement(
-		// ResultSet.TYPE_SCROLL_SENSITIVE,
-		// ResultSet.CONCUR_UPDATABLE);
-		//
-		// try {
-		// String strSQLCommand =
-		// "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='UserSpid')";
-		// strSQLCommand += " BEGIN ";
-		// strSQLCommand += " DELETE FROM UserSpid WHERE SPID = @@SPID ";
-		// strSQLCommand +=
-		// " IF NOT EXISTS (SELECT 1 FROM UserSpid WHERE SPID = @@SPID AND USERID = '"
-		// + TheApp.loginInfo.User.get("USERID").toString()
-		// + "')";
-		// strSQLCommand += "  INSERT INTO userspid values( '"
-		// + TheApp.loginInfo.User.get("USERID").toString()
-		// + "',@@SPID)";
-		// strSQLCommand += " END ";
-		// st.execute(strSQLCommand);
-		// System.out.println("SPID - set !");
-		//
-		// } catch (Exception e) {
-		// System.out.println("SetUserSPID ... insert in UserSPID");
-		// System.out.println(e.toString());
-		// }
-		//
-		// } catch (SQLException e) {
-		// System.out.println("SetUserSPID ... create statement");
-		// e.printStackTrace();
-		// }
-		// } else {
-		// System.out.println("User not logged ... ");
-		// }
-		//
-		// if (con != null)
-		// con.ReleaseMe();
+		DBConnection con = null;
+
+		if (conn == null) {
+			con = this.getConn(oUser);
+			conn = con.con;
+		}
+
+		if ("TheApp.loginInfo.isLoggedIn()".equals("1")) {
+			try {
+
+				Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+
+				try {
+					String strSQLCommand = "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='UserSpid')";
+					strSQLCommand += " BEGIN ";
+					strSQLCommand += " DELETE FROM UserSpid WHERE SPID = @@SPID ";
+					strSQLCommand += " IF NOT EXISTS (SELECT 1 FROM UserSpid WHERE SPID = @@SPID AND USERID = '"
+							+ "TheApp.loginInfo.User.get(\"USERID\").toString()" + "')";
+					strSQLCommand += "  INSERT INTO userspid values( '" + "TheApp.loginInfo.User.get(\"USERID\").toString()" + "',@@SPID)";
+					strSQLCommand += " END ";
+					st.execute(strSQLCommand);
+					System.out.println("SPID - set !");
+
+				} catch (Exception e) {
+					System.out.println("SetUserSPID ... insert in UserSPID");
+					System.out.println(e.toString());
+				}
+
+			} catch (SQLException e) {
+				System.out.println("SetUserSPID ... create statement");
+				e.printStackTrace();
+			}
+		} else {
+			System.out.println("User not logged ... ");
+		}
+
+		if (con != null)
+			con.ReleaseMe();
 	}
 
-	public String deleteForCondition(String tableName, String strSQLCond) {
+	public String deleteForCondition(DBRecord oUser, String tableName, String strSQLCond) {
 
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 		String strErrorMessage = "";
 
 		try {
@@ -1487,9 +1522,9 @@ public class DB {
 		return strErrorMessage;
 	}
 
-	public String executeNoResultSet(String strSQLCommand) {
+	public String executeNoResultSet(DBRecord oUser, String strSQLCommand) {
 
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 		String strErrorMessage = "";
 
 		try {
@@ -1516,9 +1551,9 @@ public class DB {
 		return strErrorMessage;
 	}
 
-	public String executeResultSetNoOutput(String strSQLCommand) {
+	public String executeResultSetNoOutput(DBRecord oUser, String strSQLCommand) {
 
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 		String strErrorMessage = "";
 
 		try {
@@ -1552,7 +1587,7 @@ public class DB {
 			connections.remove(i);
 
 		/* get the user object */
-		DBConnection con = this.getConn();
+		DBConnection con = this.getConn(oUser);
 		Connection conn = con.con;
 
 		GetDBRecordwithCon(conn, oUser, "USERS", "ALIAS", p_strAlias);
@@ -1598,7 +1633,7 @@ public class DB {
 		oUser.put("DBConnection.sqlIDFirma", DBConnection.sqlIDFirma);
 
 		/* set SPID */
-		SetUserSPID(conn);
+		SetUserSPID(oUser, conn);
 
 		con.ReleaseMe();
 	}
