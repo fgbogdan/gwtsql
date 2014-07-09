@@ -1450,7 +1450,7 @@ public class DB {
 		 * if the connection is succesfull and TheApp.loginInfo.R is not null -
 		 * set the information in UserSpid
 		 */
-		System.out.println("Set user SPID");
+		System.out.println("Set user SPID from DB");
 
 		DBConnection con = null;
 
@@ -1459,7 +1459,11 @@ public class DB {
 			conn = con.con;
 		}
 
-		if ("TheApp.loginInfo.isLoggedIn()".equals("1")) {
+		try {
+			String UserID = oUser.getString("USERID");
+			// System.out.println(oUser);
+			// System.out.println(UserID);
+
 			try {
 
 				Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
@@ -1468,9 +1472,8 @@ public class DB {
 					String strSQLCommand = "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='UserSpid')";
 					strSQLCommand += " BEGIN ";
 					strSQLCommand += " DELETE FROM UserSpid WHERE SPID = @@SPID ";
-					strSQLCommand += " IF NOT EXISTS (SELECT 1 FROM UserSpid WHERE SPID = @@SPID AND USERID = '"
-							+ "TheApp.loginInfo.User.get(\"USERID\").toString()" + "')";
-					strSQLCommand += "  INSERT INTO userspid values( '" + "TheApp.loginInfo.User.get(\"USERID\").toString()" + "',@@SPID)";
+					strSQLCommand += " IF NOT EXISTS (SELECT 1 FROM UserSpid WHERE SPID = @@SPID AND USERID = '" + UserID + "')";
+					strSQLCommand += "  INSERT INTO userspid values( '" + UserID + "',@@SPID)";
 					strSQLCommand += " END ";
 					st.execute(strSQLCommand);
 					System.out.println("SPID - set !");
@@ -1484,8 +1487,9 @@ public class DB {
 				System.out.println("SetUserSPID ... create statement");
 				e.printStackTrace();
 			}
-		} else {
-			System.out.println("User not logged ... ");
+		} catch (Exception e) {
+			System.out.println("SetUserSPID ... user not logged !");
+			e.printStackTrace();
 		}
 
 		if (con != null)
