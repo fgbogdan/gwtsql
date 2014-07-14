@@ -31,10 +31,13 @@ public class DB {
 		 */
 
 		String UserID = null;
-		try {
+		// try {
+		// UserID = oUser.getString("USERID");
+		// } catch (Exception e) {
+		// }
+
+		if (!oUser.tableName.isEmpty())
 			UserID = oUser.getString("USERID");
-		} catch (Exception e) {
-		}
 
 		DBConnection con = null;
 
@@ -1459,7 +1462,11 @@ public class DB {
 			conn = con.con;
 		}
 
-		try {
+		// System.out.println("--------------------------------------------------");
+		// System.out.println(oUser);
+		// System.out.println("--------------------------------------------------");
+		 
+		if (!oUser.tableName.isEmpty()) {
 			String UserID = oUser.getString("USERID");
 			// System.out.println(oUser);
 			// System.out.println(UserID);
@@ -1487,9 +1494,8 @@ public class DB {
 				System.out.println("SetUserSPID ... create statement");
 				e.printStackTrace();
 			}
-		} catch (Exception e) {
+		} else {
 			System.out.println("SetUserSPID ... user not logged !");
-			e.printStackTrace();
 		}
 
 		if (con != null)
@@ -1640,6 +1646,7 @@ public class DB {
 		SetUserSPID(oUser, conn);
 
 		con.ReleaseMe();
+		return;
 	}
 
 }
