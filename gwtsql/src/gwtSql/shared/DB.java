@@ -11,7 +11,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Properties;
-import java.util.TimeZone;
 
 public class DB {
 
@@ -375,8 +374,9 @@ public class DB {
 						// date
 						case 91:
 							// DebugUtils.D("date");
-							cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+							// cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 							// DebugUtils.D(rs.getDate(intCount));
+							cal.setTimeZone(java.util.TimeZone.getDefault());
 							oRecord.put(strColname, rs.getDate(strColname, cal));
 							// oRecord.put(strColname, rs.getDate(strColname));
 							break;
@@ -384,10 +384,12 @@ public class DB {
 						case 93:
 							// oRecord.put(strColname, rs.getDate(strColname));
 							// DebugUtils.D("datetime");
-							cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+							// cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 							// DebugUtils.D(rs.getTimestamp(strColname, cal));
 							// oRecord.put(strColname, rs.getTimestamp(strColname));
+							cal.setTimeZone(java.util.TimeZone.getDefault());
 							oRecord.put(strColname, rs.getTimestamp(strColname, cal));
+
 							/*
 							 * DebugUtils.D(strColname);
 							 * DebugUtils.D(rs.getDate(strColname));
@@ -583,7 +585,8 @@ public class DB {
 						// date
 						case 91:
 							// DebugUtils.D("date");
-							cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+							//cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+							cal.setTimeZone(java.util.TimeZone.getDefault());
 							// DebugUtils.D(rs.getDate(intCount));
 							// oRecord.put(strColname, rs.getDate(strColname));
 							oRecord.put(strColname, rs.getDate(strColname, cal));
@@ -592,7 +595,8 @@ public class DB {
 						case 93:
 							// oRecord.put(strColname, rs.getDate(strColname));
 							// DebugUtils.D("datetime");
-							cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+							// cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+							cal.setTimeZone(java.util.TimeZone.getDefault());
 							// DebugUtils.D(rs.getTimestamp(strColname, cal));
 							// oRecord.put(strColname, rs.getTimestamp(strColname));
 							oRecord.put(strColname, rs.getTimestamp(strColname, cal));
@@ -1465,7 +1469,7 @@ public class DB {
 		// System.out.println("--------------------------------------------------");
 		// System.out.println(oUser);
 		// System.out.println("--------------------------------------------------");
-		 
+
 		if (!oUser.tableName.isEmpty()) {
 			String UserID = oUser.getString("USERID");
 			// System.out.println(oUser);
