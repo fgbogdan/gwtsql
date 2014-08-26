@@ -585,7 +585,7 @@ public class DB {
 						// date
 						case 91:
 							// DebugUtils.D("date");
-							//cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
+							// cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 							cal.setTimeZone(java.util.TimeZone.getDefault());
 							// DebugUtils.D(rs.getDate(intCount));
 							// oRecord.put(strColname, rs.getDate(strColname));
@@ -909,94 +909,99 @@ public class DB {
 						strColvalue = oRecord.get(strColname);
 
 						try {
-							if (strColvalue != null && intColumnType != 4 && !rsmdResult.isAutoIncrement(intCount)) {
-								switch (strColvalue.getClass().getName()) {
+							// only not autoincrement fields
+							if (intColumnType != 4 && !rsmdResult.isAutoIncrement(intCount)) {
 
-								// numeric fara virgula
-								case "java.lang.Integer":
-									try {
-										rs.updateInt(intCount, (int) strColvalue);
-									} catch (Exception e) {
-										System.out.println("Exception - java.lang.Integer");
-										strErrorMessage = e.toString();
-									}
-									break;
-								// numeric cu virgula
-								case "java.lang.Double":
-									try {
-										rs.updateDouble(intCount, (Double) strColvalue);
-									} catch (Exception e) {
-										System.out.println("Exception - java.lang.Double");
-										strErrorMessage = e.toString();
-									}
-									break;
-								// varchar sau text sau char
-								case "java.lang.String":
-									try {
-										rs.updateString(intCount, (String) strColvalue);
+								// if the field is not null
+								if (strColvalue != null) {
+									switch (strColvalue.getClass().getName()) {
 
-									} catch (Exception e) {
-										System.out.println("Exception - java.lang.String");
-										strErrorMessage = e.toString();
-									}
-									break;
-								// bit
-								case "java.lang.Boolean":
-									try {
-										rs.updateBoolean(intCount, (boolean) strColvalue);
-									} catch (Exception e) {
-										System.out.println("Exception - java.lang.Boolean");
-										strErrorMessage = e.toString();
-									}
-									break;
-								// smalldatetime
-								case "java.sql.Date":
-									if (strColvalue != null) {
+									// numeric fara virgula
+									case "java.lang.Integer":
 										try {
-											if (strColvalue.toString().trim().equals("1900-01-01"))
-												rs.updateDate(intCount, null);
-											else
-												rs.updateDate(intCount, (java.sql.Date) strColvalue);
+											rs.updateInt(intCount, (int) strColvalue);
 										} catch (Exception e) {
-											System.out.println("Exception - java.sql.Date");
+											System.out.println("Exception - java.lang.Integer");
 											strErrorMessage = e.toString();
 										}
-
-									}
-									break;
-								// with time
-								case "java.sql.Timestamp":
-									// DebugUtils.D(strColvalue, 1);
-									if (strColvalue != null) {
+										break;
+									// numeric cu virgula
+									case "java.lang.Double":
 										try {
-											if (strColvalue.toString().trim().equals("1900-01-01"))
-												rs.updateTimestamp(intCount, null);
-											else
-												rs.updateTimestamp(intCount, (java.sql.Timestamp) strColvalue);
+											rs.updateDouble(intCount, (Double) strColvalue);
 										} catch (Exception e) {
-											System.out.println("Exception - java.sql.Date");
+											System.out.println("Exception - java.lang.Double");
 											strErrorMessage = e.toString();
 										}
-									}
-									break;
-								// unknown
-								default:
-									System.out.println("SetRecord - type not defined!");
-									System.out.println(strColname);
-									System.out.println(strColvalue);
-									System.out.println(strColvalue.getClass().getName());
-									break;
+										break;
+									// varchar sau text sau char
+									case "java.lang.String":
+										try {
+											rs.updateString(intCount, (String) strColvalue);
 
-								} // switch
-							}// if( strColvalue != null)
-							else {
-								try {
-									rs.updateDate(intCount, null);
-								} catch (Exception e) {
-									System.out.println("SaveDBRecord with null ...");
-									strErrorMessage = e.toString();
+										} catch (Exception e) {
+											System.out.println("Exception - java.lang.String");
+											strErrorMessage = e.toString();
+										}
+										break;
+									// bit
+									case "java.lang.Boolean":
+										try {
+											rs.updateBoolean(intCount, (boolean) strColvalue);
+										} catch (Exception e) {
+											System.out.println("Exception - java.lang.Boolean");
+											strErrorMessage = e.toString();
+										}
+										break;
+									// smalldatetime
+									case "java.sql.Date":
+										if (strColvalue != null) {
+											try {
+												if (strColvalue.toString().trim().equals("1900-01-01"))
+													rs.updateDate(intCount, null);
+												else
+													rs.updateDate(intCount, (java.sql.Date) strColvalue);
+											} catch (Exception e) {
+												System.out.println("Exception - java.sql.Date");
+												strErrorMessage = e.toString();
+											}
+
+										}
+										break;
+									// with time
+									case "java.sql.Timestamp":
+										// DebugUtils.D(strColvalue, 1);
+										if (strColvalue != null) {
+											try {
+												if (strColvalue.toString().trim().equals("1900-01-01"))
+													rs.updateTimestamp(intCount, null);
+												else
+													rs.updateTimestamp(intCount, (java.sql.Timestamp) strColvalue);
+											} catch (Exception e) {
+												System.out.println("Exception - java.sql.Date");
+												strErrorMessage = e.toString();
+											}
+										}
+										break;
+									// unknown
+									default:
+										System.out.println("SetRecord - type not defined!");
+										System.out.println(strColname);
+										System.out.println(strColvalue);
+										System.out.println(strColvalue.getClass().getName());
+										break;
+
+									} // switch
+								}// if( strColvalue != null)
+								else {
+									try {
+										rs.updateDate(intCount, null);
+									} catch (Exception e) {
+										System.out.println("SaveDBRecord with null ..." + strColname);
+										strErrorMessage = e.toString();
+									}
 								}
-							}
+							}// for all the fields except autoincrement
 						} catch (Exception e) {
 							System.out.println("Save ... conversion");
 							System.out.println(strColname);
