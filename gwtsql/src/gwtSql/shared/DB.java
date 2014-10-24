@@ -34,9 +34,9 @@ public class DB {
 		// UserID = oUser.getString("USERID");
 		// } catch (Exception e) {
 		// }
-
-		if (!oUser.tableName.isEmpty())
-			UserID = oUser.getString("USERID");
+		if (oUser != null)
+			if (!oUser.tableName.isEmpty())
+				UserID = oUser.getString("USERID");
 
 		DBConnection con = null;
 
@@ -105,7 +105,11 @@ public class DB {
 			Statement st;
 			try {
 				st = con.con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-				String strSQLCommand = "UPDATE userspid SET UserID='" + p_UserID + "' WHERE spid=@@spid";
+				String strSQLCommand = "";
+				if (DBConnection.isMySQL)
+					strSQLCommand = "UPDATE userspid SET UserID='" + p_UserID + "' WHERE spid=connection_id()";
+				else
+					strSQLCommand = "UPDATE userspid SET UserID='" + p_UserID + "' WHERE spid=@@spid";
 				st.execute(strSQLCommand);
 				System.out.println("SPID - set !");
 			} catch (SQLException e1) {
@@ -124,18 +128,12 @@ public class DB {
 
 		Connection conn = null;
 
-		try {
-			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
-		} catch (ClassNotFoundException e) {
-			System.out.println("getConn ... ClassForName");
-			e.printStackTrace();
-		}
-
 		/*
 		 * read from ini
 		 */
 
 		String strServerName = "", strSQLUser = "", strSQLPassword = "", strSQLDatabase = "", strSQLSufix = "", strSQLFirma = "";
+		String strSQLType;
 
 		try {
 
@@ -157,11 +155,11 @@ public class DB {
 
 			// System.out.println("read from ini begin ...");
 
-			strServerName = pro.getProperty("SQLSERVER");
+			strServerName = pro.getProperty("SQLSERVER").trim();
 			DBConnection.sqlServerName = strServerName;
-			strSQLUser = pro.getProperty("SQLUSER");
-			strSQLPassword = pro.getProperty("SQLPASSWORD");
-			strSQLDatabase = pro.getProperty("SQLDATABASE");
+			strSQLUser = pro.getProperty("SQLUSER").trim();
+			strSQLPassword = pro.getProperty("SQLPASSWORD").trim();
+			strSQLDatabase = pro.getProperty("SQLDATABASE").trim();
 			DBConnection.sqlDatabase = strSQLDatabase;
 			strSQLSufix = pro.getProperty("SQLSUFIX");
 			DBConnection.sqlSufix = strSQLSufix;
@@ -169,6 +167,12 @@ public class DB {
 			if (strSQLFirma.isEmpty())
 				strSQLFirma = "FRM";
 			DBConnection.sqlIDFirma = strSQLFirma;
+			strSQLType = pro.getProperty("SQLTYPE");
+			if (strSQLType.isEmpty())
+				strSQLType = "MSSQL";
+			if (!strSQLType.equals("MSSQL") && !strSQLType.equals("MYSQL"))
+				throw new Exception("SQLTYPE not defined correctly in ini file (values accepted are MSSQL or MYSQL)");
+			DBConnection.isMySQL = strSQLType.equals("MYSQL");
 			// System.out.println("read from ini ok ...");
 
 		} catch (Exception ex) {
@@ -177,10 +181,28 @@ public class DB {
 			System.out.println("the ini file must be in:" + System.getProperty("user.dir"));
 		}
 
+		try {
+			if (DBConnection.isMySQL) {
+				Class.forName("com.mysql.jdbc.Driver").newInstance();
+			} else {
+				Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver").newInstance();
+			}
+
+		} catch (Exception e) {
+			System.out.println("getConn ... ClassForName");
+			e.printStackTrace();
+		}
+
 		// String url =
 		// "jdbc:sqlserver://SrvVM2\\EX1;user=sa;password=bcmanager;databaseName=dbUnitM07_FRM;";
-		String url = "jdbc:sqlserver://" + strServerName + ";user=" + strSQLUser + ";password=" + strSQLPassword + ";databaseName=" + strSQLDatabase
-				+ ";";
+		// url =
+		// "jdbc:mysql://xx.xx.xx.xx:3306;user=xxx;password=xxx;databaseName=xxx;";
+		String url = "";
+
+		if (DBConnection.isMySQL)
+			url = "jdbc:mysql://" + strServerName + "/" + strSQLDatabase + "?zeroDateTimeBehavior=convertToNull";
+		else
+			url = "jdbc:sqlserver://" + strServerName + ";user=" + strSQLUser + ";password=" + strSQLPassword + ";databaseName=" + strSQLDatabase + ";";
 		System.out.println("Connect to server ... ");
 		System.out.println(url);
 		String sDataBase = "SqlDatabase=" + DBConnection.sqlDatabase;
@@ -188,7 +210,11 @@ public class DB {
 
 		// Connection conn=null;
 		try {
-			conn = DriverManager.getConnection(url);
+			if (DBConnection.isMySQL) {
+				conn = DriverManager.getConnection(url, strSQLUser, strSQLPassword);
+			} else {
+				conn = DriverManager.getConnection(url);
+			}
 
 			/*
 			 * if the connection is succesfull and TheApp.loginInfo.R is not null -
@@ -1475,36 +1501,45 @@ public class DB {
 		// System.out.println(oUser);
 		// System.out.println("--------------------------------------------------");
 
-		if (!oUser.tableName.isEmpty()) {
-			String UserID = oUser.getString("USERID");
-			// System.out.println(oUser);
-			// System.out.println(UserID);
-
-			try {
-
-				Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+		if (oUser != null) {
+			if (!oUser.tableName.isEmpty()) {
+				String UserID = oUser.getString("USERID");
+				// System.out.println(oUser);
+				// System.out.println(UserID);
 
 				try {
-					String strSQLCommand = "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='UserSpid')";
-					strSQLCommand += " BEGIN ";
-					strSQLCommand += " DELETE FROM UserSpid WHERE SPID = @@SPID ";
-					strSQLCommand += " IF NOT EXISTS (SELECT 1 FROM UserSpid WHERE SPID = @@SPID AND USERID = '" + UserID + "')";
-					strSQLCommand += "  INSERT INTO userspid values( '" + UserID + "',@@SPID)";
-					strSQLCommand += " END ";
-					st.execute(strSQLCommand);
-					System.out.println("SPID - set !");
 
-				} catch (Exception e) {
-					System.out.println("SetUserSPID ... insert in UserSPID");
-					System.out.println(e.toString());
+					Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+					String strSQLCommand = "";
+					try {
+						if (DBConnection.isMySQL) {
+							strSQLCommand = " CREATE TABLE IF NOT EXISTS UserSpid (UserID VARCHAR(10), SPID INT);";
+							strSQLCommand += " INSERT INTO userspid values( '" + UserID + "',connection_id());";
+						} else {
+							strSQLCommand = "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='UserSpid')";
+							strSQLCommand += " BEGIN ";
+							strSQLCommand += " DELETE FROM UserSpid WHERE SPID = @@SPID ";
+							strSQLCommand += " IF NOT EXISTS (SELECT 1 FROM UserSpid WHERE SPID = @@SPID AND USERID = '" + UserID + "')";
+							strSQLCommand += "  INSERT INTO userspid values( '" + UserID + "',@@SPID)";
+							strSQLCommand += " END ";
+						}
+						st.execute(strSQLCommand);
+						System.out.println("SPID - set !");
+
+					} catch (Exception e) {
+						System.out.println("SetUserSPID ... insert in UserSPID");
+						System.out.println(e.toString());
+					}
+
+				} catch (SQLException e) {
+					System.out.println("SetUserSPID ... create statement");
+					e.printStackTrace();
 				}
-
-			} catch (SQLException e) {
-				System.out.println("SetUserSPID ... create statement");
-				e.printStackTrace();
+			} else {
+				System.out.println("SetUserSPID ... user not logged !");
 			}
 		} else {
-			System.out.println("SetUserSPID ... user not logged !");
+			System.out.println("User is null !");
 		}
 
 		if (con != null)
