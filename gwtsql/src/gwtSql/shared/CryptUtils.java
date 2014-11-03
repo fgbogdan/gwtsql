@@ -1,5 +1,8 @@
 package gwtSql.shared;
 
+import com.googlecode.gwt.crypto.client.TripleDesCipher;
+
+
 public class CryptUtils {
 
 	public static String strMagic; // = 'USERPASS';
@@ -11,6 +14,14 @@ public class CryptUtils {
 	public String char_A = "A";
 	public static String[] PASS;
 	public static int passlen = 8;
+	
+
+
+	public final static byte[] GWT_DES_KEY = new byte[] { (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1,
+			(byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, (byte) 1, };
+
+	
+	
 
 	public static void initpass(String passwd) {
 
@@ -131,4 +142,33 @@ public class CryptUtils {
 		else
 			return source + repeat(source, occurences - 1);
 	}
+	
+	
+	/* metoda noua de criptare */
+	
+	public static String crypt(String source) {
+		TripleDesCipher cipher = new TripleDesCipher();
+		String destination = "";
+		cipher.setKey(GWT_DES_KEY);
+		try {
+			destination = cipher.encrypt(String.valueOf(source));
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+		return destination;
+	}
+
+	public static String decrypt(String source) {
+		TripleDesCipher cipher = new TripleDesCipher();
+		String destination = "";
+		cipher.setKey(GWT_DES_KEY);
+		try {
+			destination = cipher.decrypt(source);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return destination;
+	}
+	
+	
 }

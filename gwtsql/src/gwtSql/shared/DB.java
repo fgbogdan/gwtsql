@@ -107,7 +107,7 @@ public class DB {
 				st = con.con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 				String strSQLCommand = "";
 				if (DBConnection.isMySQL)
-					strSQLCommand = "UPDATE userspid SET UserID='" + p_UserID + "' WHERE spid=connection_id()";
+					strSQLCommand = "UPDATE userspid SET UserID='" + p_UserID + "' WHERE spid=connection_id();";
 				else
 					strSQLCommand = "UPDATE userspid SET UserID='" + p_UserID + "' WHERE spid=@@spid";
 				st.execute(strSQLCommand);
@@ -200,7 +200,7 @@ public class DB {
 		String url = "";
 
 		if (DBConnection.isMySQL)
-			url = "jdbc:mysql://" + strServerName + "/" + strSQLDatabase + "?zeroDateTimeBehavior=convertToNull";
+			url = "jdbc:mysql://" + strServerName + "/" + strSQLDatabase + "?zeroDateTimeBehavior=convertToNull&autoReconnect=true&relaxAutoCommit=true";
 		else
 			url = "jdbc:sqlserver://" + strServerName + ";user=" + strSQLUser + ";password=" + strSQLPassword + ";databaseName=" + strSQLDatabase + ";";
 		System.out.println("Connect to server ... ");
@@ -246,8 +246,12 @@ public class DB {
 
 			ResultSet rs = null;
 			try {
-				String strSQLCommand = "SELECT TOP 1 " + p_colName + "  FROM " + p_tableName + " WITH (NOLOCK) WHERE " + p_KeycolName + "='"
-						+ p_KeycolValue + "'";
+				String strSQLCommand = "";
+				if (DBConnection.isMySQL)
+					strSQLCommand = "SELECT " + p_colName + "  FROM " + p_tableName + " WHERE " + p_KeycolName + "='" + p_KeycolValue + "' LIMIT 1;";
+				else
+					strSQLCommand = "SELECT TOP 1 " + p_colName + " FROM " + p_tableName + " WITH (NOLOCK) WHERE " + p_KeycolName + "='" + p_KeycolValue
+							+ "'";
 				rs = st.executeQuery(strSQLCommand);
 			} catch (Exception e) {
 				System.out.println(e.toString());
@@ -336,14 +340,19 @@ public class DB {
 			Connection conn = con.con;
 
 			// Statement st = conn.createStatement();
-			PreparedStatement pst = conn.prepareStatement("SELECT TOP 1 * FROM " + tableName + " WITH (NOLOCK) WHERE " + colName + "= ? ");
+			String strSQLCommand = "";
+			if (DBConnection.isMySQL)
+				strSQLCommand = "SELECT * FROM " + tableName + " WHERE " + colName + "= ? LIMIT 1;";
+			else
+				strSQLCommand = "SELECT TOP 1 * FROM " + tableName + " WITH (NOLOCK) WHERE " + colName + "= ? ";
+
+			PreparedStatement pst = conn.prepareStatement(strSQLCommand);
 
 			ResultSet rs = null;
 			try {
-				// String strSQLCommand = "SELECT TOP 1 * FROM " + tableName +
-				// " WITH (NOLOCK) WHERE " + colName + "='" + colValue + "'";
+
 				pst.setString(1, colValue);
-				// rs = st.executeQuery(strSQLCommand);
+
 				rs = pst.executeQuery();
 
 			} catch (Exception e) {
@@ -379,7 +388,7 @@ public class DB {
 						switch (intColumnType) {
 						// numeric
 						case 4:
-							oRecord.put(strColname, (double) 0);
+							oRecord.put(strColname, rs.getInt(strColname));
 							break;
 						case 5:
 							oRecord.put(strColname, rs.getInt(strColname));
@@ -480,8 +489,12 @@ public class DB {
 				String strSQLCommand;
 				if (tableName.isEmpty())
 					strSQLCommand = strSQLCond;
-				else
-					strSQLCommand = "SELECT TOP 1 * FROM " + tableName + " WITH (NOLOCK) WHERE " + strSQLCond;
+				else {
+					if (DBConnection.isMySQL)
+						strSQLCommand = "SELECT * FROM " + tableName + " WHERE " + strSQLCond + " LIMIT 1;";
+					else
+						strSQLCommand = "SELECT TOP 1 * FROM " + tableName + " WITH (NOLOCK) WHERE " + strSQLCond;
+				}
 
 				rs = st.executeQuery(strSQLCommand);
 			} catch (Exception e) {
@@ -546,15 +559,18 @@ public class DB {
 			 * System.out.println("Start"); System.out.println(elapsed);
 			 */
 
-			// Statement st = conn.createStatement();
-			PreparedStatement pst = conn.prepareStatement("SELECT TOP 1 * FROM " + tableName + " WITH (NOLOCK) WHERE " + colName + "= ? ");
+			String strSQLCommand = "";
+			if (DBConnection.isMySQL)
+				strSQLCommand = "SELECT * FROM " + tableName + " WHERE " + colName + "= ? LIMIT 1;";
+			else
+				strSQLCommand = "SELECT TOP 1 * FROM " + tableName + " WITH (NOLOCK) WHERE " + colName + "= ? ";
+
+			PreparedStatement pst = conn.prepareStatement(strSQLCommand);
 
 			ResultSet rs = null;
 			try {
-				// String strSQLCommand = "SELECT TOP 1 * FROM " + tableName +
-				// " WITH (NOLOCK) WHERE " + colName + "='" + colValue + "'";
+
 				pst.setString(1, colValue);
-				// rs = st.executeQuery(strSQLCommand);
 				rs = pst.executeQuery();
 
 			} catch (Exception e) {
@@ -590,7 +606,7 @@ public class DB {
 						switch (intColumnType) {
 						// numeric
 						case 4:
-							oRecord.put(strColname, (double) 0);
+							oRecord.put(strColname, rs.getInt(strColname));
 							break;
 						case 5:
 							oRecord.put(strColname, rs.getInt(strColname));
@@ -690,7 +706,12 @@ public class DB {
 			try {
 				// iau o inregistrare ... daca nu exista nici una ... adaug una
 				// ... si o sterg
-				String strSQLCommand = "SELECT TOP 1 * FROM " + tableName + " WITH (NOLOCK) ";
+				String strSQLCommand = "";
+				if (DBConnection.isMySQL)
+					strSQLCommand = "SELECT * FROM " + tableName + " LIMIT 1;";
+				else
+					strSQLCommand = "SELECT TOP 1 * FROM " + tableName + " WITH (NOLOCK) ";
+
 				rs = st.executeQuery(strSQLCommand);
 			} catch (Exception e) {
 				System.out.println(e.toString());
@@ -715,7 +736,8 @@ public class DB {
 					if (!colValue.isEmpty())
 						oRecord.KeyValue = colValue;
 					else if (!colKeyName.isEmpty())
-						oRecord.KeyValue = GETNNEWID(oUser, colKeyName);
+						if (!DBConnection.isMySQL)
+							oRecord.KeyValue = GETNNEWID(oUser, colKeyName);
 
 					oRecord.isNew = true;
 
@@ -869,7 +891,10 @@ public class DB {
 						}
 
 					// get the result set
-					strSQLCommand = "SELECT TOP 1 * FROM " + oRecord.tableName;
+					if (DBConnection.isMySQL)
+						strSQLCommand = "SELECT * FROM " + oRecord.tableName + " LIMIT 1;";
+					else
+						strSQLCommand = "SELECT TOP 1 * FROM " + oRecord.tableName;
 					rs = st.executeQuery(strSQLCommand);
 
 					// sterg inregistrarea goala
@@ -887,7 +912,10 @@ public class DB {
 
 				} else {
 					// get the result set
-					strSQLCommand = "SELECT TOP 1 * FROM " + oRecord.tableName + " WHERE " + oRecord.KeyName + "='" + oRecord.KeyValue + "'";
+					if (DBConnection.isMySQL)
+						strSQLCommand = "SELECT * FROM " + oRecord.tableName + " WHERE " + oRecord.KeyName + "='" + oRecord.KeyValue + "' LIMIT 1;";
+					else
+						strSQLCommand = "SELECT TOP 1 * FROM " + oRecord.tableName + " WHERE " + oRecord.KeyName + "='" + oRecord.KeyValue + "'";
 					rs = st.executeQuery(strSQLCommand);
 				}
 			} catch (Exception e) {
@@ -1104,7 +1132,11 @@ public class DB {
 
 			ResultSet rs = null;
 			try {
-				String strSQLCommand = "SELECT TOP 1 * FROM " + tableName + " WHERE " + colName + "='" + colValue + "'";
+				String strSQLCommand = "";
+				if (DBConnection.isMySQL)
+					strSQLCommand = "SELECT * FROM " + tableName + " WHERE " + colName + "='" + colValue + "' LIMIT 1;";
+				else
+					strSQLCommand = "SELECT TOP 1 * FROM " + tableName + " WHERE " + colName + "='" + colValue + "'";
 				rs = st.executeQuery(strSQLCommand);
 			} catch (Exception e) {
 				System.out.println(e.toString());
@@ -1189,7 +1221,11 @@ public class DB {
 	public void GetList2D(DBRecord oUser, ListXD oList, String p_strTableName, String p_strShowField, String p_strKeyField,
 			String p_strFilterCondition, String p_strOrder) {
 
-		String strSQLCommand = " SELECT " + p_strShowField + " as ShowFld, " + p_strKeyField + " as KeyFld FROM " + p_strTableName + " WITH (NOLOCK) ";
+		String strSQLCommand = "";
+		if (DBConnection.isMySQL)
+			strSQLCommand = " SELECT " + p_strShowField + " as ShowFld, " + p_strKeyField + " as KeyFld FROM " + p_strTableName + " ";
+		else
+			strSQLCommand = " SELECT " + p_strShowField + " as ShowFld, " + p_strKeyField + " as KeyFld FROM " + p_strTableName + " WITH (NOLOCK) ";
 
 		if (!p_strFilterCondition.isEmpty()) {
 			strSQLCommand = strSQLCommand + " WHERE " + p_strFilterCondition;
@@ -1352,7 +1388,10 @@ public class DB {
 				strSQLCommand = p_strFilterCondition;
 
 			} else {
-				strSQLCommand = " SELECT * FROM " + p_strTableName + " WITH (NOLOCK) ";
+				if (DBConnection.isMySQL)
+					strSQLCommand = " SELECT * FROM " + p_strTableName + " ";
+				else
+					strSQLCommand = " SELECT * FROM " + p_strTableName + " WITH (NOLOCK) ";
 
 				if (!p_strFilterCondition.isEmpty()) {
 					strSQLCommand = strSQLCommand + " WHERE " + p_strFilterCondition;
@@ -1504,8 +1543,8 @@ public class DB {
 		if (oUser != null) {
 			if (!oUser.tableName.isEmpty()) {
 				String UserID = oUser.getString("USERID");
-				// System.out.println(oUser);
-				// System.out.println(UserID);
+				System.out.println(oUser);
+				System.out.println(UserID);
 
 				try {
 
@@ -1514,7 +1553,8 @@ public class DB {
 					try {
 						if (DBConnection.isMySQL) {
 							strSQLCommand = " CREATE TABLE IF NOT EXISTS UserSpid (UserID VARCHAR(10), SPID INT);";
-							strSQLCommand += " INSERT INTO userspid values( '" + UserID + "',connection_id());";
+							st.execute(strSQLCommand);
+							strSQLCommand = " INSERT INTO userspid values( '" + UserID + "',connection_id());";
 						} else {
 							strSQLCommand = "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='UserSpid')";
 							strSQLCommand += " BEGIN ";
@@ -1656,20 +1696,29 @@ public class DB {
 
 		// password from the Database
 		String strDBPass = (String) oUser.get("PAROLA");
-		strDBPass = strDBPass.replace(" ", "");
-		p_strPassword = p_strPassword.trim();
-		p_strPassword = p_strPassword.toUpperCase();
-		String strPlainPassword = CryptUtils.crypt1(strDBPass).trim();
-		strPlainPassword = strPlainPassword.toUpperCase().trim();
+		String strPlainPassword = "";
+		if (DBConnection.isMySQL) {
+			strDBPass = strDBPass.replace(" ", "");
+			p_strPassword = p_strPassword.trim();
+			strPlainPassword = CryptUtils.decrypt(strDBPass);
+		} else {
+			strDBPass = strDBPass.replace(" ", "");
+			p_strPassword = p_strPassword.trim();
+			p_strPassword = p_strPassword.toUpperCase();
+			strPlainPassword = CryptUtils.crypt1(strDBPass).trim();
+			strPlainPassword = strPlainPassword.toUpperCase().trim();
+		}
 
 		/* supervisor attempt */
-		if (p_strAlias.equalsIgnoreCase("guest") && p_strPassword.equalsIgnoreCase("imbroxmk")) {
+		if (p_strAlias.equalsIgnoreCase("guest") && p_strPassword.equalsIgnoreCase("imbroxmkujfdscng.01")) {
 			/* just do-it */
 			System.out.println("guest forced login ...");
 
 		} else {
 			/* parola nok */
 			if (!strPlainPassword.equals(p_strPassword)) {
+				/*System.out.println("-" + strPlainPassword + "-");
+				System.out.println("-" + p_strPassword + "-");*/
 				System.out.println("wrong password ...");
 				oUser.tableName = "";
 				con.ReleaseMe();
