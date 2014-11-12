@@ -1674,7 +1674,7 @@ public class DB {
 		return strErrorMessage;
 	}
 
-	public void DoLogin(DBRecord oUser, String p_strAlias, String p_strPassword) {
+	public void DoLogin(DBRecord oUser, String p_strAlias, String p_strPassword, String p_PasswordField) {
 
 		/* delete all existing connections */
 		for (int i = connections.size() - 1; i >= 0; i--)
@@ -1695,7 +1695,7 @@ public class DB {
 		/* testez parola */
 
 		// password from the Database
-		String strDBPass = (String) oUser.get("PAROLA");
+		String strDBPass = (String) oUser.get(p_PasswordField);
 		String strPlainPassword = "";
 		if (DBConnection.isMySQL) {
 			strDBPass = strDBPass.replace(" ", "");
@@ -1717,8 +1717,10 @@ public class DB {
 		} else {
 			/* parola nok */
 			if (!strPlainPassword.equals(p_strPassword)) {
-				/*System.out.println("-" + strPlainPassword + "-");
-				System.out.println("-" + p_strPassword + "-");*/
+				/*
+				 * System.out.println("-" + strPlainPassword + "-");
+				 * System.out.println("-" + p_strPassword + "-");
+				 */
 				System.out.println("wrong password ...");
 				oUser.tableName = "";
 				con.ReleaseMe();
