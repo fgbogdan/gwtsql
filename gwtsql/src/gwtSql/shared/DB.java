@@ -133,7 +133,7 @@ public class DB {
 		 */
 
 		String strServerName = "", strSQLUser = "", strSQLPassword = "", strSQLDatabase = "", strSQLSufix = "", strSQLFirma = "";
-		String strSQLType;
+		String strSQLType, strisLog = "NO";
 
 		try {
 
@@ -154,25 +154,38 @@ public class DB {
 			pro.load(new FileInputStream(DbManager.iniFileName));
 
 			// System.out.println("read from ini begin ...");
-
+			// sql server
 			strServerName = pro.getProperty("SQLSERVER").trim();
 			DBConnection.sqlServerName = strServerName;
+			// sql user
 			strSQLUser = pro.getProperty("SQLUSER").trim();
+			// sql password
 			strSQLPassword = pro.getProperty("SQLPASSWORD").trim();
+			// database
 			strSQLDatabase = pro.getProperty("SQLDATABASE").trim();
 			DBConnection.sqlDatabase = strSQLDatabase;
+			// database sufix
 			strSQLSufix = pro.getProperty("SQLSUFIX");
 			DBConnection.sqlSufix = strSQLSufix;
+
+			// firm identification
 			strSQLFirma = pro.getProperty("SQLFIRMA");
 			if (strSQLFirma.isEmpty())
 				strSQLFirma = "FRM";
 			DBConnection.sqlIDFirma = strSQLFirma;
+			// database type
 			strSQLType = pro.getProperty("SQLTYPE");
 			if (strSQLType.isEmpty())
 				strSQLType = "MSSQL";
 			if (!strSQLType.equals("MSSQL") && !strSQLType.equals("MYSQL"))
 				throw new Exception("SQLTYPE not defined correctly in ini file (values accepted are MSSQL or MYSQL)");
 			DBConnection.isMySQL = strSQLType.equals("MYSQL");
+			// logging
+			strisLog = pro.getProperty("ISLOG");
+			if (strisLog.isEmpty())
+				strisLog = "NO";
+			DBConnection.isLog = strisLog.equals("YES") ? true : false;
+
 			// System.out.println("read from ini ok ...");
 
 		} catch (Exception ex) {
@@ -388,23 +401,23 @@ public class DB {
 						switch (intColumnType) {
 						// numeric
 						case 4:
-							oRecord.put(strColname, rs.getInt(strColname));
+							oRecord.put_original(strColname, rs.getInt(strColname));
 							break;
 						case 5:
-							oRecord.put(strColname, rs.getInt(strColname));
+							oRecord.put_original(strColname, rs.getInt(strColname));
 							break;
 						case 2:
-							oRecord.put(strColname, rs.getDouble(strColname));
+							oRecord.put_original(strColname, rs.getDouble(strColname));
 							break;
 						// varchar sau text sau char
 						case 12:
 						case -1:
 						case 1:
-							oRecord.put(strColname, rs.getString(strColname));
+							oRecord.put_original(strColname, rs.getString(strColname));
 							break;
 						// bit
 						case -7:
-							oRecord.put(strColname, rs.getBoolean(strColname));
+							oRecord.put_original(strColname, rs.getBoolean(strColname));
 							break;
 						// date
 						case 91:
@@ -412,18 +425,18 @@ public class DB {
 							// cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 							// DebugUtils.D(rs.getDate(intCount));
 							cal.setTimeZone(java.util.TimeZone.getDefault());
-							oRecord.put(strColname, rs.getDate(strColname, cal));
-							// oRecord.put(strColname, rs.getDate(strColname));
+							oRecord.put_original(strColname, rs.getDate(strColname, cal));
+							// oRecord.put_original(strColname, rs.getDate(strColname));
 							break;
 						// smalldatetime
 						case 93:
-							// oRecord.put(strColname, rs.getDate(strColname));
+							// oRecord.put_original(strColname, rs.getDate(strColname));
 							// DebugUtils.D("datetime");
 							// cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 							// DebugUtils.D(rs.getTimestamp(strColname, cal));
-							// oRecord.put(strColname, rs.getTimestamp(strColname));
+							// oRecord.put_original(strColname, rs.getTimestamp(strColname));
 							cal.setTimeZone(java.util.TimeZone.getDefault());
-							oRecord.put(strColname, rs.getTimestamp(strColname, cal));
+							oRecord.put_original(strColname, rs.getTimestamp(strColname, cal));
 
 							/*
 							 * DebugUtils.D(strColname);
@@ -524,7 +537,7 @@ public class DB {
 						strColvalue = rs.getString(strColname);
 						// if(rs.wasNull())
 						// strColvalue="";
-						oRecord.put(strColname.toUpperCase(), strColvalue);
+						oRecord.put_original(strColname.toUpperCase(), strColvalue);
 						// NOTE: THE COLUMN NAMES WILL ALWAYS BE STORED IN
 						// UPPERCASE, HENCE NEED TO BE RETRIEVED IN UPPER CASE
 					}
@@ -606,23 +619,23 @@ public class DB {
 						switch (intColumnType) {
 						// numeric
 						case 4:
-							oRecord.put(strColname, rs.getInt(strColname));
+							oRecord.put_original(strColname, rs.getInt(strColname));
 							break;
 						case 5:
-							oRecord.put(strColname, rs.getInt(strColname));
+							oRecord.put_original(strColname, rs.getInt(strColname));
 							break;
 						case 2:
-							oRecord.put(strColname, rs.getDouble(strColname));
+							oRecord.put_original(strColname, rs.getDouble(strColname));
 							break;
 						// varchar sau text sau char
 						case 12:
 						case -1:
 						case 1:
-							oRecord.put(strColname, rs.getString(strColname));
+							oRecord.put_original(strColname, rs.getString(strColname));
 							break;
 						// bit
 						case -7:
-							oRecord.put(strColname, rs.getBoolean(strColname));
+							oRecord.put_original(strColname, rs.getBoolean(strColname));
 							break;
 						// date
 						case 91:
@@ -630,18 +643,18 @@ public class DB {
 							// cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 							cal.setTimeZone(java.util.TimeZone.getDefault());
 							// DebugUtils.D(rs.getDate(intCount));
-							// oRecord.put(strColname, rs.getDate(strColname));
-							oRecord.put(strColname, rs.getDate(strColname, cal));
+							// oRecord.put_original(strColname, rs.getDate(strColname));
+							oRecord.put_original(strColname, rs.getDate(strColname, cal));
 							break;
 						// smalldatetime
 						case 93:
-							// oRecord.put(strColname, rs.getDate(strColname));
+							// oRecord.put_original(strColname, rs.getDate(strColname));
 							// DebugUtils.D("datetime");
 							// cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 							cal.setTimeZone(java.util.TimeZone.getDefault());
 							// DebugUtils.D(rs.getTimestamp(strColname, cal));
-							// oRecord.put(strColname, rs.getTimestamp(strColname));
-							oRecord.put(strColname, rs.getTimestamp(strColname, cal));
+							// oRecord.put_original(strColname, rs.getTimestamp(strColname));
+							oRecord.put_original(strColname, rs.getTimestamp(strColname, cal));
 							/*
 							 * DebugUtils.D(strColname);
 							 * DebugUtils.D(rs.getDate(strColname));
@@ -758,27 +771,27 @@ public class DB {
 								// numeric
 								case 4:
 									// autoincrement ... do nothing
-									// oRecord.put(strColname,(double)0);
+									// oRecord.put_original(strColname,(double)0);
 									break;
 								case 2:
 								case 5:
-									oRecord.put(strColname, (int) 0);
+									oRecord.put_original(strColname, (int) 0);
 									break;
 								// varchar sau text sau char
 								case 12:
 								case -1:
 								case 1:
-									oRecord.put(strColname, "");
+									oRecord.put_original(strColname, "");
 									break;
 								// bit
 								case -7:
-									oRecord.put(strColname, false);
+									oRecord.put_original(strColname, false);
 									break;
 								// date
 								// smalldatetime
 								case 91:
 								case 93:
-									oRecord.put(strColname, null);
+									oRecord.put_original(strColname, null);
 									break;
 								// unknown
 								default:
@@ -798,7 +811,7 @@ public class DB {
 					}// for(int intCount = 1; intCount <= intNoCols; intCount++)
 
 					// set the colName = colValue
-					oRecord.put(oRecord.KeyName.toUpperCase(), oRecord.KeyValue);
+					oRecord.put_original(oRecord.KeyName.toUpperCase(), oRecord.KeyValue);
 
 				} catch (SQLException e) {
 					System.out.println("GetBlankRecord ... MetaData");
@@ -944,7 +957,9 @@ public class DB {
 				int intColumnType = 0;
 				String strColname = null;
 				// String strColumnName=null;
-				Object strColvalue = null;
+				Object oColvalue = null;
+				Object oOldColvalue = null;
+				String strColvalue, strOldColvalue;
 
 				try {
 					rsmdResult = rs.getMetaData();
@@ -960,20 +975,21 @@ public class DB {
 						// sql type ... not yet used
 						// strColumnName = rsmdResult.getColumnTypeName(intCount);
 
-						strColvalue = oRecord.get(strColname);
+						oColvalue = oRecord.get(strColname);
 
 						try {
 							// only not autoincrement fields
 							if (intColumnType != 4 && !rsmdResult.isAutoIncrement(intCount)) {
 
 								// if the field is not null
-								if (strColvalue != null) {
-									switch (strColvalue.getClass().getName()) {
+								if (oColvalue != null) {
+
+									switch (oColvalue.getClass().getName()) {
 
 									// numeric fara virgula
 									case "java.lang.Integer":
 										try {
-											rs.updateInt(intCount, (int) strColvalue);
+											rs.updateInt(intCount, (int) oColvalue);
 										} catch (Exception e) {
 											System.out.println("Exception - java.lang.Integer");
 											strErrorMessage = e.toString();
@@ -982,7 +998,7 @@ public class DB {
 									// numeric cu virgula
 									case "java.lang.Double":
 										try {
-											rs.updateDouble(intCount, (Double) strColvalue);
+											rs.updateDouble(intCount, (Double) oColvalue);
 										} catch (Exception e) {
 											System.out.println("Exception - java.lang.Double");
 											strErrorMessage = e.toString();
@@ -991,7 +1007,7 @@ public class DB {
 									// varchar sau text sau char
 									case "java.lang.String":
 										try {
-											rs.updateString(intCount, (String) strColvalue);
+											rs.updateString(intCount, (String) oColvalue);
 
 										} catch (Exception e) {
 											System.out.println("Exception - java.lang.String");
@@ -1001,7 +1017,7 @@ public class DB {
 									// bit
 									case "java.lang.Boolean":
 										try {
-											rs.updateBoolean(intCount, (boolean) strColvalue);
+											rs.updateBoolean(intCount, (boolean) oColvalue);
 										} catch (Exception e) {
 											System.out.println("Exception - java.lang.Boolean");
 											strErrorMessage = e.toString();
@@ -1009,12 +1025,12 @@ public class DB {
 										break;
 									// smalldatetime
 									case "java.sql.Date":
-										if (strColvalue != null) {
+										if (oColvalue != null) {
 											try {
-												if (strColvalue.toString().trim().equals("1900-01-01"))
+												if (oColvalue.toString().trim().equals("1900-01-01"))
 													rs.updateDate(intCount, null);
 												else
-													rs.updateDate(intCount, (java.sql.Date) strColvalue);
+													rs.updateDate(intCount, (java.sql.Date) oColvalue);
 											} catch (Exception e) {
 												System.out.println("Exception - java.sql.Date");
 												strErrorMessage = e.toString();
@@ -1025,12 +1041,12 @@ public class DB {
 									// with time
 									case "java.sql.Timestamp":
 										// DebugUtils.D(strColvalue, 1);
-										if (strColvalue != null) {
+										if (oColvalue != null) {
 											try {
-												if (strColvalue.toString().trim().equals("1900-01-01"))
+												if (oColvalue.toString().trim().equals("1900-01-01"))
 													rs.updateTimestamp(intCount, null);
 												else
-													rs.updateTimestamp(intCount, (java.sql.Timestamp) strColvalue);
+													rs.updateTimestamp(intCount, (java.sql.Timestamp) oColvalue);
 											} catch (Exception e) {
 												System.out.println("Exception - java.sql.Date");
 												strErrorMessage = e.toString();
@@ -1041,11 +1057,12 @@ public class DB {
 									default:
 										System.out.println("SetRecord - type not defined!");
 										System.out.println(strColname);
-										System.out.println(strColvalue);
-										System.out.println(strColvalue.getClass().getName());
+										System.out.println(oColvalue);
+										System.out.println(oColvalue.getClass().getName());
 										break;
 
 									} // switch
+
 								}// if( strColvalue != null)
 								else {
 									try {
@@ -1055,17 +1072,44 @@ public class DB {
 										strErrorMessage = e.toString();
 									}
 								}
+
+								// if we log changes
+								if (oRecord.isLog) {
+
+									// if it's new - add only the new information and
+									// stop adding another lines
+									if (oRecord.isNew) {
+										WriteLog(oUser, oRecord, "NEW", "", "NEW");
+										oRecord.isLog = false;
+									} else {
+
+										// existing record
+										// if the old val differs the new val - write in
+										// log
+										oOldColvalue = oRecord.get(strColname + "_ORIGINAL");
+										// null test
+										if (oOldColvalue == null)
+											oOldColvalue = "NULL";
+										if (oColvalue == null)
+											oColvalue = "NULL";
+										strColvalue = oColvalue.toString();				
+										strOldColvalue = oOldColvalue.toString();
+										if (!strOldColvalue.equals(strColvalue))
+											WriteLog(oUser, oRecord, strColname, strOldColvalue, strColvalue);
+									}
+								}
+
 							}// for all the fields except autoincrement
 						} catch (Exception e) {
 							System.out.println("Save ... conversion");
 							System.out.println(strColname);
-							System.out.println(strColvalue);
+							System.out.println(oColvalue);
 							System.out.println(e.toString());
 							strErrorMessage = e.toString();
 						}
 						// NOTE: THE COLUMN NAMES WILL ALWAYS BE STORED IN
 						// UPPERCASE, HENCE NEED TO BE RETRIEVED IN UPPER CASE
-					}
+					} // for
 
 					// daca este record nou ... insert
 					if (oRecord.isNew) {
@@ -1425,7 +1469,7 @@ public class DB {
 			if (rs != null) {
 				while (rs.next()) {
 					// generate each record and put it in the list
-					// oList.put( rs.getString("ShowFld"),
+					// oList.put_original( rs.getString("ShowFld"),
 					// rs.getString("KeyFld"));
 					ResultSetMetaData rsmdResult = null;
 
@@ -1450,7 +1494,7 @@ public class DB {
 							strColname = strColname.toUpperCase();
 							strColvalue = rs.getString(strColname);
 
-							oDBRecord.put(strColname.toUpperCase(), strColvalue);
+							oDBRecord.put_original(strColname.toUpperCase(), strColvalue);
 
 							// save the fields names
 							if (bFirstTime) {
@@ -1552,14 +1596,14 @@ public class DB {
 					String strSQLCommand = "";
 					try {
 						if (DBConnection.isMySQL) {
-							strSQLCommand = " CREATE TABLE IF NOT EXISTS UserSpid (UserID VARCHAR(10), SPID INT);";
+							strSQLCommand = " CREATE TABLE IF NOT EXISTS userspid (userid VARCHAR(10), spid INT);";
 							st.execute(strSQLCommand);
 							strSQLCommand = " INSERT INTO userspid values( '" + UserID + "',connection_id());";
 						} else {
-							strSQLCommand = "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='UserSpid')";
+							strSQLCommand = "IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE' AND TABLE_NAME='userspid')";
 							strSQLCommand += " BEGIN ";
-							strSQLCommand += " DELETE FROM UserSpid WHERE SPID = @@SPID ";
-							strSQLCommand += " IF NOT EXISTS (SELECT 1 FROM UserSpid WHERE SPID = @@SPID AND USERID = '" + UserID + "')";
+							strSQLCommand += " DELETE FROM userspid WHERE spid = @@SPID ";
+							strSQLCommand += " IF NOT EXISTS (SELECT 1 FROM userspid WHERE spid = @@SPID AND userid = '" + UserID + "')";
 							strSQLCommand += "  INSERT INTO userspid values( '" + UserID + "',@@SPID)";
 							strSQLCommand += " END ";
 						}
@@ -1684,7 +1728,7 @@ public class DB {
 		DBConnection con = this.getConn(oUser);
 		Connection conn = con.con;
 
-		GetDBRecordwithCon(conn, oUser, "USERS", "ALIAS", p_strAlias);
+		GetDBRecordwithCon(conn, oUser, "users", "alias", p_strAlias);
 
 		/* daca nu am resultat - adica alias nok */
 		if (oUser.tableName.isEmpty()) {
@@ -1744,4 +1788,57 @@ public class DB {
 		return;
 	}
 
+	/**
+	 * write in the log table the changes
+	 * 
+	 * @param oRecord
+	 * @param strColumnName
+	 * @param strOldValue
+	 * @param strNewValue
+	 */
+	private void WriteLog(DBRecord oUser, DBRecord oRecord, String strColumnName, String strOldValue, String strNewValue) {
+
+		DBConnection con = this.getConn(oUser);
+
+		Connection conn = con.con;
+
+		String strTableName = oRecord.tableName;
+		String strKeyValue = oRecord.KeyValue;
+
+		/*
+		 * 
+		 * CREATE TABLE `log_audit` ( `table_name` varchar(30) DEFAULT NULL,
+		 * `key_value` varchar(45) DEFAULT NULL, `column_name` varchar(45) DEFAULT
+		 * NULL, `old_value` varchar(100) DEFAULT NULL, `new_value` varchar(100)
+		 * DEFAULT NULL, `alias` varchar(45) DEFAULT NULL, `dtmDateStamp` datetime
+		 * DEFAULT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
+		 */
+
+		try {
+
+			Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+			String strSQLCommand = "";
+			try {
+				if (DBConnection.isMySQL) {
+					strSQLCommand = " INSERT INTO log_audit (table_name, key_value, column_name, " + " old_value, new_value, alias, dtmDateStamp ) "
+							+ "	values( '" + strTableName + "','" + strKeyValue + "','" + strColumnName + "', " + " '" + strOldValue + "','" + strNewValue
+							+ "','" + oUser.getString("ALIAS") + "', now())";
+				} else {
+					strSQLCommand = " INSERT INTO log_audit (table_name, key_value, column_name, " + " old_value, new_value, alias, dtmDateStamp ) "
+							+ "	values( '" + strTableName + "','" + strKeyValue + "','" + strColumnName + "', " + " '" + strOldValue + "','" + strNewValue
+							+ "','" + oUser.getString("ALIAS") + "', getdate())";
+				}
+				st.execute(strSQLCommand);
+
+			} catch (Exception e) {
+				System.out.println("WriteLog ... insert in log_audit");
+				System.out.println(e.toString());
+			}
+
+		} catch (SQLException e) {
+			System.out.println("WriteLog ... create statement");
+			e.printStackTrace();
+		}
+
+	}
 }

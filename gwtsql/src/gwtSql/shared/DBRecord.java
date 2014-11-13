@@ -19,6 +19,8 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 	public boolean isFirst = false;
 	public boolean isDeleted = false;
 	public boolean isChanged = false;
+	// log changes
+	public boolean isLog = false;
 
 	// for serialisation compiler problems
 	Double dbldummy;
@@ -29,13 +31,23 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 
 	// blank constructor
 	public DBRecord() {
-
+		// logging from DBConnection
+		this.isLog = DBConnection.isLog;
 	}
 	
 	// overridde put
 	public void put(String key, Object o){
+		// normal
 		super.put(key, o);
 		this.isChanged = true;
+	}
+	// put from DB (first time)
+	public void put_original(String key, Object o){
+		// logging
+		if(this.isLog)
+				super.put(key+"_ORIGINAL", o);
+		// normal
+		super.put(key, o);
 	}
 	
 	// put nochange

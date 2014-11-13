@@ -10,7 +10,7 @@ public class DBConnection {
 	public Date bornDate = new Date();
 	public boolean isinuse = false;
 	public static String sqlServerName, sqlDatabase, sqlSufix, sqlIDFirma;
-	public static boolean isMySQL;
+	public static boolean isMySQL, isLog;
 
 	public boolean isDead() {
 		if (5 < DateUtils.minDiff(new Date(), this.bornDate)) {
