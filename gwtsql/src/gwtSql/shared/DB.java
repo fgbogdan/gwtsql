@@ -426,15 +426,18 @@ public class DB {
 							// DebugUtils.D(rs.getDate(intCount));
 							cal.setTimeZone(java.util.TimeZone.getDefault());
 							oRecord.put_original(strColname, rs.getDate(strColname, cal));
-							// oRecord.put_original(strColname, rs.getDate(strColname));
+							// oRecord.put_original(strColname,
+							// rs.getDate(strColname));
 							break;
 						// smalldatetime
 						case 93:
-							// oRecord.put_original(strColname, rs.getDate(strColname));
+							// oRecord.put_original(strColname,
+							// rs.getDate(strColname));
 							// DebugUtils.D("datetime");
 							// cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 							// DebugUtils.D(rs.getTimestamp(strColname, cal));
-							// oRecord.put_original(strColname, rs.getTimestamp(strColname));
+							// oRecord.put_original(strColname,
+							// rs.getTimestamp(strColname));
 							cal.setTimeZone(java.util.TimeZone.getDefault());
 							oRecord.put_original(strColname, rs.getTimestamp(strColname, cal));
 
@@ -643,17 +646,20 @@ public class DB {
 							// cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 							cal.setTimeZone(java.util.TimeZone.getDefault());
 							// DebugUtils.D(rs.getDate(intCount));
-							// oRecord.put_original(strColname, rs.getDate(strColname));
+							// oRecord.put_original(strColname,
+							// rs.getDate(strColname));
 							oRecord.put_original(strColname, rs.getDate(strColname, cal));
 							break;
 						// smalldatetime
 						case 93:
-							// oRecord.put_original(strColname, rs.getDate(strColname));
+							// oRecord.put_original(strColname,
+							// rs.getDate(strColname));
 							// DebugUtils.D("datetime");
 							// cal.setTimeZone(TimeZone.getTimeZone("GMT+2"));
 							cal.setTimeZone(java.util.TimeZone.getDefault());
 							// DebugUtils.D(rs.getTimestamp(strColname, cal));
-							// oRecord.put_original(strColname, rs.getTimestamp(strColname));
+							// oRecord.put_original(strColname,
+							// rs.getTimestamp(strColname));
 							oRecord.put_original(strColname, rs.getTimestamp(strColname, cal));
 							/*
 							 * DebugUtils.D(strColname);
@@ -826,7 +832,165 @@ public class DB {
 				String strSQLCommand;
 				try {
 					// adaug una
-					strSQLCommand = "EXEC APPEND_BLANK '" + tableName + "' ";
+					if (DBConnection.isMySQL) {
+
+						/*
+						 * CREATE DEFINER=`berg`@`%` PROCEDURE `append_blank`(IN
+						 * TABLENAME VARCHAR(100)) BEGIN
+						 * 
+						 * 
+						 * SELECT @VAR1 := GROUP_CONCAT( COLUMN_NAME separator ', ') ,
+						 * 
+						 * @VAR2 := GROUP_CONCAT(DATA_TYPE separator ', ') as VAR2
+						 * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA =
+						 * DATABASE() AND TABLE_NAME = TABLENAME AND EXTRA !=
+						 * 'auto_increment' group by TABLE_NAME;
+						 * 
+						 * 
+						 * set @VAR2 = REPLACE(@VAR2,'varchar',"''"); set @VAR2 =
+						 * REPLACE(@VAR2,'int','0');
+						 * 
+						 * set @CMD_INSERT = CONCAT('INSERT INTO ', TABLENAME); set
+						 * 
+						 * @CMD_INSERT = CONCAT(@CMD_INSERT, '(', @VAR1, ')'); set
+						 * 
+						 * @CMD_INSERT = CONCAT(@CMD_INSERT, ' values '); set
+						 * 
+						 * @CMD_INSERT = CONCAT(@CMD_INSERT, '(', @VAR2, ')');
+						 * 
+						 * PREPARE stmt1 FROM @CMD_INSERT; EXECUTE stmt1; DEALLOCATE
+						 * PREPARE stmt1;
+						 * 
+						 * END
+						 */
+						strSQLCommand = "CALL append_blank('" + tableName + "');";
+					} else {
+
+						//
+						//
+						// ALTER PROCEDURE [dbo].[APPEND_BLANK]
+						// (@STRTABLENAME AS VARCHAR(50))
+						// /* EXEMPLU DE PARAMETRU
+						// 'GEST'
+						// */
+						// AS
+						// BEGIN
+						// DECLARE @STRBUFFIELDS AS VARCHAR(8000)
+						// DECLARE @STRBUFVALUES AS VARCHAR(8000)
+						// DECLARE @Column_Name AS VARCHAR(50), @Type_Name AS
+						// VARCHAR(50)
+						// /*, @STRLINE AS VARCHAR(200), @STRLINE1 AS VARCHAR(200)
+						// DECLARE @STRFIELDNAME AS VARCHAR(100), @STRFIELDTYPE AS
+						// VARCHAR(100),@STRFIELD1TYPE AS VARCHAR(100),
+						// @STRFIELDLENGTH AS VARCHAR(10)
+						// DECLARE @STRFIELDPRECISION AS VARCHAR(20), @STRFIELDSCALE
+						// AS VARCHAR(20)
+						// DECLARE @NBUF AS INT, @NBUF1 AS INT, @NFIELDPRECISION AS
+						// INT, @NFIELDSCALE AS INT
+						// DECLARE @STRCMD AS VARCHAR(8000), @STRBUF1 AS VARCHAR(200),
+						// @STRCONSTRAINT AS VARCHAR(1000), @STRINDEXNAME AS
+						// VARCHAR(100)
+						// DECLARE @NDOAGAIN AS INT, @NSTEPS AS INT, @NFLAGCONSTRAINT
+						// AS INT*/
+						// DECLARE @nFirstTime AS INT
+						// SET @nFirstTime = 1
+						// DECLARE @NDEBUG AS INT
+						// /* Setare Debug */
+						// SET @NDEBUG = 1
+						// /* existenta tabelei */
+						// IF EXISTS(SELECT * FROM DBO.SYSOBJECTS WHERE ID =
+						// OBJECT_ID(@STRTABLENAME) AND OBJECTPROPERTY(ID,
+						// N'ISUSERTABLE') = 1)
+						// BEGIN
+						// /* citesc structura ei */
+						// IF EXISTS(SELECT * FROM DBO.SYSOBJECTS WHERE ID =
+						// OBJECT_ID(N'#XSTRUCTURE') AND OBJECTPROPERTY(ID,
+						// N'ISUSERTABLE') = 1)
+						// DROP TABLE #XSTRUCTURE
+						// /*SELECT DBO.SYSCOLUMNS.NAME, DBO.SYSCOLUMNS.LENGTH,
+						// DBO.SYSTYPES.NAME AS TYPE
+						// INTO #XSTRUCTURE
+						// FROM DBO.SYSCOLUMNS
+						// JOIN DBO.SYSTYPES ON DBO.SYSTYPES.XTYPE =
+						// DBO.SYSCOLUMNS.XTYPE
+						// WHERE ID = OBJECT_ID(@STRTABLENAME)*/
+						// CREATE TABLE #XSTRUCTURE(
+						// [TABLE_QUALIFIER] SYSNAME ,
+						// [TABLE_OWNER] SYSNAME ,
+						// [TABLE_NAME] SYSNAME ,
+						// [COLUMN_NAME] SYSNAME ,
+						// [DATA_TYPE] SMALLINT ,
+						// [TYPE_NAME] VARCHAR(30) ,
+						// [PRECISION] INT ,
+						// [LENGTH] INT ,
+						// [SCALE] SMALLINT ,
+						// [RADIX] SMALLINT ,
+						// [NULLABLE] SMALLINT ,
+						// [REMARKS] VARCHAR(254) ,
+						// [COLUMN_DEF] NVARCHAR(2000) ,
+						// [SQL_DATA_TYPE] SMALLINT ,
+						// [SQL_DATETIME_SUB] SMALLINT ,
+						// [CHAR_OCTET_LENGTH] INT ,
+						// [ORDINAL_POSITION] INT ,
+						// [IS_NULLABLE] VARCHAR(254) ,
+						// [SS_DATA_TYPE] TINYINT
+						// )
+						// INSERT INTO #XSTRUCTURE EXEC SP_COLUMNS @TABLE_NAME =
+						// @STRTABLENAME
+						// DECLARE xStructure CURSOR FOR SELECT Column_Name, Type_Name
+						// from #xStructure
+						// OPEN xStructure
+						// SET @STRBUFFIELDS = ' INSERT INTO ' + @STRTABLENAME + ' ('
+						// SET @STRBUFVALUES = ' VALUES ('
+						// FETCH NEXT FROM xStructure INTO @Column_Name, @Type_Name
+						// /* parcurg xStructure pentru a genera un insert */
+						// WHILE @@FETCH_STATUS = 0
+						// BEGIN
+						// IF 0 = CHARINDEX( 'identity', @Type_Name)
+						// BEGIN
+						// /* daca nu e prima data pun terminatia */
+						// IF 1 = @nFirstTime
+						// SET @nFirstTime = 0
+						// ELSE /* 1 = @nFirstTime*/
+						// BEGIN
+						// SET @STRBUFFIELDS = @STRBUFFIELDS + ','
+						// SET @STRBUFVALUES = @STRBUFVALUES + ','
+						// END /*1 = @nFirstTime*/
+						// /* numele coloanei */
+						// SET @STRBUFFIELDS = @STRBUFFIELDS + @Column_Name
+						// IF @Type_Name IN ( 'decimal','numeric', 'bit', 'int')
+						// SET @STRBUFVALUES = @STRBUFVALUES + '0'
+						// ELSE IF @Type_Name IN ( 'char', 'nchar', 'varchar',
+						// 'nvarchar', 'text')
+						// SET @STRBUFVALUES = @STRBUFVALUES + ''''''
+						// ELSE /* tip data */
+						// SET @STRBUFVALUES = @STRBUFVALUES + 'NULL'
+						// END /* identity */
+						// /* citeste mai departe*/
+						// FETCH NEXT FROM xStructure INTO @Column_Name, @Type_Name
+						// END /* @@FETCH_STATUS = 0 */
+						// /* incheierea */
+						// SET @STRBUFFIELDS = @STRBUFFIELDS + ')'
+						// SET @STRBUFVALUES = @STRBUFVALUES + ')'
+						// CLOSE xStructure
+						// DEALLOCATE xStructure
+						// DROP TABLE #xStructure
+						// /* execut */
+						// SET @STRBUFFIELDS = @STRBUFFIELDS + ' ' + @STRBUFVALUES
+						// EXEC( @STRBUFFIELDS)
+						// END /* EXISTS(SELECT * FROM DBO.SYSOBJECTS WHERE ID =
+						// OBJECT_ID(@STRTABLENAME) AND OBJECTPROPERTY(ID,
+						// N'ISUSERTABLE') = 1) */
+						// ELSE /* EXISTS(SELECT * FROM DBO.SYSOBJECTS WHERE ID =
+						// OBJECT_ID(@STRTABLENAME) AND OBJECTPROPERTY(ID,
+						// N'ISUSERTABLE') = 1) */
+						// /* Tabela exista */
+						// IF @NDEBUG = 1
+						// PRINT 'TABELA ' + @STRTABLENAME + 'NU EXISTA'
+						// END /* Global procedure */
+						//
+						strSQLCommand = "EXEC APPEND_BLANK '" + tableName + "' ";
+					}
 					st.executeUpdate(strSQLCommand);
 				} catch (Exception e) {
 					System.out.println("GetBlankRecord.EXEC APPEND_BLANK ... ");
@@ -845,7 +1009,7 @@ public class DB {
 
 				// sterg inregistrarea goala
 				try {
-					// adaug una
+					// sterg ce am inserat
 					strSQLCommand = "DELETE FROM " + tableName + " WHERE " + colName + " = '' ";
 					st.executeUpdate(strSQLCommand);
 				} catch (Exception e) {
@@ -895,7 +1059,11 @@ public class DB {
 						try {
 							// adaug una
 							Statement st1 = conn.createStatement();
-							strSQLCommand = "EXEC APPEND_BLANK '" + oRecord.tableName + "' ";
+							if (DBConnection.isMySQL) {
+								strSQLCommand = "CALL append_blank('" + oRecord.tableName + "');";
+							} else {
+								strSQLCommand = "EXEC APPEND_BLANK '" + oRecord.tableName + "' ";
+							}
 							st1.executeUpdate(strSQLCommand);
 							st1.close();
 						} catch (Exception e) {
@@ -1092,7 +1260,7 @@ public class DB {
 											oOldColvalue = "NULL";
 										if (oColvalue == null)
 											oColvalue = "NULL";
-										strColvalue = oColvalue.toString();				
+										strColvalue = oColvalue.toString();
 										strOldColvalue = oOldColvalue.toString();
 										if (!strOldColvalue.equals(strColvalue))
 											WriteLog(oUser, oRecord, strColname, strOldColvalue, strColvalue);
