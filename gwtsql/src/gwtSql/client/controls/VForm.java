@@ -89,6 +89,30 @@ public class VForm extends Composite implements IForm {
 		});
 	}
 
+	/**
+	 * Delete button
+	 * 
+	 * @param R
+	 */
+	public void DesktopForm_deleteDBRecord(final DBRecord R) {
+		/* delete */
+		DesktopForm_deleteDBRecord(R.tableName, R.KeyName, R.KeyValue);
+	}
+
+	public void DesktopForm_deleteDBRecord(String tableName, String colName, String colValue) {
+		dbService.deleteDBRecord(tableName, colName, colValue, new AsyncCallback<String>() {
+			@Override
+			public void onSuccess(String result) {
+				onReturn("DesktopForm_deleteDBRecord", null);
+			}
+
+			@Override
+			public void onFailure(Throwable caught) {
+				Window.alert("DesktopForm_deleteDBRecord Exception");
+			}
+		});
+	}
+
 	public void DesktopForm_GetBlankDBRecord(String tableName, String colName, String colValue, String colKeyName) {
 
 		dbService.GetBlankDBRecord(tableName, colName, colValue, colKeyName, new AsyncCallback<DBRecord>() {
