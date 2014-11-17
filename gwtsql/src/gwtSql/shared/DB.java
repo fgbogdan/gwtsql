@@ -766,18 +766,19 @@ public class DB {
 
 						// type of the column
 						intColumnType = rsmdResult.getColumnType(intCount);
+						
+						//System.out.println(strColname + " " + intColumnType);
 
 						strColvalue = oRecord.get(strColname);
 						// NOTE: THE COLUMN NAMES WILL ALWAYS BE STORED IN
 						// UPPERCASE, HENCE NEED TO BE RETRIEVED IN UPPER CASE
 						strColname = strColname.toUpperCase();
 						try {
-							if (!strColname.equalsIgnoreCase("RECORD"))
+							if (!rsmdResult.isAutoIncrement(intCount))
 								switch (intColumnType) {
-								// numeric
+								// int
 								case 4:
-									// autoincrement ... do nothing
-									// oRecord.put_original(strColname,(double)0);
+									oRecord.put_original(strColname, (int) 0);
 									break;
 								case 2:
 								case 5:
@@ -848,7 +849,8 @@ public class DB {
 						 * 
 						 * 
 						 * set @VAR2 = REPLACE(@VAR2,'varchar',"''"); set @VAR2 =
-						 * REPLACE(@VAR2,'int','0');
+						 * REPLACE(@VAR2,'int','0'); 
+						 * set @VAR2 = REPLACE(@VAR2,'date','null');
 						 * 
 						 * set @CMD_INSERT = CONCAT('INSERT INTO ', TABLENAME); set
 						 * 
@@ -1147,7 +1149,8 @@ public class DB {
 
 						try {
 							// only not autoincrement fields
-							if (intColumnType != 4 && !rsmdResult.isAutoIncrement(intCount)) {
+							//if (intColumnType != 4 && !rsmdResult.isAutoIncrement(intCount)) {
+							if (!rsmdResult.isAutoIncrement(intCount)) {
 
 								// if the field is not null
 								if (oColvalue != null) {
