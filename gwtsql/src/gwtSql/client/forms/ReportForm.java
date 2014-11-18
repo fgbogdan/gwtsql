@@ -22,6 +22,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+@SuppressWarnings("deprecation")
 public class ReportForm extends BaseDialogBox {
 
 	interface MyUiBinder extends UiBinder<Widget, ReportForm> {
