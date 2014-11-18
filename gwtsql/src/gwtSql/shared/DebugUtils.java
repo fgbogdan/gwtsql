@@ -11,7 +11,7 @@ public class DebugUtils {
 	/* serviciul de comunicare cu baza de date */
 	private final static DBServiceAsync dbService = GWT.create(DBService.class);
 
-	public static void D(Object o, int bSimple) {
+	public static void D(Object o, int bComplex) {
 
 		try {
 			throw new Exception("Who called me?");
