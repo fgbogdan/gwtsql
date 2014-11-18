@@ -31,27 +31,32 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 
 	// blank constructor
 	public DBRecord() {
-		// logging from DBConnection
-		this.isLog = DBConnection.isLog;
 	}
-	
+
+	// constructor with log
+	public DBRecord(boolean isLog) {
+		// logging
+		this.isLog = isLog;
+	}
+
 	// overridde put
-	public void put(String key, Object o){
+	public void put(String key, Object o) {
 		// normal
 		super.put(key, o);
 		this.isChanged = true;
 	}
+
 	// put from DB (first time)
-	public void put_original(String key, Object o){
+	public void put_original(String key, Object o) {
 		// logging
-		if(this.isLog)
-				super.put(key+"_ORIGINAL", o);
+		if (this.isLog)
+			super.put(key + "_ORIGINAL", o);
 		// normal
 		super.put(key, o);
 	}
-	
+
 	// put nochange
-	public void put_nochange(String key, Object o){
+	public void put_nochange(String key, Object o) {
 		super.put(key, o);
 	}
 
@@ -80,10 +85,10 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 	public String getString(String strKey) {
 		return this.get(strKey).toString();
 	}
-	
+
 	// getStringNotZero
-	public String getStringNotZero(String strKey){
-		if(this.getDouble(strKey)==0d)
+	public String getStringNotZero(String strKey) {
+		if (this.getDouble(strKey) == 0d)
 			return "";
 		else
 			return this.getString(strKey);
@@ -104,17 +109,17 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 		String strColvalue = null;
 		strColvalue = this.get(strKey).toString().trim();
 		boolean lRetVal;
-		if("0".equals(strColvalue) || "false".equals(strColvalue))
+		if ("0".equals(strColvalue) || "false".equals(strColvalue))
 			lRetVal = false;
 		else
 			lRetVal = true;
-		//return Boolean.valueOf(strColvalue);
+		// return Boolean.valueOf(strColvalue);
 		return lRetVal;
 
 	}
 
 	public Date getDate(String strKey) {
-	
+
 		Object o = this.get(strKey);
 		if (o == null)
 			return null;
@@ -132,7 +137,7 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 	}
 
 	public String getDateString(String strKey, String strFormat) {
-	
+
 		Object o = this.get(strKey);
 		if (o == null)
 			return null;

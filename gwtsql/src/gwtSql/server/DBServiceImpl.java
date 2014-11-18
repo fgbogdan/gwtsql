@@ -1,6 +1,7 @@
 package gwtSql.server;
 
 import gwtSql.client.DBService;
+import gwtSql.shared.DBConnection;
 import gwtSql.shared.DBException;
 import gwtSql.shared.DBRecord;
 import gwtSql.shared.DBTable;
@@ -58,7 +59,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 
 	public DBRecord GetDBRecord(String p_tableName, String p_colName, String p_colValue) {
 
-		DBRecord oRecord = new DBRecord();
+		DBRecord oRecord = new DBRecord(DBConnection.isLog);
 		try {
 			DbManager.getDB().GetDBRecord(this.getUser(), oRecord, p_tableName, p_colName, p_colValue);
 			return oRecord;
@@ -69,7 +70,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	}
 
 	public DBRecord GetDBRecordForConditon(String p_sqlCond) {
-		DBRecord oRecord = new DBRecord();
+		DBRecord oRecord = new DBRecord(DBConnection.isLog);
 		try {
 			DbManager.getDB().GetDBRecordForConditon(this.getUser(), oRecord, p_sqlCond);
 			return oRecord;
@@ -80,7 +81,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	}
 
 	public DBRecord GetDBRecordForConditon(String p_tableName, String p_sqlCond) {
-		DBRecord oRecord = new DBRecord();
+		DBRecord oRecord = new DBRecord(DBConnection.isLog);
 		try {
 			DbManager.getDB().GetDBRecordForConditon(this.getUser(), oRecord, p_tableName, p_sqlCond);
 			return oRecord;
@@ -97,7 +98,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	/* supraincarcare pentru a putea executa o metoda dupa AppendBlank */
 	public DBRecord GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_colKeyName, String p_MethodName) {
 
-		DBRecord oRecord = new DBRecord();
+		DBRecord oRecord = new DBRecord(DBConnection.isLog);
 		try {
 			DbManager.getDB().GetBlankDBRecord(this.getUser(), oRecord, p_tableName, p_colName, p_colValue, p_colKeyName, p_MethodName);
 			return oRecord;
@@ -250,7 +251,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 
 	public DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_PasswordField) {
 
-		DBRecord oRecord = new DBRecord();
+		DBRecord oRecord = new DBRecord(DBConnection.isLog);
 		try {
 			DbManager.getDB().DoLogin(oRecord, p_strAlias, p_strPassword, p_PasswordField);
 
