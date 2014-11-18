@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
 <jardesc>
-    <jar path="gwtSql/gwtSql.jar"/>
-    <options buildIfNeeded="true" compress="true" descriptionLocation="/gwtSql/jar_export.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <jar path="gwtsql/gwtsql.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/gwtsql/jar_export.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
     <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
     <selectedProjects/>
     <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
@@ -11,8 +11,6 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="true" exportOutputFolder="false">
-        <file path="/gwtSql/.classpath"/>
-        <file path="/gwtSql/.project"/>
-        <javaElement handleIdentifier="=gwtSql/src"/>
+        <javaElement handleIdentifier="=gwtsql/src"/>
     </selectedElements>
 </jardesc>
