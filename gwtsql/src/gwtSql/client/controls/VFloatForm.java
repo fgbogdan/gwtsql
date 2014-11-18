@@ -15,6 +15,7 @@ import com.google.gwt.user.client.ui.HasHorizontalAlignment;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+@SuppressWarnings("deprecation")
 public class VFloatForm extends VListForm {
 
 	interface MyUiBinder extends UiBinder<Widget, VFloatForm> {
