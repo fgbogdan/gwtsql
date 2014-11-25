@@ -50,4 +50,10 @@ public class BaseDialogBox extends DialogBox implements IForm {
 
 	}
 
+	@Override
+	public DBRecord ReturnSelected() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

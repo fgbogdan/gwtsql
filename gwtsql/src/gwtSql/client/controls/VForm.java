@@ -306,4 +306,10 @@ public class VForm extends Composite implements IForm {
 			VFF.hide();
 	}
 
+	@Override
+	public DBRecord ReturnSelected() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

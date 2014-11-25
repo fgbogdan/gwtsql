@@ -1,30 +1,35 @@
 package gwtSql.shared;
 
+import java.util.logging.Logger;
+
 import gwtSql.client.DBService;
 import gwtSql.client.DBServiceAsync;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.resources.client.CssResource.ClassName;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 public class DebugUtils {
-	
+
 	/* serviciul de comunicare cu baza de date */
 	private final static DBServiceAsync dbService = GWT.create(DBService.class);
+	final static Logger log = Logger.getLogger(ClassName.class.getName());
 
 	public static void D(Object o, int bComplex) {
 
 		try {
 			throw new Exception("Who called me?");
 		} catch (Exception e) {
-			System.out.println("Called by " + e.getStackTrace()[1].getClassName() + "." + e.getStackTrace()[1].getMethodName() + "()!");
+			log.info("Called by " + e.getStackTrace()[1].getClassName() + "." + e.getStackTrace()[1].getMethodName() + "()!");
+
 		}
-		System.out.println("-----");
-		System.out.println(o);
+		log.info("-----");
+		log.info(o.toString());
 	}
 
 	public static void D(Object o) {
 
-		System.out.println(o);
+		log.info(o.toString());
 	}
 
 	public static void DS(String s) {

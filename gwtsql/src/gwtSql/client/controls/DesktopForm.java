@@ -163,4 +163,10 @@ public class DesktopForm extends Composite implements IForm {
 
 	}
 
+	@Override
+	public DBRecord ReturnSelected() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
