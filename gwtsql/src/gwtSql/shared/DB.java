@@ -766,8 +766,8 @@ public class DB {
 
 						// type of the column
 						intColumnType = rsmdResult.getColumnType(intCount);
-						
-						//System.out.println(strColname + " " + intColumnType);
+
+						// System.out.println(strColname + " " + intColumnType);
 
 						strColvalue = oRecord.get(strColname);
 						// NOTE: THE COLUMN NAMES WILL ALWAYS BE STORED IN
@@ -849,8 +849,8 @@ public class DB {
 						 * 
 						 * 
 						 * set @VAR2 = REPLACE(@VAR2,'varchar',"''"); set @VAR2 =
-						 * REPLACE(@VAR2,'int','0'); 
-						 * set @VAR2 = REPLACE(@VAR2,'date','null');
+						 * REPLACE(@VAR2,'int','0'); set @VAR2 =
+						 * REPLACE(@VAR2,'date','null');
 						 * 
 						 * set @CMD_INSERT = CONCAT('INSERT INTO ', TABLENAME); set
 						 * 
@@ -1011,8 +1011,12 @@ public class DB {
 
 				// sterg inregistrarea goala
 				try {
-					// sterg ce am inserat
-					strSQLCommand = "DELETE FROM " + tableName + " WHERE " + colName + " = '' ";
+					// delete the blank record
+					// in MYSQL - delete all because I don;t have the autoincrement column
+					if (DBConnection.isMySQL)
+						strSQLCommand = "DELETE FROM " + tableName + ";";
+					else
+						strSQLCommand = "DELETE FROM " + tableName + " WHERE " + colName + " = '' ";
 					st.executeUpdate(strSQLCommand);
 				} catch (Exception e) {
 					System.out.println("GetBlankRecord.EXEC DELETE ... ");
@@ -1085,7 +1089,11 @@ public class DB {
 						try {
 							// adaug una
 							Statement st1 = conn.createStatement();
-							strSQLCommand = "DELETE FROM " + oRecord.tableName + " WHERE " + oRecord.KeyName + " = '' ";
+							// if MYSQL - delete all
+							if (DBConnection.isMySQL)
+								strSQLCommand = "DELETE FROM " + oRecord.tableName + ";";
+							else
+								strSQLCommand = "DELETE FROM " + oRecord.tableName + " WHERE " + oRecord.KeyName + " = '' ";
 							st1.executeUpdate(strSQLCommand);
 							st1.close();
 						} catch (Exception e) {
@@ -1124,7 +1132,7 @@ public class DB {
 				ResultSetMetaData rsmdResult = null;
 
 				int intNoCols = 0;
-				int intColumnType = 0;
+				//int intColumnType = 0;
 				String strColname = null;
 				// String strColumnName=null;
 				Object oColvalue = null;
@@ -1141,7 +1149,7 @@ public class DB {
 						strColname = rsmdResult.getColumnName(intCount);
 						strColname = strColname.toUpperCase();
 						// type of the column
-						intColumnType = rsmdResult.getColumnType(intCount);
+						//intColumnType = rsmdResult.getColumnType(intCount);
 						// sql type ... not yet used
 						// strColumnName = rsmdResult.getColumnTypeName(intCount);
 
@@ -1149,7 +1157,8 @@ public class DB {
 
 						try {
 							// only not autoincrement fields
-							//if (intColumnType != 4 && !rsmdResult.isAutoIncrement(intCount)) {
+							// if (intColumnType != 4 &&
+							// !rsmdResult.isAutoIncrement(intCount)) {
 							if (!rsmdResult.isAutoIncrement(intCount)) {
 
 								// if the field is not null

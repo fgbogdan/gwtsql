@@ -82,7 +82,7 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage().replace("com.microsoft.sqlserver.jdbc.SQLServerException:", ""));
+					Window.alert(((DBException) caught).getMessage());
 				else
 					Window.alert("DesktopForm_saveDBRecord fail - " + details);
 			}
@@ -108,7 +108,10 @@ public class VForm extends Composite implements IForm {
 
 			@Override
 			public void onFailure(Throwable caught) {
-				Window.alert("DesktopForm_deleteDBRecord Exception");
+				if (caught instanceof DBException)
+					Window.alert(((DBException) caught).getMessage());
+				else
+					Window.alert("DesktopForm_deleteDBRecord Exception");
 			}
 		});
 	}
@@ -136,7 +139,7 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage().replace("com.microsoft.sqlserver.jdbc.SQLServerException:", ""));
+					Window.alert(((DBException) caught).getMessage());
 				else
 					Window.alert("DesktopForm_GetBlankDBRecord fail - " + details);
 			}
@@ -175,7 +178,7 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage().replace("com.microsoft.sqlserver.jdbc.SQLServerException:", ""));
+					Window.alert(((DBException) caught).getMessage());
 				else
 					Window.alert("DesktopForm_GetDBRecord fail - " + details);
 			}
@@ -207,7 +210,7 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage().replace("com.microsoft.sqlserver.jdbc.SQLServerException:", ""));
+					Window.alert(((DBException) caught).getMessage());
 				else
 					Window.alert("DesktopForm_GetDBRecord fail - " + details);
 			}
@@ -233,7 +236,7 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage().replace("com.microsoft.sqlserver.jdbc.SQLServerException:", ""));
+					Window.alert(((DBException) caught).getMessage());
 				else
 					Window.alert("DesktopForm_executeResultSetNoOutput fail - " + details);
 			}
@@ -258,7 +261,7 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage().replace("com.microsoft.sqlserver.jdbc.SQLServerException:", ""));
+					Window.alert(((DBException) caught).getMessage());
 				else
 					Window.alert("DesktopForm_executeNoResultSet fail - " + details);
 			}

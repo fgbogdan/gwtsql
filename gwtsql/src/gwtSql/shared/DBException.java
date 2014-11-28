@@ -15,6 +15,8 @@ public class DBException extends Exception implements Serializable {
 	}
 
 	public DBException(String message) {
+		message = message.replace("com.microsoft.sqlserver.jdbc.SQLServerException:", "");
+		message = message.replace("com.mysql.jdbc.exceptions.jdbc4.", "");
 		this.message = message;
 	}
 
