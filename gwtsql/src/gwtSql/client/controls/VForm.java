@@ -131,6 +131,7 @@ public class VForm extends Composite implements IForm {
 
 				} catch (Exception e) {
 					System.out.println(e.toString());
+					Window.alert(e.toString());
 					Window.alert("DesktopForm_GetBlankDBRecord Exception");
 				}
 			}

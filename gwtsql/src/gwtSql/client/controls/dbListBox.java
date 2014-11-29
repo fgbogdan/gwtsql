@@ -170,7 +170,7 @@ public class dbListBox extends ListBox implements Controls {
 
 		if (this.strLinkedField.equals(""))
 			return;
-		String KeyValue = (String) R.get(this.strLinkedField);
+		String KeyValue = R.getString(this.strLinkedField);
 		if (KeyValue == null)
 			return;
 		KeyValue = KeyValue.trim();
