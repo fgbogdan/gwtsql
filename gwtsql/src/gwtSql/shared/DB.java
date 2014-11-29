@@ -836,16 +836,18 @@ public class DB {
 					if (DBConnection.isMySQL) {
 
 						/*
+						 * 
 						 * CREATE DEFINER=`berg`@`%` PROCEDURE `append_blank`(IN
 						 * TABLENAME VARCHAR(100)) BEGIN
 						 * 
 						 * 
 						 * SELECT @VAR1 := GROUP_CONCAT( COLUMN_NAME separator ', ') ,
 						 * 
-						 * @VAR2 := GROUP_CONCAT(DATA_TYPE separator ', ') as VAR2
-						 * FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA =
-						 * DATABASE() AND TABLE_NAME = TABLENAME AND EXTRA !=
-						 * 'auto_increment' group by TABLE_NAME;
+						 * @VAR2 := GROUP_CONCAT( IF( COLUMN_KEY='MUL', 'null',
+						 * DATA_TYPE) separator ', ') as VAR2 FROM
+						 * INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = DATABASE()
+						 * AND TABLE_NAME = TABLENAME AND EXTRA != 'auto_increment'
+						 * group by TABLE_NAME;
 						 * 
 						 * 
 						 * set @VAR2 = REPLACE(@VAR2,'varchar',"''"); set @VAR2 =
@@ -853,15 +855,12 @@ public class DB {
 						 * REPLACE(@VAR2,'date','null');
 						 * 
 						 * set @CMD_INSERT = CONCAT('INSERT INTO ', TABLENAME); set
-						 * 
 						 * @CMD_INSERT = CONCAT(@CMD_INSERT, '(', @VAR1, ')'); set
-						 * 
 						 * @CMD_INSERT = CONCAT(@CMD_INSERT, ' values '); set
-						 * 
 						 * @CMD_INSERT = CONCAT(@CMD_INSERT, '(', @VAR2, ')');
 						 * 
-						 * PREPARE stmt1 FROM @CMD_INSERT; EXECUTE stmt1; DEALLOCATE
-						 * PREPARE stmt1;
+						 * PREPARE stmt1 FROM @CMD_INSERT; -- select @CMD_INSERT as
+						 * text; EXECUTE stmt1; DEALLOCATE PREPARE stmt1;
 						 * 
 						 * END
 						 */
@@ -1012,7 +1011,8 @@ public class DB {
 				// sterg inregistrarea goala
 				try {
 					// delete the blank record
-					// in MYSQL - delete all because I don;t have the autoincrement column
+					// in MYSQL - delete all because I don;t have the autoincrement
+					// column
 					if (DBConnection.isMySQL)
 						strSQLCommand = "DELETE FROM " + tableName + ";";
 					else
@@ -1132,7 +1132,7 @@ public class DB {
 				ResultSetMetaData rsmdResult = null;
 
 				int intNoCols = 0;
-				//int intColumnType = 0;
+				// int intColumnType = 0;
 				String strColname = null;
 				// String strColumnName=null;
 				Object oColvalue = null;
@@ -1149,7 +1149,7 @@ public class DB {
 						strColname = rsmdResult.getColumnName(intCount);
 						strColname = strColname.toUpperCase();
 						// type of the column
-						//intColumnType = rsmdResult.getColumnType(intCount);
+						// intColumnType = rsmdResult.getColumnType(intCount);
 						// sql type ... not yet used
 						// strColumnName = rsmdResult.getColumnTypeName(intCount);
 
