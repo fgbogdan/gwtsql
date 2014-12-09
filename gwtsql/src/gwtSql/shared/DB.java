@@ -406,6 +406,7 @@ public class DB {
 						case 5:
 							oRecord.put_original(strColname, rs.getInt(strColname));
 							break;
+						case 3:	
 						case 2:
 							oRecord.put_original(strColname, rs.getDouble(strColname));
 							break;
@@ -455,7 +456,8 @@ public class DB {
 							System.out.println(strColname);
 							System.out.println(strColvalue);
 							System.out.println(intColumnType);
-							break;
+							throw new Exception("GetDBRecord - type not defined: " + strColname + " type: " + intColumnType);
+							//break;
 
 						}// strColname!="RECORD"
 

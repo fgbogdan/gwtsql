@@ -130,7 +130,6 @@ public class VForm extends Composite implements IForm {
 					onReturn("DesktopForm_GetBlankDBRecord", R);
 
 				} catch (Exception e) {
-					System.out.println(e.toString());
 					Window.alert(e.toString());
 					Window.alert("DesktopForm_GetBlankDBRecord Exception");
 				}
@@ -170,7 +169,7 @@ public class VForm extends Composite implements IForm {
 					onReturn("DesktopForm_GetDBRecord" + type, result);
 
 				} catch (Exception e) {
-					System.out.println(e.toString());
+					Window.alert(e.toString());
 					Window.alert("DesktopForm_GetDBRecord Exception");
 				}
 			}
@@ -202,7 +201,7 @@ public class VForm extends Composite implements IForm {
 					onReturn("DesktopForm_GetDBRecordForCondition" + type, result);
 
 				} catch (Exception e) {
-					System.out.println(e.toString());
+					Window.alert(e.toString());
 					Window.alert("DesktopForm_GetDBRecordForCondition Exception");
 				}
 			}
