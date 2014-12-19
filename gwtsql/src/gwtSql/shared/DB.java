@@ -132,7 +132,8 @@ public class DB {
 		 * read from ini
 		 */
 
-		String strServerName = "", strSQLUser = "", strSQLPassword = "", strSQLDatabase = "", strSQLSufix = "", strSQLFirma = "";
+		String strServerName = "", strSQLUser = "", strSQLPassword = "", strSQLDatabase = "";
+		String strSQLSufix = "", strSQLFirma = "", strFilesRepository = "";
 		String strSQLType, strisLog = "NO";
 
 		try {
@@ -185,7 +186,9 @@ public class DB {
 			if (strisLog.isEmpty())
 				strisLog = "NO";
 			DBConnection.isLog = strisLog.equals("YES") ? true : false;
-
+			// Files Repository
+			strFilesRepository = pro.getProperty("FILES_REPOSITORY");
+			DBConnection.FilesRepository = strFilesRepository;
 			// System.out.println("read from ini ok ...");
 
 		} catch (Exception ex) {
@@ -406,7 +409,7 @@ public class DB {
 						case 5:
 							oRecord.put_original(strColname, rs.getInt(strColname));
 							break;
-						case 3:	
+						case 3:
 						case 2:
 							oRecord.put_original(strColname, rs.getDouble(strColname));
 							break;
@@ -457,7 +460,7 @@ public class DB {
 							System.out.println(strColvalue);
 							System.out.println(intColumnType);
 							throw new Exception("GetDBRecord - type not defined: " + strColname + " type: " + intColumnType);
-							//break;
+							// break;
 
 						}// strColname!="RECORD"
 
@@ -857,8 +860,11 @@ public class DB {
 						 * REPLACE(@VAR2,'date','null');
 						 * 
 						 * set @CMD_INSERT = CONCAT('INSERT INTO ', TABLENAME); set
+						 * 
 						 * @CMD_INSERT = CONCAT(@CMD_INSERT, '(', @VAR1, ')'); set
+						 * 
 						 * @CMD_INSERT = CONCAT(@CMD_INSERT, ' values '); set
+						 * 
 						 * @CMD_INSERT = CONCAT(@CMD_INSERT, '(', @VAR2, ')');
 						 * 
 						 * PREPARE stmt1 FROM @CMD_INSERT; -- select @CMD_INSERT as
@@ -2014,7 +2020,7 @@ public class DB {
 
 			} catch (Exception e) {
 				System.out.println("WriteLog ... insert in log_audit");
-				System.out.println(e.toString());
+				e.printStackTrace();
 			}
 
 		} catch (SQLException e) {

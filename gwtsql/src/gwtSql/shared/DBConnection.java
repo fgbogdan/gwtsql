@@ -9,7 +9,7 @@ public class DBConnection {
 	public String UserID = "";
 	public Date bornDate = new Date();
 	public boolean isinuse = false;
-	public static String sqlServerName, sqlDatabase, sqlSufix, sqlIDFirma;
+	public static String sqlServerName, sqlDatabase, sqlSufix, sqlIDFirma, FilesRepository;
 	public static boolean isMySQL, isLog;
 
 	public boolean isDead() {

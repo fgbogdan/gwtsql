@@ -38,11 +38,18 @@ public class FormatUtils {
 	public static short toShort(Object o) {
 		return Short.parseShort(o.toString());
 	}
-	
-	public static String toString(Object o){
+
+	public static String toString(Object o) {
 		return o.toString();
 	}
 
-	
-	
+	public static boolean isNumeric(String str) {
+		try {
+			double d = Double.parseDouble(str);
+		} catch (NumberFormatException nfe) {
+			return false;
+		}
+		return true;
+	}
+
 }
