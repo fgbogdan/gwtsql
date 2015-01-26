@@ -10,6 +10,16 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class AlertWidget {
 
+	public static DialogBox A(final Object content) {
+
+		return alertWidget("Alert", content.toString());
+	}
+
+	public static DialogBox alertWidget(final Object content) {
+
+		return alertWidget("Alert", content.toString());
+	}
+
 	public static DialogBox alertWidget(final String content) {
 
 		return alertWidget("Alert", content);
