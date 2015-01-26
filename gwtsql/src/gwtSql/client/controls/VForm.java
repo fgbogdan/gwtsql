@@ -52,8 +52,12 @@ public class VForm extends Composite implements IForm {
 	protected void RefreshMyControls() {
 		// DebugUtils.D(MyControls.size());
 		for (int i = 0; i < MyControls.size(); i++) {
-			Controls C = MyControls.get(i);
-			C.Refresh();
+			try {
+				Controls C = MyControls.get(i);
+				C.Refresh();
+			} catch (Exception e) {
+				Window.alert("RefreshMyControls.Exception on control " + (i + 1));
+			}
 		}
 	}
 

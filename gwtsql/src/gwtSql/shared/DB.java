@@ -382,7 +382,6 @@ public class DB {
 				int intNoCols = 0;
 				int intColumnType = 0;
 				String strColname = null;
-				Object strColvalue = null;
 
 				try {
 					rsmdResult = rs.getMetaData();
@@ -409,8 +408,8 @@ public class DB {
 						case 5:
 							oRecord.put_original(strColname, rs.getInt(strColname));
 							break;
-						case 3:
 						case 2:
+						case 3:
 							oRecord.put_original(strColname, rs.getDouble(strColname));
 							break;
 						// varchar sau text sau char
@@ -457,9 +456,9 @@ public class DB {
 						default:
 							System.out.println("GetDBRecord - type not defined!");
 							System.out.println(strColname);
-							System.out.println(strColvalue);
 							System.out.println(intColumnType);
-							throw new Exception("GetDBRecord - type not defined: " + strColname + " type: " + intColumnType);
+							oRecord.put_original(strColname, "<not defined> type:" + intColumnType);
+							throw new Exception("GetDBRecord - type not defined: " + strColname + " type:" + intColumnType + ":");
 							// break;
 
 						}// strColname!="RECORD"
@@ -469,7 +468,6 @@ public class DB {
 					}
 				} catch (Exception e) {
 					System.out.println(strColname);
-					System.out.println(strColvalue);
 					System.out.println(intColumnType);
 					e.printStackTrace();
 				}
@@ -633,6 +631,7 @@ public class DB {
 							oRecord.put_original(strColname, rs.getInt(strColname));
 							break;
 						case 2:
+						case 3:
 							oRecord.put_original(strColname, rs.getDouble(strColname));
 							break;
 						// varchar sau text sau char
@@ -680,6 +679,7 @@ public class DB {
 							System.out.println(strColname);
 							System.out.println(strColvalue);
 							System.out.println(intColumnType);
+							oRecord.put_original(strColname, "<not defined> type:" + intColumnType);
 							break;
 
 						}// strColname!="RECORD"
@@ -748,7 +748,7 @@ public class DB {
 				int intNoCols = 0;
 				int intColumnType = 0;
 				String strColname = null;
-				Object strColvalue = null;
+				// Object strColvalue = null;
 
 				try {
 					rsmdResult = rs.getMetaData();
@@ -767,14 +767,14 @@ public class DB {
 
 					for (int intCount = 1; intCount <= intNoCols; intCount++) {
 						strColname = rsmdResult.getColumnName(intCount);
-						strColvalue = rs.getString(strColname);
+						// strColvalue = rs.getString(strColname);
 
 						// type of the column
 						intColumnType = rsmdResult.getColumnType(intCount);
 
 						// System.out.println(strColname + " " + intColumnType);
 
-						strColvalue = oRecord.get(strColname);
+						// strColvalue = oRecord.get(strColname);
 						// NOTE: THE COLUMN NAMES WILL ALWAYS BE STORED IN
 						// UPPERCASE, HENCE NEED TO BE RETRIEVED IN UPPER CASE
 						strColname = strColname.toUpperCase();
@@ -782,10 +782,9 @@ public class DB {
 							if (!rsmdResult.isAutoIncrement(intCount))
 								switch (intColumnType) {
 								// int
-								case 4:
-									oRecord.put_original(strColname, (int) 0);
-									break;
 								case 2:
+								case 3:
+								case 4:
 								case 5:
 									oRecord.put_original(strColname, (int) 0);
 									break;
@@ -809,15 +808,14 @@ public class DB {
 								default:
 									System.out.println("GetBlankRecord - type not defined!");
 									System.out.println(strColname);
-									System.out.println(strColvalue);
 									System.out.println(intColumnType);
+									oRecord.put_original(strColname, "<not defined> type:" + intColumnType);
 									break;
 
 								}// strColname!="RECORD"
 						} catch (Exception e) {
 							System.out.println("GetBlankRecord ... conversion");
 							System.out.println(strColname);
-							System.out.println(strColvalue);
 							System.out.println(e.toString());
 						}
 					}// for(int intCount = 1; intCount <= intNoCols; intCount++)
