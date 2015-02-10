@@ -21,6 +21,7 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 	public boolean isChanged = false;
 	// log changes
 	public boolean isLog = false;
+	public int recno = 1;
 
 	// for serialisation compiler problems
 	Double dbldummy;
@@ -59,6 +60,11 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 	public void put_nochange(String key, Object o) {
 		super.put(key, o);
 	}
+	
+	// recno
+	public int recno(){
+		return this.recno;
+	}
 
 	@SuppressWarnings("rawtypes")
 	public void CopyTo(DBRecord Destination) {
@@ -69,6 +75,9 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 		Destination.KeyValue = this.KeyValue;
 		Destination.isNew = this.isNew;
 		Destination.isDeleted = this.isDeleted;
+		Destination.isChanged = this.isChanged;
+		Destination.isLog = this.isLog;
+		Destination.recno = this.recno;
 
 		// Create a Set with the keys in the HashMap.
 		Set set = this.keySet();

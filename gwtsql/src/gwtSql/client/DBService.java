@@ -23,9 +23,9 @@ public interface DBService extends RemoteService {
 
 	DBRecord GetDBRecordForConditon(String p_tableName, String p_sqlCond);
 
-	DBRecord GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_MethodName);
+	DBRecord GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_colKeyName);
 
-	DBRecord GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_colKeyName, String p_MethodName);
+	DBRecord GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_colKeyName, int p_call_level);
 
 	String saveDBRecord(DBRecord R) throws DBException;
 

@@ -92,15 +92,15 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	}
 
 	public DBRecord GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_colKeyName) {
-		return GetBlankDBRecord(p_tableName, p_colName, p_colValue, p_colKeyName, "");
+		return GetBlankDBRecord(p_tableName, p_colName, p_colValue, p_colKeyName, 0);
 	}
 
 	/* supraincarcare pentru a putea executa o metoda dupa AppendBlank */
-	public DBRecord GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_colKeyName, String p_MethodName) {
+	public DBRecord GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_colKeyName, int p_call_level) {
 
 		DBRecord oRecord = new DBRecord(DBConnection.isLog);
 		try {
-			DbManager.getDB().GetBlankDBRecord(this.getUser(), oRecord, p_tableName, p_colName, p_colValue, p_colKeyName, p_MethodName);
+			DbManager.getDB().GetBlankDBRecord(this.getUser(), oRecord, p_tableName, p_colName, p_colValue, p_colKeyName, p_call_level);
 			return oRecord;
 		} catch (Exception e) {
 			e.printStackTrace();

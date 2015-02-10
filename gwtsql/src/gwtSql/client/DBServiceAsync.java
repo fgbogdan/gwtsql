@@ -25,7 +25,7 @@ public interface DBServiceAsync {
 	void GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_colKeyName, AsyncCallback<DBRecord> callback);
 
 	/* supraincarcare pentru a putea executa o metoda dupa AppendBlank */
-	void GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_colKeyName, String p_MethodName,
+	void GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_colKeyName, int p_call_level,
 			AsyncCallback<DBRecord> callback);
 
 	//void ReadWriteConf(String key, String value, AsyncCallback<String> asyncCallback);

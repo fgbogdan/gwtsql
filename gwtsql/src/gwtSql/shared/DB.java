@@ -712,11 +712,18 @@ public class DB {
 
 	/* supraincarcare pentru a putea executa o metoda dupa AppendBlank */
 	public void GetBlankDBRecord(DBRecord oUser, DBRecord oRecord, String tableName, String colName, String colValue, String colKeyName) {
-		GetBlankDBRecord(oUser, oRecord, tableName, colName, colValue, colKeyName, "");
+		// call with level zero
+		GetBlankDBRecord(oUser, oRecord, tableName, colName, colValue, colKeyName, 0);
 	}
 
-	public void GetBlankDBRecord(DBRecord oUser, DBRecord oRecord, String tableName, String colName, String colValue, String colKeyName,
-			String functionName) {
+	public void GetBlankDBRecord(DBRecord oUser, DBRecord oRecord, String tableName, String colName, String colValue, String colKeyName, int call_step) {
+
+		// if is a third call ...
+		if (call_step > 1) {
+			System.out.println("GetBlankRecord - exit from call - cannot add new record ");
+			System.out.println("Table name:" + tableName);
+			return;
+		}
 
 		DBConnection con = this.getConn(oUser);
 
@@ -1004,9 +1011,9 @@ public class DB {
 					e.printStackTrace();
 				}
 
-				// ma reapelez ...
+				// ma reapelez ... o singura data
 				try {
-					DB.this.GetBlankDBRecord(oUser, oRecord, tableName, colName, colValue, colKeyName);
+					DB.this.GetBlankDBRecord(oUser, oRecord, tableName, colName, colValue, colKeyName, call_step + 1);
 					// setez ca este primul
 					oRecord.isFirst = true;
 				} catch (Exception e) {
@@ -1651,7 +1658,7 @@ public class DB {
 			oTable.KeyName = p_strKeyName;
 
 			boolean bFirstTime = true;
-
+			int nrecno = 0;
 			if (rs != null) {
 				while (rs.next()) {
 					// generate each record and put it in the list
@@ -1663,6 +1670,8 @@ public class DB {
 					String strColname = null;
 					Object strColvalue = null;
 					DBRecord oDBRecord = new DBRecord();
+					nrecno++;
+					oDBRecord.recno = nrecno;
 					try {
 						rsmdResult = rs.getMetaData();
 						intNoCols = rsmdResult.getColumnCount();
