@@ -22,11 +22,13 @@ public class DBConnection {
 	public void UseMe() {
 		bornDate = new Date();
 		isinuse = true;
+		//System.out.println("Use : " + con.toString());
 	}
 
 	public void ReleaseMe() {
 		bornDate = null;
 		isinuse = false;
+		//System.out.println("Release : " + con.toString());
 	}
 
 }

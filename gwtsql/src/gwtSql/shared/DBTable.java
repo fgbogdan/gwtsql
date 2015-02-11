@@ -74,7 +74,7 @@ public class DBTable implements Serializable {
 	public int count(String strFieldName, String strValue) {
 		int nCount = 0;
 		for (int i = 0; i < this.reccount(); i++)
-			if (strValue.trim().equals(this.get(i).get(strFieldName).toString().trim())) {
+			if (strValue.trim().equals(this.get(i).get(strFieldName.toUpperCase()).toString().trim())) {
 				nCount++;
 			}
 
@@ -84,7 +84,7 @@ public class DBTable implements Serializable {
 	// cautare dupa un camp
 	public DBRecord Locate(String strFieldName, String strValue) {
 		for (int i = 0; i < this.reccount(); i++)
-			if (strValue.trim().equals(this.get(i).get(strFieldName).toString().trim())) {
+			if (strValue.trim().equals(this.get(i).get(strFieldName.toUpperCase()).toString().trim())) {
 				nLastLocatePos = i;
 				return this.get(i);
 			}
@@ -94,7 +94,7 @@ public class DBTable implements Serializable {
 
 	public DBRecord Continue(String strFieldName, String strValue) {
 		for (int i = this.nLastLocatePos == -1 ? 0 : this.nLastLocatePos; i < this.reccount(); i++)
-			if (strValue.trim().equals(this.get(i).get(strFieldName).toString().trim())) {
+			if (strValue.trim().equals(this.get(i).get(strFieldName.toUpperCase()).toString().trim())) {
 				nLastLocatePos = i;
 				return this.get(i);
 			}
@@ -106,7 +106,7 @@ public class DBTable implements Serializable {
 	public DBRecord Locate(String strFieldName, String strValue, String strFieldName1, String strValue1) {
 		for (int i = 0; i < this.reccount(); i++)
 			if (strValue.trim().equals(this.get(i).get(strFieldName).toString().trim())
-					&& strValue1.trim().equals(this.get(i).get(strFieldName1).toString().trim())) {
+					&& strValue1.trim().equals(this.get(i).get(strFieldName1.toUpperCase()).toString().trim())) {
 				nLastLocatePos = i;
 				return this.get(i);
 			}
@@ -115,8 +115,8 @@ public class DBTable implements Serializable {
 
 	public DBRecord Continue(String strFieldName, String strValue, String strFieldName1, String strValue1) {
 		for (int i = this.nLastLocatePos == -1 ? 0 : this.nLastLocatePos; i < this.reccount(); i++)
-			if (strValue.trim().equals(this.get(i).get(strFieldName).toString().trim())
-					&& strValue1.trim().equals(this.get(i).get(strFieldName1).toString().trim())) {
+			if (strValue.trim().equals(this.get(i).get(strFieldName.toUpperCase()).toString().trim())
+					&& strValue1.trim().equals(this.get(i).get(strFieldName1.toUpperCase()).toString().trim())) {
 				nLastLocatePos = i;
 				return this.get(i);
 			}
@@ -127,8 +127,8 @@ public class DBTable implements Serializable {
 	// cautare dupa doua campuri de la pozitia
 	public DBRecord LocateFromPos(String strFieldName, String strValue, String strFieldName1, String strValue1) {
 		for (int i = nLastLocatePos; i < this.reccount(); i++)
-			if (strValue.trim().equals(this.get(i).get(strFieldName).toString().trim())
-					&& strValue1.trim().equals(this.get(i).get(strFieldName1).toString().trim())) {
+			if (strValue.trim().equals(this.get(i).get(strFieldName.toUpperCase()).toString().trim())
+					&& strValue1.trim().equals(this.get(i).get(strFieldName1.toUpperCase()).toString().trim())) {
 				nLastLocatePos = i + 1;
 				return this.get(i);
 			}
@@ -139,7 +139,7 @@ public class DBTable implements Serializable {
 	// cautare dupa un camp
 	public DBRecord LocateFromPos(String strFieldName, String strValue) {
 		for (int i = nLastLocatePos; i < this.reccount(); i++)
-			if (strValue.trim().equals(this.get(i).get(strFieldName).toString().trim())) {
+			if (strValue.trim().equals(this.get(i).get(strFieldName.toUpperCase()).toString().trim())) {
 				nLastLocatePos = i + 1;
 				return this.get(i);
 			}
@@ -186,7 +186,7 @@ public class DBTable implements Serializable {
 		for (int i = 0; i < this.reccount() - 1; i++)
 			for (int j = i + 1; j < this.reccount(); j++) {
 				if ("String".equals(type)) {
-					if (this.get(i).getString(strFieldName).compareToIgnoreCase(this.get(j).getString(strFieldName)) * sens > 0) {
+					if (this.get(i).getString(strFieldName.toUpperCase()).compareToIgnoreCase(this.get(j).getString(strFieldName.toUpperCase())) * sens > 0) {
 						// switch between records
 						DBRecord R;
 						R = this.get(i);
@@ -195,7 +195,7 @@ public class DBTable implements Serializable {
 					}
 				} // String
 				if ("Integer".equals(type)) {
-					if ((this.get(i).getInteger(strFieldName) - this.get(j).getInteger(strFieldName)) * sens > 0) {
+					if ((this.get(i).getInteger(strFieldName.toUpperCase()) - this.get(j).getInteger(strFieldName.toUpperCase())) * sens > 0) {
 						// switch between records
 						DBRecord R;
 						R = this.get(i);
@@ -214,7 +214,7 @@ public class DBTable implements Serializable {
 	public double sum(String strFieldName) {
 		double nSum = 0d;
 		for (int i = 0; i < this.reccount(); i++)
-			nSum += this.get(i).getDouble(strFieldName);
+			nSum += this.get(i).getDouble(strFieldName.toUpperCase());
 
 		return nSum;
 	}
@@ -225,7 +225,7 @@ public class DBTable implements Serializable {
 	public double sum(String strFieldName1, String strFieldName2) {
 		double nSum = 0d;
 		for (int i = 0; i < this.reccount(); i++)
-			nSum += (this.get(i).getDouble(strFieldName1) * this.get(i).getDouble(strFieldName2));
+			nSum += (this.get(i).getDouble(strFieldName1.toUpperCase()) * this.get(i).getDouble(strFieldName2.toUpperCase()));
 
 		return nSum;
 	}

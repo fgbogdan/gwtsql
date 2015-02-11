@@ -43,7 +43,7 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 	// overridde put
 	public void put(String key, Object o) {
 		// normal
-		super.put(key, o);
+		super.put(key.toUpperCase(), o);
 		this.isChanged = true;
 	}
 
@@ -51,18 +51,18 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 	public void put_original(String key, Object o) {
 		// logging
 		if (this.isLog)
-			super.put(key + "_ORIGINAL", o);
+			super.put(key.toUpperCase() + "_ORIGINAL", o);
 		// normal
 		super.put(key, o);
 	}
 
 	// put nochange
 	public void put_nochange(String key, Object o) {
-		super.put(key, o);
+		super.put(key.toUpperCase(), o);
 	}
-	
+
 	// recno
-	public int recno(){
+	public int recno() {
 		return this.recno;
 	}
 
@@ -86,37 +86,37 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 		while (iter.hasNext()) {
 			Object o = iter.next();
 			String strKey = o.toString();
-			Destination.put(strKey, this.get(strKey));
+			Destination.put(strKey.toUpperCase(), this.get(strKey.toUpperCase()));
 		}
 	} // CopyTo
 
 	// getString
 	public String getString(String strKey) {
-		return this.get(strKey).toString();
+		return this.get(strKey.toUpperCase()).toString();
 	}
 
 	// getStringNotZero
 	public String getStringNotZero(String strKey) {
-		if (this.getDouble(strKey) == 0d)
+		if (this.getDouble(strKey.toUpperCase()) == 0d)
 			return "";
 		else
-			return this.getString(strKey);
+			return this.getString(strKey.toUpperCase());
 	}
 
 	// getDouble
 	public Double getDouble(String strKey) {
-		return Double.valueOf(this.get(strKey).toString());
+		return Double.valueOf(this.get(strKey.toUpperCase()).toString());
 	}
 
 	// getInteger
 	public int getInteger(String strKey) {
-		return Integer.parseInt(this.get(strKey).toString());
+		return Integer.parseInt(this.get(strKey.toUpperCase()).toString());
 	}
 
 	// getBoolean
 	public boolean getBoolean(String strKey) {
 		String strColvalue = null;
-		strColvalue = this.get(strKey).toString().trim();
+		strColvalue = this.get(strKey.toUpperCase()).toString().trim();
 		boolean lRetVal;
 		if ("0".equals(strColvalue) || "false".equals(strColvalue))
 			lRetVal = false;
@@ -129,7 +129,7 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 
 	public Date getDate(String strKey) {
 
-		Object o = this.get(strKey);
+		Object o = this.get(strKey.toUpperCase());
 		if (o == null)
 			return null;
 		String strDate = o.toString();
@@ -138,7 +138,7 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 
 	public String getDateString(String strKey) {
 
-		Object o = this.get(strKey);
+		Object o = this.get(strKey.toUpperCase());
 		if (o == null)
 			return null;
 		String strDate = o.toString();
@@ -147,7 +147,7 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 
 	public String getDateString(String strKey, String strFormat) {
 
-		Object o = this.get(strKey);
+		Object o = this.get(strKey.toUpperCase());
 		if (o == null)
 			return null;
 		String strDate = o.toString();

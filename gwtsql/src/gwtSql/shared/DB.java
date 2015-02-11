@@ -51,8 +51,12 @@ public class DB {
 
 		for (int i = 0; i < connections.size(); i++) {
 			con = (DBConnection) connections.get(i);
+
+			// System.out.println(" Connection user:"+con.UserID+" vs " +
+			// p_UserID);
 			/* only if not logged in or - a connection from the same user */
 			if ("".equals(con.UserID) || p_UserID.equals(con.UserID)) {
+				// System.out.println("Is My connection ...");
 				if (con.isinuse) {
 					/* do nothing */
 
@@ -2034,6 +2038,9 @@ public class DB {
 			System.out.println("WriteLog ... create statement");
 			e.printStackTrace();
 		}
+
+		con.ReleaseMe();
+		return;
 
 	}
 }
