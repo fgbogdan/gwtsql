@@ -1847,6 +1847,7 @@ public class DB {
 				st1.close();
 			} catch (Exception e) {
 				System.out.println(e.toString());
+				strErrorMessage = e.toString();
 			}
 
 		} catch (SQLException e) {
@@ -1876,11 +1877,13 @@ public class DB {
 				st1.close();
 			} catch (Exception e) {
 				System.out.println(e.toString());
+				strErrorMessage = e.toString();
 			}
 
 		} catch (SQLException e) {
 			System.out.println("executeNoResultSet ... get connection");
 			e.printStackTrace();
+			strErrorMessage = e.toString();
 			strErrorMessage = e.toString();
 		}
 
@@ -1905,6 +1908,7 @@ public class DB {
 				st1.close();
 			} catch (Exception e) {
 				System.out.println(e.toString());
+				strErrorMessage = e.toString();
 			}
 
 		} catch (SQLException e) {
