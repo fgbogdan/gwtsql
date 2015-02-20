@@ -31,7 +31,7 @@ public class dbCheckBox extends CheckBox implements Controls {
 
 		if (R != null) {
 			Object o = R.get(this.colName);
-			this.setValue(o.toString() == "true" ? true : false);
+			this.setValue(o.toString() == "true" || o.toString() == "1" ? true : false);
 		} else
 			System.out.println("R is null");
 	}
