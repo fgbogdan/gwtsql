@@ -1609,15 +1609,25 @@ public class DB {
 	public String getDBTable(DBRecord oUser, DBTable oTable, String p_strTableName, String p_strKeyName, String p_strFilterCondition,
 			String p_strOrderCondition) {
 
+		String strErrorMessage = "";
+		DBConnection con = this.getConn(oUser);
+
+		strErrorMessage = getDBTableWithConn(con.con, oTable, p_strTableName, p_strKeyName, p_strFilterCondition, p_strOrderCondition);
+		con.ReleaseMe();
+
+		return strErrorMessage;
+	}
+
+	public String getDBTableWithConn(Connection conn, DBTable oTable, String p_strTableName, String p_strKeyName, String p_strFilterCondition,
+			String p_strOrderCondition) {
+
 		// string de return
 		String strErrorMessage = "";
 
 		// empty the table
 		oTable.clear();
-		DBConnection con = this.getConn(oUser);
-		try {
 
-			Connection conn = con.con;
+		try {
 
 			Statement st = conn.createStatement();
 
@@ -1729,7 +1739,6 @@ public class DB {
 			strErrorMessage = e.toString();
 
 		}
-		con.ReleaseMe();
 
 		return strErrorMessage;
 	}
