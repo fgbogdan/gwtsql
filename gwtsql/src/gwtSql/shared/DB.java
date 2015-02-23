@@ -569,7 +569,7 @@ public class DB {
 	/*
 	 * intoarce un record din baza de date pe baza unei chei
 	 */
-	public void GetDBRecordwithCon(Connection conn, DBRecord oRecord, String tableName, String colName, String colValue) {
+	public void GetDBRecordwithConn(Connection conn, DBRecord oRecord, String tableName, String colName, String colValue) {
 		// System.out.println("GetRecord");
 		// System.out.println(tableName);
 
@@ -1940,7 +1940,7 @@ public class DB {
 		DBConnection con = this.getConn(oUser);
 		Connection conn = con.con;
 
-		GetDBRecordwithCon(conn, oUser, "users", "alias", p_strAlias);
+		GetDBRecordwithConn(conn, oUser, "users", "alias", p_strAlias);
 
 		/* daca nu am resultat - adica alias nok */
 		if (oUser.tableName.isEmpty()) {
