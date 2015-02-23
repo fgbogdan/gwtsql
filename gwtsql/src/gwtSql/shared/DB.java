@@ -1870,13 +1870,18 @@ public class DB {
 	}
 
 	public String executeNoResultSet(DBRecord oUser, String strSQLCommand) {
-
-		DBConnection con = this.getConn(oUser);
 		String strErrorMessage = "";
 
-		try {
+		DBConnection con = this.getConn(oUser);
+		strErrorMessage = executeNoResultSetWithConn(con.con, strSQLCommand);
+		con.ReleaseMe();
+		return strErrorMessage;
+	}
 
-			Connection conn = con.con;
+	public String executeNoResultSetWithConn(Connection conn, String strSQLCommand) {
+
+		String strErrorMessage = "";
+		try {
 
 			Statement st1 = conn.createStatement();
 
@@ -1896,18 +1901,22 @@ public class DB {
 			strErrorMessage = e.toString();
 		}
 
-		con.ReleaseMe();
 		return strErrorMessage;
 	}
 
 	public String executeResultSetNoOutput(DBRecord oUser, String strSQLCommand) {
-
 		DBConnection con = this.getConn(oUser);
+		String strErrorMessage = "";
+		strErrorMessage = executeResultSetNoOutputWithConn(con.con, strSQLCommand);
+		con.ReleaseMe();
+		return strErrorMessage;
+	}
+
+	public String executeResultSetNoOutputWithConn(Connection conn, String strSQLCommand) {
+
 		String strErrorMessage = "";
 
 		try {
-
-			Connection conn = con.con;
 
 			Statement st1 = conn.createStatement();
 
@@ -1926,7 +1935,6 @@ public class DB {
 			strErrorMessage = e.toString();
 		}
 
-		con.ReleaseMe();
 		return strErrorMessage;
 	}
 
