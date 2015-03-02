@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
+import com.google.gwt.user.client.Window;
 
 @SuppressWarnings("deprecation")
 public class DateUtils {
@@ -135,6 +136,24 @@ public class DateUtils {
 			return fmt.parse(strDate);
 		} catch (Exception e) {
 			System.out.println("DateUtils - String2Date");
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	Date String2DateTime(String strDate) {
+		return String2DateTime(strDate, "yyyy-MM-dd hh:mm:ss");
+	}
+
+	Date String2DateTime(String strDate, String Format) {
+		if (strDate == null)
+			return null;
+		try {
+			DateTimeFormat fmt = DateTimeFormat.getFormat(Format);
+			strDate = strDate.substring(1, Format.length());
+			return fmt.parse(strDate);
+		} catch (Exception e) {
+			System.out.println("DateUtils - String2DateTime");
 			e.printStackTrace();
 			return null;
 		}
