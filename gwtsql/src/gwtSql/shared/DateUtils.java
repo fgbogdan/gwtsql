@@ -141,11 +141,11 @@ public class DateUtils {
 		}
 	}
 
-	Date String2DateTime(String strDate) {
+	public Date String2DateTime(String strDate) {
 		return String2DateTime(strDate, "yyyy-MM-dd hh:mm:ss");
 	}
 
-	Date String2DateTime(String strDate, String Format) {
+	public Date String2DateTime(String strDate, String Format) {
 		if (strDate == null)
 			return null;
 		try {
