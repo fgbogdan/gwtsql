@@ -19,9 +19,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
@@ -329,19 +332,77 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		}
 	}
 
-	public String getReport(String fileName, HashMap<String, Object> param, String type) throws DBException {
+	// public String getReport(String fileName, HashMap<String, Object> param,
+	// String type) throws DBException {
+	// try {
+	// // Class.forName("com.mysql.jdbc.Driver");
+	// // Connection con =
+	// // DriverManager.getConnection("jdbc:mysql://localhost:3306/sales",
+	// // "sa", "bcmanager");
+	// Connection con = DbManager.getDB().getConn(this.getUser()).con;
+	// String fileNamewithPath =
+	// getServletConfig().getServletContext().getRealPath("reports\\" +
+	// fileName);
+	// System.out.println("++++++++ report file +++++++");
+	// System.out.println(fileNamewithPath);
+	//
+	// // define the report
+	// JasperPrint print = JasperFillManager.fillReport(fileNamewithPath +
+	// ".jasper", param, con);
+	//
+	// // generate a new name for file
+	//
+	// // String newFileName = filePath + "." + type;
+	// // String unique_ext = String.format("%s.%s",
+	// // RandomStringUtils.randomAlphanumeric(8), type);
+	// SecureRandom random = new SecureRandom();
+	//
+	// String unique_ext = "_" + new BigInteger(30, random).toString(32) + "." +
+	// type;
+	//
+	// String resultFileNameWithPath = fileNamewithPath + unique_ext;
+	//
+	// // System.out.println("++++++++ result file +++++++");
+	// // System.out.println(resultFileNameWithPath);
+	//
+	// switch (type) {
+	// case "pdf":
+	// JasperExportManager.exportReportToPdfFile(print, resultFileNameWithPath);
+	// break;
+	// case "html":
+	// JasperExportManager.exportReportToHtmlFile(print, resultFileNameWithPath);
+	// break;
+	// default:
+	// type = "html";
+	// JasperExportManager.exportReportToHtmlFile(print, resultFileNameWithPath);
+	// }
+	//
+	// return resultFileNameWithPath;
+	//
+	// } catch (JRException ex) {
+	// System.out.println(ex.getMessage());
+	// /* nu am raport jasper ... deci e posibil sa fie un raport grafic */
+	// /* trebuie sa creez parametrii din ceea ce exista in param */
+	// throw new DBException("NO FILE");
+	// }
+	//
+	// }
+
+	public String getReport(String fileName, HashMap<String, Object> param, String type) {
 		try {
 			// Class.forName("com.mysql.jdbc.Driver");
 			// Connection con =
 			// DriverManager.getConnection("jdbc:mysql://localhost:3306/sales",
 			// "sa", "bcmanager");
 			Connection con = DbManager.getDB().getConn(this.getUser()).con;
-			String fileNamewithPath = getServletConfig().getServletContext().getRealPath("reports\\" + fileName);
-			System.out.println("++++++++ report file +++++++");
-			System.out.println(fileNamewithPath);
+			String fileNamewithPath = getServletConfig().getServletContext().getRealPath("reports");
+			// System.out.println("++++++++ report file +++++++");
+			// System.out.println(fileNamewithPath);
+			// System.out.println(fileNamewithPath + "\\" + fileName + ".jasper");
+			fileNamewithPath = fileNamewithPath + "\\" + fileName;
 
 			// define the report
-			JasperPrint print = JasperFillManager.fillReport(fileNamewithPath + ".jasper", param, con);
+			JasperPrint jasperPrint = JasperFillManager.fillReport(fileNamewithPath + ".jasper", param, con);
 
 			// generate a new name for file
 
@@ -359,14 +420,30 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 
 			switch (type) {
 			case "pdf":
-				JasperExportManager.exportReportToPdfFile(print, resultFileNameWithPath);
+				JasperExportManager.exportReportToPdfFile(jasperPrint, resultFileNameWithPath);
 				break;
 			case "html":
-				JasperExportManager.exportReportToHtmlFile(print, resultFileNameWithPath);
+				JasperExportManager.exportReportToHtmlFile(jasperPrint, resultFileNameWithPath);
+				break;
+			case "xls":
+				JRXlsExporter exporterXLS = new JRXlsExporter();
+				exporterXLS.setParameter(JRXlsExporterParameter.JASPER_PRINT, jasperPrint);
+				exporterXLS.setParameter(JRExporterParameter.INPUT_FILE_NAME, fileNamewithPath + ".jasper");
+				exporterXLS.setParameter(JRExporterParameter.OUTPUT_FILE_NAME, resultFileNameWithPath);
+
+				exporterXLS.setParameter(JRXlsExporterParameter.IS_DETECT_CELL_TYPE, Boolean.TRUE);
+				exporterXLS.setParameter(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
+				exporterXLS.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_ROWS, Boolean.TRUE);
+				exporterXLS.setParameter(JRXlsExporterParameter.IS_REMOVE_EMPTY_SPACE_BETWEEN_COLUMNS, Boolean.TRUE);
+				exporterXLS.setParameter(JRXlsExporterParameter.IS_COLLAPSE_ROW_SPAN, Boolean.TRUE);
+				exporterXLS.setParameter(JRXlsExporterParameter.IS_IGNORE_GRAPHICS, Boolean.FALSE);
+
+				exporterXLS.exportReport();
+
 				break;
 			default:
 				type = "html";
-				JasperExportManager.exportReportToHtmlFile(print, resultFileNameWithPath);
+				JasperExportManager.exportReportToHtmlFile(jasperPrint, resultFileNameWithPath);
 			}
 
 			return resultFileNameWithPath;
@@ -375,7 +452,8 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 			System.out.println(ex.getMessage());
 			/* nu am raport jasper ... deci e posibil sa fie un raport grafic */
 			/* trebuie sa creez parametrii din ceea ce exista in param */
-			throw new DBException("NO FILE");
+			// throw new DBException("NO FILE");
+			return "No File";
 		}
 
 	}

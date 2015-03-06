@@ -150,7 +150,7 @@ public class DateUtils {
 			return null;
 		try {
 			DateTimeFormat fmt = DateTimeFormat.getFormat(Format);
-			strDate = strDate.substring(1, Format.length());
+			strDate = strDate.substring(0, Format.length());
 			return fmt.parse(strDate);
 		} catch (Exception e) {
 			System.out.println("DateUtils - String2DateTime");
