@@ -89,5 +89,6 @@ public class dbDateTimeBox extends Composite implements Controls {
 
 	public void SetR(DBRecord R1) {
 		this.R = R1;
+		this.dbdateBox.R = this.R;
 	}
 }
