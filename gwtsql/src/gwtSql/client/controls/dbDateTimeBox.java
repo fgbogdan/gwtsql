@@ -22,9 +22,13 @@ public class dbDateTimeBox extends Composite implements Controls {
 	public DBRecord R;
 	public String colName;
 
-	String Format = " HH:mm:ss";
+	String Format;
 
-	dbDateTimeBox(String strColName, String strFormat) {
+	public dbDateTimeBox(String strColName) {
+		this(strColName, "yyyy-MM-dd HH:mm:ss");
+	}
+
+	public dbDateTimeBox(String strColName, String strFormat) {
 
 		colName = strColName;
 		Format = strFormat;

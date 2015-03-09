@@ -36,11 +36,11 @@ public class dbDateBox extends Composite implements Controls {
 	 */
 
 	public dbDateBox(String strColName) {
-		this(strColName, "dd.MM.yyyy");
+		this(strColName, "yyyy-MM-dd");
 
 	}
 
-	dbDateBox(String strColName, String strFormat) {
+	public dbDateBox(String strColName, String strFormat) {
 		colName = strColName;
 		Format = strFormat;
 		dateBox = new _DateBox();
