@@ -1952,6 +1952,8 @@ public class DB {
 
 		/* daca nu am resultat - adica alias nok */
 		if (oUser.tableName.isEmpty()) {
+			System.out.println("alias not found ...");
+			System.out.println("alias was: " + p_strAlias);
 			con.ReleaseMe();
 			return;
 		}
