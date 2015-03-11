@@ -58,7 +58,7 @@ public class dbDateBox extends Composite implements Controls {
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				// in R - se pune tot timpul formatul SQL yyyy-MM-dd
 				if (dbDateBox.this.R != null)
-					dbDateBox.this.R.put(dbDateBox.this.colName, DateUtils.Date2String(dbDateBox.this.getValue(), "yyyy-MM-dd"));
+					dbDateBox.this.R.put(dbDateBox.this.colName, DateUtils.Date2String(dbDateBox.this.getValue(), Format));
 				else
 					Window.alert("Informatia nu se poate modifica sau nu este adaugata !");
 			}
@@ -83,7 +83,7 @@ public class dbDateBox extends Composite implements Controls {
 				Object o = R.get(this.colName);
 				if (o != null) {
 					String strDate = o.toString();
-					d = DateUtils.String2Date(strDate, "yyyy-MM-dd");
+					d = DateUtils.String2DateTime(strDate, Format);
 					this.setValue(d);
 				} else {
 					// d = DateUtils.String2Date("1900-01-01");
