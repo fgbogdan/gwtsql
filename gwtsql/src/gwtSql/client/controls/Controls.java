@@ -9,4 +9,6 @@ public interface Controls {
 	
 	void SetR(DBRecord R);
 	
+	String getLinkedField();
+	
 }

@@ -6,6 +6,7 @@ import gwtSql.shared.DBTable;
 import gwtSql.shared.ListXD;
 
 import java.util.HashMap;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
@@ -37,6 +38,8 @@ public interface DBService extends RemoteService {
 
 	DBTable getDBTable(String p_strTableName, String p_strKeyName, String p_strFilterCondition, String p_strOrderCondition) throws DBException;
 
+	List<DBTable> getDBXTable(String p_strSQLCommand) throws DBException;
+
 	DBTable saveDBTable(DBTable oTable);
 
 	String deleteForCondition(String p_tableName, String p_sqlCond) throws DBException;
@@ -46,15 +49,17 @@ public interface DBService extends RemoteService {
 	String executeResultSetNoOutput(String p_sqlCommand) throws DBException;
 
 	void SetIniFileName(String strIniFileName);
+	
+	String GetIniFileName();
 
-	String GETNNEWID(String p_idname);
+	String GETNNEWID(String p_idname, String p_tableName);
 
 	public String deleteFile(String fileNamewithPathandExt);
 
 	void D(String strText);
 
 	DBRecord DoLogin(String p_strAlias, String p_strPassword);
-	
+
 	DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_PasswordField);
 
 	ListXD LoadListXDFromData(String strSQLCommand, String strFilterCondition);

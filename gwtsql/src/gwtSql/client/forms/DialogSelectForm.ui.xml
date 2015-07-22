@@ -1,0 +1,27 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<g:HTMLPanel>
+		<table>
+			<tr>
+				<td width="1000px;">
+					<g:Composite ui:field="show_form"></g:Composite>
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<div class="dialog-button-set">
+						<div class="button-group-right">
+							<g:Button ui:field="select" styleName="bc-button bc-button-text-icon">
+								<span class="bc-button-icon">
+									<img src="css/icons/bt-save-small-circle.png"/>
+								</span>
+								<span class="bc-button-text">Select</span>
+							</g:Button>
+						</div>
+					</div>
+				</td>
+			</tr>
+		</table>
+	</g:HTMLPanel>
+</ui:UiBinder>

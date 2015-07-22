@@ -39,4 +39,8 @@ public class dbCheckBox extends CheckBox implements Controls {
 	public void SetR(DBRecord R1) {
 		this.R = R1;
 	}
+
+	public String getLinkedField() {
+		return colName;
+	}
 }

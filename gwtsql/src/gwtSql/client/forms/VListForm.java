@@ -1,7 +1,7 @@
-package gwtSql.client.controls;
+package gwtSql.client.forms;
 
-import gwtSql.client.controls.BaseDialogBox;
-import gwtSql.client.controls.IForm;
+import gwtSql.client.forms.BaseDialogBox;
+import gwtSql.client.forms.IForm;
 import gwtSql.shared.DBRecord;
 
 import java.util.List;

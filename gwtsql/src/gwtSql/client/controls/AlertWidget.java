@@ -1,18 +1,32 @@
 package gwtSql.client.controls;
 
+import gwtSql.client.forms.ClosableDialogBox;
+
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.DialogBox;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HasAlignment;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class AlertWidget {
 
-	public static DialogBox A(final Object content) {
+	public static void A(Object content) {
+		A(content, true);
+	}
 
-		return alertWidget("Alert", content.toString());
+	public static void A(Object content, boolean withGlass) {
+
+		ClosableDialogBox closableDialogBox = new ClosableDialogBox();
+		if (content == null)
+			content = "NULL";
+		closableDialogBox.add(new HTML(content.toString()));
+		closableDialogBox.show();
+		closableDialogBox.setGlassEnabled(withGlass);
+		closableDialogBox.center();
+
 	}
 
 	public static DialogBox alertWidget(final Object content) {

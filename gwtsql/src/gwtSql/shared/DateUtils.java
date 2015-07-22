@@ -4,7 +4,6 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.Window;
 
 @SuppressWarnings("deprecation")
 public class DateUtils {

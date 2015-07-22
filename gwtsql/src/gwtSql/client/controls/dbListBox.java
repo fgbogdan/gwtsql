@@ -296,4 +296,9 @@ public class dbListBox extends ListBox implements Controls {
 	public void SetR(DBRecord R1) {
 		this.R = R1;
 	}
+
+	public String getLinkedField() {
+		return strLinkedField;
+	}
+
 }

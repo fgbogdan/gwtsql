@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Properties;
 
 public class DB {
@@ -96,6 +97,7 @@ public class DB {
 			} catch (Exception e) {
 				con = null;
 				System.out.println("cannnot make a connection");
+				System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
 		}
@@ -117,7 +119,8 @@ public class DB {
 				st.execute(strSQLCommand);
 				System.out.println("SPID - set !");
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
+				System.out.println("UPDATE userspid");
+				System.out.println(e1.getMessage());
 				e1.printStackTrace();
 			}
 		}
@@ -160,40 +163,84 @@ public class DB {
 
 			// System.out.println("read from ini begin ...");
 			// sql server
-			strServerName = pro.getProperty("SQLSERVER").trim();
+			strServerName = pro.getProperty("SQLSERVER");
+			if (strServerName == null)
+				strServerName = "<undefined>";
+			strServerName = strServerName.trim();
 			DBConnection.sqlServerName = strServerName;
+			System.out.println("SQLSERVER=" + strServerName);
+
 			// sql user
-			strSQLUser = pro.getProperty("SQLUSER").trim();
+			strSQLUser = pro.getProperty("SQLUSER");
+			if (strSQLUser == null)
+				strSQLUser = "<undefined>";
+			strSQLUser = strSQLUser.trim();
+			System.out.println("SQLUSER=" + strSQLUser);
+
 			// sql password
-			strSQLPassword = pro.getProperty("SQLPASSWORD").trim();
+			strSQLPassword = pro.getProperty("SQLPASSWORD");
+			if (strSQLPassword == null)
+				strSQLPassword = "<undefined>";
+			strSQLPassword = strSQLPassword.trim();
+			System.out.println("SQLPASSWORD=" + strSQLPassword);
+
 			// database
-			strSQLDatabase = pro.getProperty("SQLDATABASE").trim();
+			strSQLDatabase = pro.getProperty("SQLDATABASE");
+			if (strSQLDatabase == null)
+				strSQLDatabase = "<undefined>";
+			strSQLDatabase = strSQLDatabase.trim();
 			DBConnection.sqlDatabase = strSQLDatabase;
+			System.out.println("SQLDATABASE=" + strSQLDatabase);
+
 			// database sufix
 			strSQLSufix = pro.getProperty("SQLSUFIX");
+			if (strSQLSufix == null)
+				strSQLSufix = "<undefined>";
+			strSQLSufix = strSQLSufix.trim();
 			DBConnection.sqlSufix = strSQLSufix;
+			System.out.println("SQLSUFIX=" + strSQLSufix);
 
 			// firm identification
 			strSQLFirma = pro.getProperty("SQLFIRMA");
+			if (strSQLFirma == null)
+				strSQLFirma = "<undefined>";
+			strSQLFirma = strSQLFirma.trim();
 			if (strSQLFirma.isEmpty())
 				strSQLFirma = "FRM";
 			DBConnection.sqlIDFirma = strSQLFirma;
+			System.out.println("SQLFIRMA=" + strSQLFirma);
+
 			// database type
 			strSQLType = pro.getProperty("SQLTYPE");
+			if (strSQLType == null)
+				strSQLType = "";
+			strSQLType = strSQLType.trim();
 			if (strSQLType.isEmpty())
 				strSQLType = "MSSQL";
 			if (!strSQLType.equals("MSSQL") && !strSQLType.equals("MYSQL"))
 				throw new Exception("SQLTYPE not defined correctly in ini file (values accepted are MSSQL or MYSQL)");
 			DBConnection.isMySQL = strSQLType.equals("MYSQL");
+			System.out.println("SQLTYPE=" + strSQLType);
+
 			// logging
 			strisLog = pro.getProperty("ISLOG");
+			if (strisLog == null)
+				strisLog = "<undefined>";
+			strisLog = strisLog.trim();
 			if (strisLog.isEmpty())
 				strisLog = "NO";
 			DBConnection.isLog = strisLog.equals("YES") ? true : false;
+			System.out.println("ISLOG=" + strisLog);
+
 			// Files Repository
 			strFilesRepository = pro.getProperty("FILES_REPOSITORY");
+			if (strFilesRepository == null)
+				strFilesRepository = "<undefined>";
+			strFilesRepository = strFilesRepository.trim();
 			DBConnection.FilesRepository = strFilesRepository;
-			// System.out.println("read from ini ok ...");
+			System.out.println("FILES_REPOSITORY=" + strFilesRepository);
+
+			System.out.println("read from ini ok ...");
 
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());
@@ -210,6 +257,7 @@ public class DB {
 
 		} catch (Exception e) {
 			System.out.println("getConn ... ClassForName");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -220,7 +268,7 @@ public class DB {
 		String url = "";
 
 		if (DBConnection.isMySQL)
-			url = "jdbc:mysql://" + strServerName + "/" + strSQLDatabase + "?zeroDateTimeBehavior=convertToNull&autoReconnect=true&relaxAutoCommit=true";
+			url = "jdbc:mysql://" + strServerName + "/" + strSQLDatabase + "?zeroDateTimeBehavior=convertToNull&autoReconnect=true&relaxAutoCommit=true&allowMultiQueries=true";
 		else
 			url = "jdbc:sqlserver://" + strServerName + ";user=" + strSQLUser + ";password=" + strSQLPassword + ";databaseName=" + strSQLDatabase + ";";
 		System.out.println("Connect to server ... ");
@@ -244,6 +292,7 @@ public class DB {
 
 		} catch (SQLException e) {
 			System.out.println("getConn ... get connection(url)");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -285,6 +334,7 @@ public class DB {
 			}
 		} catch (SQLException e) {
 			System.out.println("GetDBFieldString ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 
 		}
@@ -298,7 +348,7 @@ public class DB {
 	 * GETNNEWID
 	 */
 
-	public String GETNNEWID(DBRecord oUser, String IDNAME) {
+	public String GETNNEWID(DBRecord oUser, String IDNAME, String tableName) {
 		String strRetVal = "";
 		DBConnection con = this.getConn(oUser);
 		try {
@@ -316,7 +366,12 @@ public class DB {
 
 			ResultSet rs = null;
 			try {
-				String strSQLCommand = "EXEC GetNNewID '" + IDNAME + "'";
+				String strSQLCommand;
+				if (tableName.toUpperCase().contains("BCMAIN"))
+					strSQLCommand = "EXEC bcmain" + DBConnection.sqlSufix + ".dbo.GetNNewID '" + IDNAME + "'";
+				else
+					strSQLCommand = "EXEC GetNNewID '" + IDNAME + "'";
+
 				rs = st.executeQuery(strSQLCommand);
 			} catch (Exception e) {
 				System.out.println(e.toString());
@@ -334,6 +389,7 @@ public class DB {
 
 		} catch (SQLException e) {
 			System.out.println("GETNNEWID ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 
 		}
@@ -473,6 +529,7 @@ public class DB {
 				} catch (Exception e) {
 					System.out.println(strColname);
 					System.out.println(intColumnType);
+					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
 
@@ -480,6 +537,7 @@ public class DB {
 
 		} catch (SQLException e) {
 			System.out.println("GetDBRecord ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 
 		}
@@ -552,12 +610,15 @@ public class DB {
 						// UPPERCASE, HENCE NEED TO BE RETRIEVED IN UPPER CASE
 					}
 				} catch (SQLException e) {
+					System.out.println("put_original");
+					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
 			}
 
 		} catch (SQLException e) {
 			System.out.println("GetDBRecordForCondition ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 
 		}
@@ -695,6 +756,7 @@ public class DB {
 					System.out.println(strColname);
 					System.out.println(strColvalue);
 					System.out.println(intColumnType);
+					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
 
@@ -702,6 +764,7 @@ public class DB {
 
 		} catch (SQLException e) {
 			System.out.println("GetDBRecord ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 
 		}
@@ -772,7 +835,7 @@ public class DB {
 						oRecord.KeyValue = colValue;
 					else if (!colKeyName.isEmpty())
 						if (!DBConnection.isMySQL)
-							oRecord.KeyValue = GETNNEWID(oUser, colKeyName);
+							oRecord.KeyValue = GETNNEWID(oUser, colKeyName, tableName);
 
 					oRecord.isNew = true;
 
@@ -836,6 +899,7 @@ public class DB {
 
 				} catch (SQLException e) {
 					System.out.println("GetBlankRecord ... MetaData");
+					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
 			}// if(rs.next())
@@ -1012,6 +1076,7 @@ public class DB {
 					st.executeUpdate(strSQLCommand);
 				} catch (Exception e) {
 					System.out.println("GetBlankRecord.EXEC APPEND_BLANK ... ");
+					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
 
@@ -1022,6 +1087,7 @@ public class DB {
 					oRecord.isFirst = true;
 				} catch (Exception e) {
 					System.out.println("GetBlankRecord.EXEC reapel ... ");
+					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
 
@@ -1037,12 +1103,14 @@ public class DB {
 					st.executeUpdate(strSQLCommand);
 				} catch (Exception e) {
 					System.out.println("GetBlankRecord.EXEC DELETE ... ");
+					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
 
 			}
 		} catch (Exception e) {
 			System.out.println("GetBlankDBRecord ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 
@@ -1091,6 +1159,7 @@ public class DB {
 							st1.close();
 						} catch (Exception e) {
 							System.out.println("SetDBRecord.EXEC APPEND_BLANK ... ");
+							System.out.println(e.getMessage());
 							e.printStackTrace();
 						}
 
@@ -1115,6 +1184,7 @@ public class DB {
 							st1.close();
 						} catch (Exception e) {
 							System.out.println("SetDBRecord.EXEC DELETE ... ");
+							System.out.println(e.getMessage());
 							e.printStackTrace();
 						}
 
@@ -1273,12 +1343,7 @@ public class DB {
 								// if we log changes
 								if (oRecord.isLog) {
 
-									// if it's new - add only the new information and
-									// stop adding another lines
-									if (oRecord.isNew) {
-										WriteLog(oUser, oRecord, "NEW", "", "NEW");
-										oRecord.isLog = false;
-									} else {
+									if (!oRecord.isNew) {
 
 										// existing record
 										// if the old val differs the new val - write in
@@ -1313,9 +1378,36 @@ public class DB {
 						try {
 							oRecord.isNew = false;
 							rs.insertRow();
+
+							/* get the ID */
+							String s;
+							if (DBConnection.isMySQL)
+								s = "SELECT LAST_INSERT_ID() as LAST_INSERT_ID;";
+							else
+								s = "SELECT @@identity as LAST_INSERT_ID;";
+							Statement st1 = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+							ResultSet rs1 = st1.executeQuery(s);
+							if (rs1.next())
+								strErrorMessage = rs1.getString("LAST_INSERT_ID");
+							rs1.close();
+
+							// in cazul in care strErrorMessage este null
+							if (strErrorMessage == null)
+								strErrorMessage = "";
+
+							// if we log changes
+							if (oRecord.isLog) {
+
+								// if it's new - add only the new information and
+								oRecord.put(oRecord.KeyValue, strErrorMessage);
+								WriteLog(oUser, oRecord, oRecord.KeyValue, "", strErrorMessage);
+							}
+
 							rs.moveToCurrentRow();
+
 						} catch (SQLException e) {
 							System.out.println("saveDBRecord ... insertRow");
+							System.out.println(e.getMessage());
 							e.printStackTrace();
 							strErrorMessage = e.toString();
 						}
@@ -1324,6 +1416,7 @@ public class DB {
 							rs.updateRow();
 						} catch (SQLException e) {
 							System.out.println("saveDBRecord ... updateRow");
+							System.out.println(e.getMessage());
 							e.printStackTrace();
 							strErrorMessage = e.toString();
 						}
@@ -1335,6 +1428,7 @@ public class DB {
 
 				} catch (SQLException e) {
 					System.out.println("saveDBRecord ... process fields");
+					System.out.println(e.getMessage());
 					e.printStackTrace();
 					strErrorMessage = e.toString();
 				}
@@ -1343,6 +1437,7 @@ public class DB {
 
 		} catch (SQLException e) {
 			System.out.println("SetDBRecord ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 			strErrorMessage = e.toString();
 
@@ -1390,6 +1485,7 @@ public class DB {
 			}
 		} catch (SQLException e) {
 			System.out.println("DeleteDBRecord ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 			strErrorMessage = e.toString();
 		}
@@ -1407,6 +1503,7 @@ public class DB {
 			deleteDBRecord(oUser, oRecord.tableName, oRecord.KeyName, oRecord.KeyValue);
 		} catch (Exception e) {
 			System.out.println("DeleteDBRecord DBRecord ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -1440,6 +1537,7 @@ public class DB {
 			}
 		} catch (SQLException e) {
 			System.out.println("DeleteDBRecord ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 			strErrorMessage = e.toString();
 		}
@@ -1527,11 +1625,14 @@ public class DB {
 					}
 					rs.close();
 				} catch (SQLException e) {
+					System.out.println("Get ListXD");
+					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
 
 		} catch (SQLException e) {
 			System.out.println("GetList2D ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 
 		}
@@ -1583,6 +1684,7 @@ public class DB {
 			}
 		} catch (SQLException e) {
 			System.out.println("GetDBDouble ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 
 		}
@@ -1694,25 +1796,34 @@ public class DB {
 						oDBRecord.KeyName = p_strKeyName;
 						oDBRecord.KeyValue = "";
 
-						for (int intCount = 1; intCount <= intNoCols; intCount++) {
+						try {
+							for (int intCount = 1; intCount <= intNoCols; intCount++) {
 
-							strColname = rsmdResult.getColumnName(intCount);
-							// NOTE: THE COLUMN NAMES WILL ALWAYS BE STORED IN
-							// UPPERCASE, HENCE NEED TO BE RETRIEVED IN UPPER
-							// CASE
-							strColname = strColname.toUpperCase();
-							strColvalue = rs.getString(strColname);
+								strColname = rsmdResult.getColumnName(intCount);
+								// System.out.println(strColname);
 
-							oDBRecord.put_original(strColname.toUpperCase(), strColvalue);
+								// NOTE: THE COLUMN NAMES WILL ALWAYS BE STORED IN
+								// UPPERCASE, HENCE NEED TO BE RETRIEVED IN UPPER
+								// CASE
+								strColname = strColname.toUpperCase();
+								strColvalue = rs.getString(strColname);
 
-							// save the fields names
-							if (bFirstTime) {
-								oTable.Fields.add(strColname);
+								oDBRecord.put_original(strColname.toUpperCase(), strColvalue);
+
+								// save the fields names
+								if (bFirstTime) {
+									oTable.Fields.add(strColname);
+								}
+
+								// NOTE: THE COLUMN NAMES WILL ALWAYS BE STORED IN
+								// UPPERCASE, HENCE NEED TO BE RETRIEVED IN UPPER
+								// CASE
 							}
-
-							// NOTE: THE COLUMN NAMES WILL ALWAYS BE STORED IN
-							// UPPERCASE, HENCE NEED TO BE RETRIEVED IN UPPER
-							// CASE
+						} catch (Exception e) {
+							System.out.println("GetDBTable fill DBRecord... for ");
+							System.out.println(e.getMessage());
+							e.printStackTrace();
+							strErrorMessage = e.toString();
 						}
 
 						bFirstTime = false;
@@ -1725,6 +1836,7 @@ public class DB {
 
 					} catch (SQLException e) {
 						System.out.println("GetDBTable fill DBRecord... body");
+						System.out.println(e.getMessage());
 						e.printStackTrace();
 						strErrorMessage = e.toString();
 					}
@@ -1735,6 +1847,7 @@ public class DB {
 
 		} catch (SQLException e) {
 			System.out.println("GetDBTable ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 			strErrorMessage = e.toString();
 
@@ -1825,6 +1938,7 @@ public class DB {
 
 				} catch (SQLException e) {
 					System.out.println("SetUserSPID ... create statement");
+					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
 			} else {
@@ -1861,6 +1975,7 @@ public class DB {
 
 		} catch (SQLException e) {
 			System.out.println("deleteForCondition... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 			strErrorMessage = e.toString();
 		}
@@ -1896,6 +2011,7 @@ public class DB {
 
 		} catch (SQLException e) {
 			System.out.println("executeNoResultSet ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 			strErrorMessage = e.toString();
 			strErrorMessage = e.toString();
@@ -1931,6 +2047,7 @@ public class DB {
 
 		} catch (SQLException e) {
 			System.out.println("executeNoResultSet ... get connection");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 			strErrorMessage = e.toString();
 		}
@@ -2028,15 +2145,26 @@ public class DB {
 		String strKeyValue = oRecord.KeyValue;
 
 		/*
-		 * 
-		 * CREATE TABLE `log_audit` ( `table_name` varchar(30) DEFAULT NULL,
+		 * MYSQL CREATE TABLE `log_audit` ( `table_name` varchar(30) DEFAULT NULL,
 		 * `key_value` varchar(45) DEFAULT NULL, `column_name` varchar(45) DEFAULT
 		 * NULL, `old_value` varchar(100) DEFAULT NULL, `new_value` varchar(100)
 		 * DEFAULT NULL, `alias` varchar(45) DEFAULT NULL, `dtmDateStamp` datetime
 		 * DEFAULT NULL ) ENGINE=InnoDB DEFAULT CHARSET=utf8$$
+		 * 
+		 * 
+		 * MSSQL CREATE TABLE [dbo].[log_audit]( [table_name] [varchar](30) NULL
+		 * DEFAULT (NULL), [key_value] [varchar](45) NULL DEFAULT (NULL),
+		 * [column_name] [varchar](45) NULL DEFAULT (NULL), [old_value]
+		 * [varchar](100) NULL DEFAULT (NULL), [new_value] [varchar](100) NULL
+		 * DEFAULT (NULL), [alias] [varchar](45) NULL DEFAULT (NULL),
+		 * [dtmDateStamp] [datetime] NULL DEFAULT (NULL) ) ON [PRIMARY]
 		 */
 
 		try {
+
+			/* trim old and new value to 100 chars */
+			strOldValue = strOldValue.substring(0, Math.min(strOldValue.length(), 99)).trim();
+			strNewValue = strNewValue.substring(0, Math.min(strNewValue.length(), 99)).trim();
 
 			Statement st = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
 			String strSQLCommand = "";
@@ -2054,16 +2182,185 @@ public class DB {
 
 			} catch (Exception e) {
 				System.out.println("WriteLog ... insert in log_audit");
+				System.out.println(e.getMessage());
 				e.printStackTrace();
 			}
 
 		} catch (SQLException e) {
 			System.out.println("WriteLog ... create statement");
+			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
 
 		con.ReleaseMe();
 		return;
 
+	}
+
+	/**
+	 * 
+	 * return several result sets
+	 * 
+	 * @param user
+	 * @param p_nTables
+	 * @param oListDB
+	 * @param p_strSQLCommand
+	 * @return
+	 */
+	public String getDBXTable(DBRecord oUser, List<DBTable> oListDB, String p_strSQLCommand) {
+
+		// return String
+		String strErrorMessage = "";
+
+		// connection
+		DBConnection con = this.getConn(oUser);
+		Connection conn = con.con;
+
+		try {
+
+			Statement stmt = conn.createStatement();
+
+			boolean results = false;
+
+			// call
+			try {
+				results = stmt.execute(p_strSQLCommand);
+				// System.out.println(p_strSQLCommand);
+			} catch (Exception e) {
+				System.out.println("GetDBXTable ... execute");
+				System.out.println(p_strSQLCommand);
+				System.out.println(e.toString());
+				strErrorMessage = e.toString();
+
+			}
+
+			// Loop through the available result sets.
+			int nresultsetno = 0;
+			do {
+				if (results) {
+					ResultSet rs = stmt.getResultSet();
+
+					// Show data from the result set.
+					// System.out.println("RESULT SET #" + rsCount);
+
+					// the table
+					// DBTable
+					DBTable oTable = new DBTable();
+//					System.out.println("results cycle");
+//					System.out.println(nresultsetno);
+					// no table name
+					oTable.tableName = "" + nresultsetno;
+					nresultsetno++;
+					// no key name
+					oTable.KeyName = "";
+
+					boolean bFirstTime = true;
+					int nrecno = 0;
+					if (rs != null) {
+						while (rs.next()) {
+							// generate each record and put it in the list
+							ResultSetMetaData rsmdResult = null;
+
+							
+//							System.out.println("records cycle");
+//							System.out.println(nrecno);
+							
+							
+							int intNoCols = 0;
+							String strColname = null;
+							Object strColvalue = null;
+							DBRecord oDBRecord = new DBRecord();
+							nrecno++;
+							oDBRecord.recno = nrecno;
+							try {
+								rsmdResult = rs.getMetaData();
+								intNoCols = rsmdResult.getColumnCount();
+
+								oDBRecord.tableName = "";
+								oDBRecord.KeyName = "";
+								oDBRecord.KeyValue = "";
+
+								try {
+									for (int intCount = 1; intCount <= intNoCols; intCount++) {
+
+										strColname = rsmdResult.getColumnName(intCount);
+										// System.out.println(strColname);
+
+										// NOTE: THE COLUMN NAMES WILL ALWAYS BE STORED IN
+										// UPPERCASE, HENCE NEED TO BE RETRIEVED IN UPPER
+										// CASE
+										strColname = strColname.toUpperCase();
+										strColvalue = rs.getString(strColname);
+
+										oDBRecord.put_original(strColname.toUpperCase(), strColvalue);
+
+										// save the fields names
+										if (bFirstTime) {
+											oTable.Fields.add(strColname);
+										}
+
+										// NOTE: THE COLUMN NAMES WILL ALWAYS BE STORED IN
+										// UPPERCASE, HENCE NEED TO BE RETRIEVED IN UPPER
+										// CASE
+									} // for
+								} catch (Exception e) {
+									System.out.println("GetDBXTable fill DBRecord... for ");
+									System.out.println(e.getMessage());
+									e.printStackTrace();
+									strErrorMessage = e.toString();
+								}
+
+								bFirstTime = false;
+
+								// key value
+								oDBRecord.KeyValue = (String) oDBRecord.get(oDBRecord.KeyName);
+
+								// add in Table
+								oTable.add(oDBRecord);
+
+							} catch (SQLException e) {
+								System.out.println("GetDBXTable fill DBRecord... body");
+								System.out.println(e.getMessage());
+								e.printStackTrace();
+								strErrorMessage = e.toString();
+							} // get Meta Data
+
+						} // while
+
+						// add the table to the List
+						oListDB.add(oTable);
+//						System.out.println("Table");
+//						System.out.println(oTable);
+//						System.out.println(oTable.get(0).toString());
+						// close the result set
+						rs.close();
+
+					}// if != null
+
+				} // if(results)
+
+				// next resultset
+				results = stmt.getMoreResults();
+
+//				System.out.println("Result set step ");
+//				System.out.println(nresultsetno);
+				
+			} while (results);
+
+		} catch (SQLException e) {
+			System.out.println("GetDBXTable ... get connection");
+			System.out.println(e.getMessage());
+			e.printStackTrace();
+			strErrorMessage = e.toString();
+		} // try general
+
+		// System.out.println("final");
+		// System.out.println(oListDB);
+		// System.out.println(oListDB.size());
+		// System.out.println(oListDB.get(0).toString());
+		// System.out.println(oListDB.get(0).tableName);
+		// System.out.println("end final");
+		
+		return strErrorMessage;
 	}
 }

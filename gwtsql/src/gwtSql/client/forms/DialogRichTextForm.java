@@ -1,4 +1,4 @@
-package gwtSql.client.controls;
+package gwtSql.client.forms;
 
 import gwtSql.client.DBService;
 import gwtSql.client.DBServiceAsync;

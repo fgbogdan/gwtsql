@@ -78,4 +78,8 @@ public class dbTextBox extends TextBox implements Controls {
 		this.R = R1;
 	}
 
+	public String getLinkedField() {
+		return colName;
+	}
+
 }

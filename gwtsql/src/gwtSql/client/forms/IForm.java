@@ -1,12 +1,10 @@
-package gwtSql.client.controls;
+package gwtSql.client.forms;
 
 import gwtSql.shared.DBRecord;
 
 public interface IForm {
-	
+
 	void onReturn(String type, DBRecord R);
-	VFloatForm getVFF();
-	void setVFF(VFloatForm v);
 	DBRecord ReturnSelected();
 
 }

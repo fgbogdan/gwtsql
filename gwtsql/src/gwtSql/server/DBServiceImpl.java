@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -26,6 +28,7 @@ import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.export.JRXlsExporter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.user.server.rpc.RemoteServiceServlet;
 
 @SuppressWarnings("serial")
@@ -118,7 +121,8 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (!strErrorMessage.isEmpty())
+		// if (!strErrorMessage.isEmpty())
+		if (strErrorMessage.length() > 10)
 			throw new DBException(strErrorMessage);
 		return strErrorMessage;
 	}
@@ -178,6 +182,25 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		return oTable;
 	}
 
+	public List<DBTable> getDBXTable(String p_strSQLCommand) throws DBException {
+
+		String strErrorMessage = "";
+		List<DBTable> oListDB = new ArrayList<DBTable>();
+
+		try {
+
+			strErrorMessage = DbManager.getDB().getDBXTable(this.getUser(), oListDB, p_strSQLCommand);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		if (!strErrorMessage.isEmpty())
+			throw new DBException(strErrorMessage);
+
+		return oListDB;
+	}
+
 	public DBTable saveDBTable(DBTable oTable) {
 
 		DBTable T = oTable;
@@ -194,6 +217,10 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		DbManager.iniFileName = strIniFileName;
 	}
 
+	public String GetIniFileName() {
+		return DbManager.iniFileName;
+	}
+
 	public String deleteForCondition(String p_tableName, String p_sqlCond) throws DBException {
 		String strErrorMessage = "";
 		try {
@@ -207,10 +234,10 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 
 	}
 
-	public String GETNNEWID(String p_idname) {
+	public String GETNNEWID(String p_idname, String p_tableName) {
 		String strErrorMessage = "";
 		try {
-			strErrorMessage = DbManager.getDB().GETNNEWID(this.getUser(), p_idname);
+			strErrorMessage = DbManager.getDB().GETNNEWID(this.getUser(), p_idname, p_tableName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

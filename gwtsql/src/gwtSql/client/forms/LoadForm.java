@@ -1,7 +1,5 @@
 package gwtSql.client.forms;
 
-import gwtSql.client.controls.BaseDialogBox;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
@@ -16,7 +14,8 @@ public class LoadForm extends BaseDialogBox {
 
 	public LoadForm() {
 
-		setText("Loading ... ");
+		// setText("Loading ... ");
+		addStyleName("round-dialog");
 		// lbcounter = new Label();
 		setWidget(uiBinder.createAndBindUi(this));
 

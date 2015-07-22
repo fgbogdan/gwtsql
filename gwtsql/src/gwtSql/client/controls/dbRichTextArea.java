@@ -62,4 +62,7 @@ public class dbRichTextArea extends Composite implements Controls {
 		Refresh();
 	} // Cancel
 
+	public String getLinkedField() {
+		return colName;
+	}
 }

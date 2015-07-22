@@ -1,4 +1,4 @@
-package gwtSql.client.controls;
+package gwtSql.client.forms;
 
 import gwtSql.shared.DBRecord;
 
@@ -7,7 +7,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 
 public class BaseDialogBox extends DialogBox implements IForm {
 	public LayoutPanel baseLayoutPanel;
-	public VFloatForm VFF;
+	public ClosableDialogBox VFF;
 
 	/**
 	 * constructor
@@ -16,9 +16,9 @@ public class BaseDialogBox extends DialogBox implements IForm {
 
 		super(false, false);
 
-		setText("BaseDialogBox");
+		//setText("BaseDialogBox");
 
-		setSize("182px", "94px");
+		//setSize("182px", "94px");
 
 		// Enable animation.
 		setAnimationEnabled(true);
@@ -38,21 +38,9 @@ public class BaseDialogBox extends DialogBox implements IForm {
 
 	}
 
-	@Override
-	public VFloatForm getVFF() {
-
-		return VFF;
-	}
-
-	@Override
-	public void setVFF(VFloatForm v) {
-		VFF = v;
-
-	}
-
+	
 	@Override
 	public DBRecord ReturnSelected() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

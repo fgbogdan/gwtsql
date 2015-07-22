@@ -1,6 +1,5 @@
 package gwtSql.client.controls;
 
-import gwtSql.client.controls.Controls;
 import gwtSql.shared.DBRecord;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -20,11 +19,10 @@ public class dbRadioButton extends RadioButton implements Controls {
 		strLinkedField = p_strLinkedField;
 		value = p_value;
 
-		
 		this.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
-				
+
 				if (dbRadioButton.this.R != null)
 					dbRadioButton.this.R.put(dbRadioButton.this.strLinkedField, value);
 				else
@@ -32,10 +30,8 @@ public class dbRadioButton extends RadioButton implements Controls {
 
 			}
 		});
-		
-		
-	}
 
+	}
 
 	public void Refresh() {
 		if (R == null)
@@ -48,6 +44,10 @@ public class dbRadioButton extends RadioButton implements Controls {
 
 	public void SetR(DBRecord R1) {
 		this.R = R1;
+	}
+
+	public String getLinkedField() {
+		return strLinkedField;
 	}
 
 }

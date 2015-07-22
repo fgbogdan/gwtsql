@@ -4,17 +4,16 @@
 	version="2.5" xmlns="http://java.sun.com/xml/ns/javaee">
 
 	<!-- Servlets -->
- <!-- DBService -->
-  <servlet>
-    <servlet-name>DBService</servlet-name>
-    <servlet-class>gwtSql.server.DBServiceImpl</servlet-class>
-  </servlet>
-  
-  
-  <servlet-mapping>
-    <servlet-name>DBService</servlet-name>
-    <url-pattern>/gwtSql/DBService</url-pattern>
-  </servlet-mapping>
+	<!-- DBService -->
+	<servlet>
+		<servlet-name>DBService</servlet-name>
+		<servlet-class>gwtSql.server.DBServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>DBService</servlet-name>
+		<url-pattern>/gwtsql/DBService</url-pattern>
+	</servlet-mapping>
 
 	<!-- Default page to serve -->
 	<welcome-file-list>

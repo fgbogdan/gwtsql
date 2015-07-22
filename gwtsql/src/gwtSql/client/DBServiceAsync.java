@@ -1,10 +1,11 @@
 package gwtSql.client;
 
-import java.util.HashMap;
-
 import gwtSql.shared.DBRecord;
 import gwtSql.shared.DBTable;
 import gwtSql.shared.ListXD;
+
+import java.util.HashMap;
+import java.util.List;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
@@ -15,7 +16,7 @@ public interface DBServiceAsync {
 	void deleteDBRecord(String p_SQLCommand, AsyncCallback<String> asyncCallback);
 
 	void GetDBRecord(String p_tableName, String p_colName, String p_colValue, AsyncCallback<DBRecord> asyncCallback);
-	
+
 	void GetDBRecordForConditon(String p_sqlCond, AsyncCallback<DBRecord> asyncCallback);
 
 	void GetDBRecordForConditon(String p_tableName, String p_sqlCond, AsyncCallback<DBRecord> asyncCallback);
@@ -28,7 +29,8 @@ public interface DBServiceAsync {
 	void GetBlankDBRecord(String p_tableName, String p_colName, String p_colValue, String p_colKeyName, int p_call_level,
 			AsyncCallback<DBRecord> callback);
 
-	//void ReadWriteConf(String key, String value, AsyncCallback<String> asyncCallback);
+	// void ReadWriteConf(String key, String value, AsyncCallback<String>
+	// asyncCallback);
 
 	void getDBTable(String strSQLCommand, AsyncCallback<DBTable> asyncCallback);
 
@@ -37,13 +39,17 @@ public interface DBServiceAsync {
 	void getDBTable(String p_strTableName, String p_strKeyName, String p_strFilterCondition, String p_strOrderCondition,
 			AsyncCallback<DBTable> asyncCallback);
 
+	void getDBXTable(String strSQLCommand, AsyncCallback<List<DBTable>> asyncCallback);
+
 	void saveDBTable(DBTable oTable, AsyncCallback<DBTable> callback);
 
 	void SetIniFileName(String strIniFileName, AsyncCallback<Void> callback);
 
+	void GetIniFileName(AsyncCallback<String> callback);
+
 	void deleteForCondition(String p_tableName, String p_sqlCond, AsyncCallback<String> asyncCallback);
 
-	void GETNNEWID(String p_idname, AsyncCallback<String> asyncCallback);
+	void GETNNEWID(String p_idname, String p_tableName, AsyncCallback<String> asyncCallback);
 
 	void executeNoResultSet(String p_sqlCommand, AsyncCallback<String> asyncCallback);
 
@@ -54,7 +60,7 @@ public interface DBServiceAsync {
 	void deleteFile(String fileNamewithPathandExt, AsyncCallback<String> callback);
 
 	void DoLogin(String p_strAlias, String p_strPassword, AsyncCallback<DBRecord> callback);
-	
+
 	void DoLogin(String p_strAlias, String p_strPassword, String p_PasswordField, AsyncCallback<DBRecord> callback);
 
 	void LoadListXDFromData(String strSQLCommand, String strFilterCondition, AsyncCallback<ListXD> callback);

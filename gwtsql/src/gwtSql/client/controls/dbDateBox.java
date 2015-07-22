@@ -23,6 +23,8 @@ public class dbDateBox extends Composite implements Controls {
 	public @UiField(provided = true) _DateBox dateBox;
 	// static String Format = "yyyy-MM-dd";
 	String Format;
+	// number of minutes to add after select
+	int minutesAdd = 0;
 
 	// @UiField Button btnDel;
 
@@ -57,10 +59,16 @@ public class dbDateBox extends Composite implements Controls {
 		this.dateBox.addValueChangeHandler(new ValueChangeHandler<Date>() {
 			public void onValueChange(ValueChangeEvent<Date> event) {
 				// in R - se pune tot timpul formatul SQL yyyy-MM-dd
-				if (dbDateBox.this.R != null)
-					dbDateBox.this.R.put(dbDateBox.this.colName, DateUtils.Date2String(dbDateBox.this.getValue(), Format));
-				else
+				if (dbDateBox.this.R != null) {
+					Date d = dbDateBox.this.getValue();
+					if (minutesAdd != 0)
+						d = DateUtils.addMinutes(d, minutesAdd);
+					dbDateBox.this.R.put(dbDateBox.this.colName, DateUtils.Date2String(d, Format));
+					if (minutesAdd != 0)
+						dbDateBox.this.setValue(d);
+				} else {
 					Window.alert("Informatia nu se poate modifica sau nu este adaugata !");
+				}
 			}
 		});
 
@@ -122,6 +130,10 @@ public class dbDateBox extends Composite implements Controls {
 		this.dateBox.setEnabled(b);
 	}
 
+	public void setMinutes(int minutes) {
+		minutesAdd = minutes;
+	}
+
 	// @UiHandler("btnDel")
 	// public void btnDelClick(ClickEvent e) {
 	// // daca sterg ... trec data pe 1900-01-01 si pe Save o sa trec in null.
@@ -140,6 +152,10 @@ public class dbDateBox extends Composite implements Controls {
 			else
 				Window.alert("Informatia nu se poate modifica sau nu este adaugata !");
 		}
+	}
+
+	public String getLinkedField() {
+		return colName;
 	}
 
 }
