@@ -2,8 +2,12 @@
 
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 	<g:HTMLPanel>
-
-		<g:Composite ui:field="form"></g:Composite>
-
+		<table>
+			<tr>
+				<td width="1000px;">
+					<g:Composite ui:field="show_form"></g:Composite>
+				</td>
+			</tr>
+		</table>
 	</g:HTMLPanel>
 </ui:UiBinder>

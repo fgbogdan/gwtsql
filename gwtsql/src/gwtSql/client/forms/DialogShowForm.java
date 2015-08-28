@@ -13,14 +13,18 @@ public class DialogShowForm extends ClosableDialogBox {
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	@UiField(provided = true) Composite form;
+	@UiField(provided = true) Composite show_form;
 	String p_strType;
 	VForm p_caller = null;
 	VForm p_form = null;
 
 	public DialogShowForm(VForm f) {
 		setGlassEnabled(true);
-		form = f;
+		show_form = f;
+		// set the dialog box and the caller
+		f.dialogbox_form = this;
+		f.caller_form = null;
+		
 		p_form = f;
 		p_form.DBox = this;
 		// show
