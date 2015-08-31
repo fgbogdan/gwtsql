@@ -26,7 +26,7 @@ public class DialogShowForm extends ClosableDialogBox {
 		f.caller_form = null;
 		
 		vform = f;
-		vform.DBox = this;
+		//vform.DBox = this;
 		// show
 		setWidget(uiBinder.createAndBindUi(this));
 
