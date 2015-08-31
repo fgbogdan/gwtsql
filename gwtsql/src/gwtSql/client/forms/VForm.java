@@ -14,16 +14,16 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 public class VForm extends Composite implements IForm {
 
 	public DBRecord R, R_BUFFER;
 
+// reference to the dialog box ... if exists
 	public ClosableDialogBox dialogbox_form;
-	// reference to the dialog box ... if exists
-	public DialogBox DBox = null;
+	
+	//public DialogBox DBox = null;
 
 	public List<Controls> MyControls = new ArrayList<Controls>();
 

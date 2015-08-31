@@ -16,7 +16,7 @@ public class DialogShowForm extends ClosableDialogBox {
 	@UiField(provided = true) Composite show_form;
 	String p_strType;
 	VForm p_caller = null;
-	VForm p_form = null;
+	VForm vform = null;
 
 	public DialogShowForm(VForm f) {
 		setGlassEnabled(true);
@@ -25,11 +25,33 @@ public class DialogShowForm extends ClosableDialogBox {
 		f.dialogbox_form = this;
 		f.caller_form = null;
 		
-		p_form = f;
-		p_form.DBox = this;
+		vform = f;
+		vform.DBox = this;
 		// show
 		setWidget(uiBinder.createAndBindUi(this));
 
+		show();
+		setCenter();
+
+	}
+	
+	/**
+	 * call from dbPickBox
+	 * 
+	 * @param f
+	 * @param f1
+	 */
+	public DialogShowForm(VForm f, VForm f1, String strType) {
+		setGlassEnabled(true);
+		p_strType = strType;
+		show_form = f;
+		vform = f;
+		// set the dialog box and the caller
+		f.caller_form = f1;
+		f.dialogbox_form = this;
+		f.caller_varName = strType;
+		// show
+		setWidget(uiBinder.createAndBindUi(this));
 		show();
 		setCenter();
 
