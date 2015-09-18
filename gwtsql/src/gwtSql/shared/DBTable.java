@@ -163,6 +163,21 @@ public class DBTable implements Serializable {
 		return Destination;
 	}
 
+	// selectie cu group (un singur camp)
+	public DBTable SelectGroup(String strFieldName) {
+
+		DBTable Destination = new DBTable();
+		for (int i = 0; i < this.reccount(); i++) {
+			DBRecord R = new DBRecord();
+			R.put(strFieldName, this.get(i).getString(strFieldName));
+			if (null == Destination.Locate(strFieldName, R.getString(strFieldName)))
+				Destination.add(R);
+		}// for
+		Destination.Sort(strFieldName, "String", 1);
+
+		return Destination;
+	}
+
 	// selectie recorduri care corespund unei cerinte
 	public DBTable Select(String strFieldName, String strValue, String strFieldName1, String strValue1) {
 
