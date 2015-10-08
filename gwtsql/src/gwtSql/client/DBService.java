@@ -62,7 +62,7 @@ public interface DBService extends RemoteService {
 
 	DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_PasswordField);
 
-	DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_PasswordField, String p_AliasField);
+	DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_AliasField, String p_PasswordField);
 
 	ListXD LoadListXDFromData(String strSQLCommand, String strFilterCondition);
 

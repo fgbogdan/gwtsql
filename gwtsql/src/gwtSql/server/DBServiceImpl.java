@@ -282,7 +282,7 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		return DoLogin(p_strAlias, p_strPassword, p_PasswordField, "ALIAS");
 	}
 
-	public DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_PasswordField, String p_AliasField) {
+	public DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_AliasField, String p_PasswordField) {
 
 		DBRecord oRecord = new DBRecord(DBConnection.isLog);
 		try {
