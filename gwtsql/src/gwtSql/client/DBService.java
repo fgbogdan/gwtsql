@@ -49,7 +49,7 @@ public interface DBService extends RemoteService {
 	String executeResultSetNoOutput(String p_sqlCommand) throws DBException;
 
 	void SetIniFileName(String strIniFileName);
-	
+
 	String GetIniFileName();
 
 	String GETNNEWID(String p_idname, String p_tableName);
@@ -60,7 +60,7 @@ public interface DBService extends RemoteService {
 
 	DBRecord DoLogin(String p_strAlias, String p_strPassword);
 
-	DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_PasswordField);
+	DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_PasswordField, String p_AliasField);
 
 	ListXD LoadListXDFromData(String strSQLCommand, String strFilterCondition);
 

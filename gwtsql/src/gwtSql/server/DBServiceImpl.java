@@ -277,12 +277,16 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 	public DBRecord DoLogin(String p_strAlias, String p_strPassword) {
 		return DoLogin(p_strAlias, p_strPassword, "PAROLA");
 	}
-
+	
 	public DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_PasswordField) {
+		return DoLogin(p_strAlias, p_strPassword, p_PasswordField, "ALIAS");
+	}
+
+	public DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_PasswordField, String p_AliasField) {
 
 		DBRecord oRecord = new DBRecord(DBConnection.isLog);
 		try {
-			DbManager.getDB().DoLogin(oRecord, p_strAlias, p_strPassword, p_PasswordField);
+			DbManager.getDB().DoLogin(oRecord, p_strAlias, p_strPassword, p_PasswordField, p_AliasField);
 
 			/* store the user in session */
 			HttpServletRequest httpServletRequest = this.getThreadLocalRequest();

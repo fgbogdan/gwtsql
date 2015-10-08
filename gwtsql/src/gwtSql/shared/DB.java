@@ -2055,7 +2055,7 @@ public class DB {
 		return strErrorMessage;
 	}
 
-	public void DoLogin(DBRecord oUser, String p_strAlias, String p_strPassword, String p_PasswordField) {
+	public void DoLogin(DBRecord oUser, String p_strAlias, String p_strPassword, String p_PasswordField, String p_AliasField) {
 
 		/* delete all existing connections */
 		for (int i = connections.size() - 1; i >= 0; i--)
@@ -2065,7 +2065,7 @@ public class DB {
 		DBConnection con = this.getConn(oUser);
 		Connection conn = con.con;
 
-		GetDBRecordwithConn(conn, oUser, "users", "alias", p_strAlias);
+		GetDBRecordwithConn(conn, oUser, "users", p_AliasField, p_strAlias);
 
 		/* daca nu am resultat - adica alias nok */
 		if (oUser.tableName.isEmpty()) {
@@ -2078,7 +2078,7 @@ public class DB {
 		/* testez parola */
 
 		// password from the Database
-		String strDBPass = (String) oUser.get(p_PasswordField);
+		String strDBPass = (String) oUser.get(p_PasswordField.toUpperCase());
 		String strPlainPassword = "";
 		if (DBConnection.isMySQL) {
 			strDBPass = strDBPass.replace(" ", "");
