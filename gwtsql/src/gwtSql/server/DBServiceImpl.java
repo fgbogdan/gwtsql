@@ -274,13 +274,15 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		System.out.println(strText);
 	}
 
-	public DBRecord DoLogin(String p_strAlias, String p_strPassword) {
-		return DoLogin(p_strAlias, p_strPassword, "PAROLA");
-	}
-	
-	public DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_PasswordField) {
-		return DoLogin(p_strAlias, p_strPassword, p_PasswordField, "ALIAS");
-	}
+	// 20151112 - Use Only the complete call
+	// public DBRecord DoLogin(String p_strAlias, String p_strPassword) {
+	// return DoLogin(p_strAlias, p_strPassword, "PAROLA");
+	// }
+	//
+	// public DBRecord DoLogin(String p_strAlias, String p_strPassword, String
+	// p_PasswordField) {
+	// return DoLogin(p_strAlias, p_strPassword, p_PasswordField, "ALIAS");
+	// }
 
 	public DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_AliasField, String p_PasswordField) {
 
@@ -525,5 +527,6 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		return (DBRecord) session.getAttribute("User");
 
 	}
+
 
 }
