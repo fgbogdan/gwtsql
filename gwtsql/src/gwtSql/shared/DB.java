@@ -268,7 +268,8 @@ public class DB {
 		String url = "";
 
 		if (DBConnection.isMySQL)
-			url = "jdbc:mysql://" + strServerName + "/" + strSQLDatabase + "?zeroDateTimeBehavior=convertToNull&autoReconnect=true&relaxAutoCommit=true&allowMultiQueries=true";
+			url = "jdbc:mysql://" + strServerName + "/" + strSQLDatabase
+					+ "?zeroDateTimeBehavior=convertToNull&autoReconnect=true&relaxAutoCommit=true&allowMultiQueries=true";
 		else
 			url = "jdbc:sqlserver://" + strServerName + ";user=" + strSQLUser + ";password=" + strSQLPassword + ";databaseName=" + strSQLDatabase + ";";
 		System.out.println("Connect to server ... ");
@@ -1098,8 +1099,12 @@ public class DB {
 					// column
 					if (DBConnection.isMySQL)
 						strSQLCommand = "DELETE FROM " + tableName + ";";
-					else
-						strSQLCommand = "DELETE FROM " + tableName + " WHERE " + colName + " = '' ";
+					else {
+							
+						//strSQLCommand = "DELETE FROM " + tableName + " WHERE " + colName + " = '' ";
+						// sterg tot ... deoarece oricum tabela e goala
+						strSQLCommand = "DELETE FROM " + tableName ;
+					}
 					st.executeUpdate(strSQLCommand);
 				} catch (Exception e) {
 					System.out.println("GetBlankRecord.EXEC DELETE ... ");
@@ -1179,7 +1184,10 @@ public class DB {
 							if (DBConnection.isMySQL)
 								strSQLCommand = "DELETE FROM " + oRecord.tableName + ";";
 							else
-								strSQLCommand = "DELETE FROM " + oRecord.tableName + " WHERE " + oRecord.KeyName + " = '' ";
+								//strSQLCommand = "DELETE FROM " + oRecord.tableName + " WHERE " + oRecord.KeyName + " = '' ";
+								// sterg tot ... deoarece oricum tabela e goala
+								strSQLCommand = "DELETE FROM " +  oRecord.tableName ;
+							
 							st1.executeUpdate(strSQLCommand);
 							st1.close();
 						} catch (Exception e) {
@@ -2246,8 +2254,8 @@ public class DB {
 					// the table
 					// DBTable
 					DBTable oTable = new DBTable();
-//					System.out.println("results cycle");
-//					System.out.println(nresultsetno);
+					// System.out.println("results cycle");
+					// System.out.println(nresultsetno);
 					// no table name
 					oTable.tableName = "" + nresultsetno;
 					nresultsetno++;
@@ -2261,11 +2269,9 @@ public class DB {
 							// generate each record and put it in the list
 							ResultSetMetaData rsmdResult = null;
 
-							
-//							System.out.println("records cycle");
-//							System.out.println(nrecno);
-							
-							
+							// System.out.println("records cycle");
+							// System.out.println(nrecno);
+
 							int intNoCols = 0;
 							String strColname = null;
 							Object strColvalue = null;
@@ -2329,9 +2335,9 @@ public class DB {
 
 						// add the table to the List
 						oListDB.add(oTable);
-//						System.out.println("Table");
-//						System.out.println(oTable);
-//						System.out.println(oTable.get(0).toString());
+						// System.out.println("Table");
+						// System.out.println(oTable);
+						// System.out.println(oTable.get(0).toString());
 						// close the result set
 						rs.close();
 
@@ -2342,9 +2348,9 @@ public class DB {
 				// next resultset
 				results = stmt.getMoreResults();
 
-//				System.out.println("Result set step ");
-//				System.out.println(nresultsetno);
-				
+				// System.out.println("Result set step ");
+				// System.out.println(nresultsetno);
+
 			} while (results);
 
 		} catch (SQLException e) {
@@ -2360,7 +2366,7 @@ public class DB {
 		// System.out.println(oListDB.get(0).toString());
 		// System.out.println(oListDB.get(0).tableName);
 		// System.out.println("end final");
-		
+
 		return strErrorMessage;
 	}
 }

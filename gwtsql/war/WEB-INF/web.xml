@@ -14,6 +14,17 @@
 		<servlet-name>DBService</servlet-name>
 		<url-pattern>/gwtsql/DBService</url-pattern>
 	</servlet-mapping>
+	
+	<!-- REST -->
+	<servlet>
+		<servlet-name>REST</servlet-name>
+		<servlet-class>gwtSql.server.RESTServiceImpl</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>REST</servlet-name>
+		<url-pattern>/gwtsql/REST</url-pattern>
+	</servlet-mapping>	
 
 	<!-- Default page to serve -->
 	<welcome-file-list>

@@ -13,6 +13,6 @@
 	<classpathentry kind="lib" path="war/WEB-INF/lib/poi-ooxml-3.11-20141221.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/poi-ooxml-schemas-3.11-20141221.jar"/>
 	<classpathentry kind="lib" path="war/WEB-INF/lib/poi-scratchpad-3.11-20141221.jar"/>
-	<classpathentry kind="lib" path="C:/Program Files/eclipse_luna/plugins/org.junit_4.11.0.v201303080030/junit.jar"/>
+	<classpathentry kind="lib" path="war/WEB-INF/lib/junit.jar"/>
 	<classpathentry kind="output" path="war/WEB-INF/classes"/>
 </classpath>

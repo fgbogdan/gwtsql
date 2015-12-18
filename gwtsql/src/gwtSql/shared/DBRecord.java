@@ -19,6 +19,7 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 	public boolean isFirst = false;
 	public boolean isDeleted = false;
 	public boolean isChanged = false;
+
 	// log changes
 	public boolean isLog = false;
 	public int recno = 1;
@@ -76,6 +77,7 @@ public class DBRecord extends HashMap<Object, Object> implements Serializable {
 		Destination.isNew = this.isNew;
 		Destination.isDeleted = this.isDeleted;
 		Destination.isChanged = this.isChanged;
+		Destination.isFirst = this.isFirst;
 		Destination.isLog = this.isLog;
 		Destination.recno = this.recno;
 
