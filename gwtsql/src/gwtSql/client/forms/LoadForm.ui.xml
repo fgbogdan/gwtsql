@@ -2,8 +2,19 @@
 	<g:HTMLPanel>
 		<!-- <img src="images/progressbarblue.gif" alt="loading" width="260" height="40"/> -->
 		<!-- <g:Label ui:field="lbcounter"/> -->
-		<div id="preloader-container">
-			<div id="preloader"></div>
-		</div>
+		<table>
+			<tr>
+				<td>
+					<g:VerticalPanel ui:field="vPanel" />
+				</td>
+				<td>
+					<div id="preloader-container">
+						<div id="preloader"></div>
+					</div>
+				</td>
+			</tr>
+		</table>
+
+
 	</g:HTMLPanel>
 </ui:UiBinder>
