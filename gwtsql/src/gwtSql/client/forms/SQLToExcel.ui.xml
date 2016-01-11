@@ -10,6 +10,9 @@
 	</ui:style>
 
 	<g:HTMLPanel>
+
+		<iframe id="__printingFrame" style="width:0;height:0;border:0"></iframe>
+
 		<div class="row">
 			<div class="col-md-12">
 				<div class="section-link section-link-first"></div>
@@ -24,9 +27,22 @@
 								</div>
 								<div class="page-section-menu">
 									<div class="button-group-right">
-										<g:FormPanel ui:field='pshbtnExportXLS'></g:FormPanel>
-										<!-- <g:Button ui:field="pshbtnExportXLS" styleName="bc-button bc-button-icon-small" title="Imprimare in format PDF"> <span class="bc-button-icon"> 
-											<img alt="Imprimare in format PDF" src="css/icons/bt-print-small-circle.png" /> </span> <span class="bc-icon-over"></span> </g:Button> -->
+										<table>
+											<tr>
+												<td>
+													<g:FormPanel ui:field='pshbtnExportXLS'>
+													</g:FormPanel>
+												</td>
+												<td>
+													<g:Button ui:field="lnkPrint" styleName="bc-button bc-button-icon-small" title="Imprimare">
+														<span class="bc-button-icon">
+															<img alt="Imprimare" src="css/icons/bt-print-small-circle.png" />
+														</span>
+														<span class="bc-icon-over"></span>
+													</g:Button>
+												</td>
+											</tr>
+										</table>
 									</div>
 								</div>
 							</div>
@@ -37,9 +53,11 @@
 								</div>
 								<div class="block-body">
 									<div class="tbl-data">
-										<g:SimplePanel>
-											<g:SimplePanel ui:field="pnlXLS" />
-										</g:SimplePanel>
+										<div id="printZone_1">
+											<g:SimplePanel>
+												<g:SimplePanel ui:field="pnlXLS" />
+											</g:SimplePanel>
+										</div>
 									</div>
 								</div>
 							</div>

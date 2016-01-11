@@ -3,10 +3,15 @@ package gwtSql.client.forms;
 import gwtSql.client.DBService;
 import gwtSql.client.DBServiceAsync;
 import gwtSql.shared.DBTable;
+import gwtSql.shared.Print;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
@@ -16,6 +21,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+@SuppressWarnings("deprecation")
 public class SQLToExcel extends VForm {
 
 	interface MyUiBinder extends UiBinder<Widget, SQLToExcel> {
@@ -104,5 +110,14 @@ public class SQLToExcel extends VForm {
 		initWidget(uiBinder.createAndBindUi(this));
 
 	}
+	
+	
+	@UiHandler("lnkPrint")
+	void onprintBtnClick(ClickEvent event) {
+		Element element = DOM.getElementById("printZone_1");
+		Print.it("<link rel=\"StyleSheet\" type=text/css media=\"print\" href=\"" + GWT.getModuleBaseURL()+"../css/tables.css\" />", element);
+
+	}
+	
 
 }
