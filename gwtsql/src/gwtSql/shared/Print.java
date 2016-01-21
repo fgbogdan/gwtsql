@@ -81,12 +81,12 @@ import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.OptionElement;
 import com.google.gwt.dom.client.TextAreaElement;
 import com.google.gwt.user.client.DOM;
-//*/
 import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.UIObject;
 
+@SuppressWarnings("deprecation")
 public class Print {
 
 	/**

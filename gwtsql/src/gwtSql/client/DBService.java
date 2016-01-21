@@ -59,6 +59,8 @@ public interface DBService extends RemoteService {
 	void D(String strText);
 
 	DBRecord DoLogin(String p_strAlias, String p_strPassword, String p_AliasField, String p_PasswordField);
+	
+	String DoLogout();
 
 	ListXD LoadListXDFromData(String strSQLCommand, String strFilterCondition);
 

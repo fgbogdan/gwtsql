@@ -60,6 +60,8 @@ public interface DBServiceAsync {
 	void deleteFile(String fileNamewithPathandExt, AsyncCallback<String> callback);
 
 	void DoLogin(String p_strAlias, String p_strPassword, String p_AliasField, String p_PasswordField, AsyncCallback<DBRecord> callback);
+	
+	void DoLogout(AsyncCallback<String> callback);
 
 	void LoadListXDFromData(String strSQLCommand, String strFilterCondition, AsyncCallback<ListXD> callback);
 

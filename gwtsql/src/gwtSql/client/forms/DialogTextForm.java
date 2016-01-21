@@ -1,21 +1,15 @@
 package gwtSql.client.forms;
 
-import gwtSql.client.DBService;
-import gwtSql.client.DBServiceAsync;
-import gwtSql.shared.DBRecord;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
-import com.google.gwt.user.client.ui.DialogBox;
-import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
+
+import gwtSql.shared.DBRecord;
 
 public class DialogTextForm extends ClosableDialogBox {
 
@@ -23,8 +17,6 @@ public class DialogTextForm extends ClosableDialogBox {
 	}
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
-
-	private final DBServiceAsync dbService = GWT.create(DBService.class);
 
 	String textValue, p_type;
 	VForm p_caller = null;

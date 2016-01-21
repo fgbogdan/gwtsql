@@ -65,7 +65,8 @@ public class RESTServiceImpl extends HttpServlet {
 		// out.println("<html>");
 		// out.println("<head><title>demolet</title></head>");
 		// out.println("<body>");
-		// out.println("<p>The servlet has received a GET. This is the reply.</p>");
+		// out.println("<p>The servlet has received a GET. This is the
+		// reply.</p>");
 		// out.println(sqlCommand);
 		// out.println("</body></html>");
 		// out.close();
@@ -76,9 +77,9 @@ public class RESTServiceImpl extends HttpServlet {
 	 * Process the HTTP doPost request.
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String var0show = "";
+		// String var0show = "";
 		try {
-			var0show = request.getParameter("showthis");
+			request.getParameter("showthis");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

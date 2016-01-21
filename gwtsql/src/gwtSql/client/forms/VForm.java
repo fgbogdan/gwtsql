@@ -20,10 +20,10 @@ public class VForm extends Composite implements IForm {
 
 	public DBRecord R, R_BUFFER;
 
-// reference to the dialog box ... if exists
+	// reference to the dialog box ... if exists
 	public ClosableDialogBox dialogbox_form;
-	
-	//public DialogBox DBox = null;
+
+	// public DialogBox DBox = null;
 
 	public List<Controls> MyControls = new ArrayList<Controls>();
 
@@ -384,6 +384,7 @@ public class VForm extends Composite implements IForm {
 		strRights = strRights.replaceAll("\n\n", "\n");
 
 		String[] aRights = strRights.split("\n");
+		boolean lShow = false;
 
 		// cut at the $ sign
 		int nPos = className.indexOf("$");
@@ -395,10 +396,21 @@ public class VForm extends Composite implements IForm {
 		for (int i = 0; i < aRights.length; i++) {
 			// search the class name in the string
 			right = aRights[i];
+			// if + is show if - is hide
+			if (right.startsWith("-")) {
+				lShow = false;
+				right = right.replaceAll("-", "");
+			} else {
+				lShow = true;
+			}
+
 			// Window.alert(right + "---" + className);
 			if (right.contains(className)) {
 				right = right.replaceAll(className, "");
-				HideControl(right);
+				if (lShow)
+					ShowControl(right);
+				else
+					HideControl(right);
 			}
 		}
 	}
@@ -418,6 +430,24 @@ public class VForm extends Composite implements IForm {
 
 			if ($doc.getElementById(id1) != null)
 				$doc.getElementById(id1).style.display = "none";
+		}
+	}-*/;
+
+	/**
+	 * show controls ...
+	 * 
+	 * @param id
+	 */
+	public native void ShowControl(String id)
+	/*-{
+		if ($doc.getElementById(id) != null)
+			$doc.getElementById(id).style.display = "block";
+
+		for (i = 1; i < 5; i++) {
+			id1 = id + "_" + i;
+
+			if ($doc.getElementById(id1) != null)
+				$doc.getElementById(id1).style.display = "block";
 		}
 	}-*/;
 

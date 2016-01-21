@@ -302,6 +302,22 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		return oRecord;
 	}
 
+	public String DoLogout() {
+
+		try {
+
+			/* store the user in session */
+			HttpServletRequest httpServletRequest = this.getThreadLocalRequest();
+			HttpSession session = httpServletRequest.getSession(true);
+			session.setAttribute("User", null);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return "";
+	}
+
 	public ListXD LoadListXDFromData(String strTableName, String strShowField, String strKeyField, String strFilterCondition, String strOrder) {
 
 		ListXD oList = new ListXD();
@@ -527,6 +543,5 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 		return (DBRecord) session.getAttribute("User");
 
 	}
-
 
 }
