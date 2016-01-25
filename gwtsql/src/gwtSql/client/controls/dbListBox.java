@@ -1,17 +1,17 @@
 package gwtSql.client.controls;
 
-import gwtSql.client.DBService;
-import gwtSql.client.DBServiceAsync;
-import gwtSql.shared.DBRecord;
-import gwtSql.shared.ListXD;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.ListBox;
+
+import gwtSql.client.DBService;
+import gwtSql.client.DBServiceAsync;
+import gwtSql.shared.DBRecord;
+import gwtSql.shared.DebugUtils;
+import gwtSql.shared.ListXD;
 
 public class dbListBox extends ListBox implements Controls {
 
@@ -28,6 +28,34 @@ public class dbListBox extends ListBox implements Controls {
 	public String strLinkedField = "";
 	public boolean isLoaded = false;
 
+	/**
+	 * constructor - 1 parameter
+	 * 
+	 * @param strSQLCommand
+	 *            - command for the content, the result must have 2 fields -
+	 *            ShowFld and KeyFld example; SELECT Name as ShowFld, ID as
+	 *            KeyFld FROM CUSTOMERS;
+	 * 
+	 *            the items that begin with (inactiv) will be disabled
+	 */
+	public dbListBox(String strSQLCommand) {
+		this.strTableName = "";
+		this.strShowField = "ShowFld";
+		this.strKeyField = "KeyFld";
+		this.strSQLCommand = strSQLCommand;
+		this.LoadData();
+	}
+
+	/**
+	 * constructor - 2 parameters
+	 * 
+	 * @param strSQLCommand
+	 *            - command for the content, the result must have 2 fields -
+	 *            ShowFld and KeyFld example; SELECT Name as ShowFld, ID as
+	 *            KeyFld FROM CUSTOMERS;
+	 * @param p_strTableName
+	 *            - optional or empty
+	 */
 	public dbListBox(String strSQLCommand, String p_strTableName) {
 		this.strTableName = p_strTableName;
 		this.strShowField = "ShowFld";
@@ -36,6 +64,16 @@ public class dbListBox extends ListBox implements Controls {
 		this.LoadData();
 	}
 
+	/**
+	 * constructor 3 - parameters
+	 * 
+	 * @param p_strTableName
+	 *            - name of the table from the list is builded
+	 * @param p_strShowField
+	 *            - name for the visible field
+	 * @param p_strKeyField
+	 *            - name for the id field
+	 */
 	public dbListBox(String p_strTableName, String p_strShowField, String p_strKeyField) {
 		this.strTableName = p_strTableName;
 		this.strShowField = p_strShowField;
@@ -43,6 +81,18 @@ public class dbListBox extends ListBox implements Controls {
 		this.LoadData();
 	}
 
+	/**
+	 * constructor 4 - parameters
+	 * 
+	 * @param p_strTableName
+	 *            - name of the table from the list is builded
+	 * @param p_strShowField
+	 *            - name for the visible field
+	 * @param p_strKeyField
+	 *            - name for the id field
+	 * @param p_strFilterCondition
+	 *            - condition for the SQL command
+	 */
 	public dbListBox(String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition) {
 		this.strTableName = p_strTableName;
 		this.strShowField = p_strShowField;
@@ -51,7 +101,22 @@ public class dbListBox extends ListBox implements Controls {
 		this.LoadData();
 	}
 
-	public dbListBox(String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition, String p_strOrder) {
+	/**
+	 * constructor 5 - parameters
+	 * 
+	 * @param p_strTableName
+	 *            - name of the table from the list is builded
+	 * @param p_strShowField
+	 *            - name for the visible field
+	 * @param p_strKeyField
+	 *            - name for the id field
+	 * @param p_strFilterCondition
+	 *            - condition for the SQL command
+	 * @param p_strOrder
+	 *            - order fields
+	 */
+	public dbListBox(String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition,
+			String p_strOrder) {
 		this.strTableName = p_strTableName;
 		this.strShowField = p_strShowField;
 		this.strKeyField = p_strKeyField;
@@ -60,8 +125,26 @@ public class dbListBox extends ListBox implements Controls {
 		this.LoadData();
 	}
 
-	public dbListBox(String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition, String p_strOrder,
-			String p_strLinkedField) {
+	/**
+	 * constructor 6 - parameters
+	 * 
+	 * @param p_strTableName
+	 *            - name of the table from the list is builded
+	 * @param p_strShowField
+	 *            - name for the visible field
+	 * @param p_strKeyField
+	 *            - name for the id field
+	 * @param p_strFilterCondition
+	 *            - condition for the SQL command
+	 * @param p_strOrder
+	 *            - order fields
+	 * @param p_strLinkedField
+	 *            - linked field (the R field - foreign key), The values will be
+	 *            update after each change, and the initial value of the list
+	 *            will correspond to him.
+	 */
+	public dbListBox(String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition,
+			String p_strOrder, String p_strLinkedField) {
 		this.strTableName = p_strTableName;
 		this.strShowField = p_strShowField;
 		this.strKeyField = p_strKeyField;
@@ -78,7 +161,7 @@ public class dbListBox extends ListBox implements Controls {
 				if (dbListBox.this.R != null)
 					dbListBox.this.R.put(dbListBox.this.strLinkedField, selectedString);
 				else
-					Window.alert("Informatia nu se poate modifica sau nu este adaugata !");
+					DebugUtils.W("Informatia nu se poate modifica sau nu este adaugata !");
 
 			}
 		});
@@ -86,15 +169,17 @@ public class dbListBox extends ListBox implements Controls {
 		this.LoadData();
 	}
 
-	// incarcare cu date
+	/**
+	 * Load information from database
+	 */
 	public void LoadData() {
 		this.clear();
 		this.addItem("Loading ...");
 		if (this.strSQLCommand.equals(""))
-			dbService.LoadListXDFromData(this.strTableName, this.strShowField, this.strKeyField, this.strFilterCondition, this.strOrder,
-					new AsyncCallback<ListXD>() {
+			dbService.LoadListXDFromData(this.strTableName, this.strShowField, this.strKeyField,
+					this.strFilterCondition, this.strOrder, new AsyncCallback<ListXD>() {
 						public void onFailure(Throwable caught) {
-							Window.alert("Error - RPC - dbListBox");
+							DebugUtils.W("Error - RPC - dbListBox");
 						}
 
 						public void onSuccess(ListXD result) {
@@ -105,7 +190,7 @@ public class dbListBox extends ListBox implements Controls {
 		else
 			dbService.LoadListXDFromData(this.strSQLCommand, this.strFilterCondition, new AsyncCallback<ListXD>() {
 				public void onFailure(Throwable caught) {
-					Window.alert("Error - RPC - dbListBox");
+					DebugUtils.W("Error - RPC - dbListBox");
 				}
 
 				public void onSuccess(ListXD result) {
@@ -116,28 +201,36 @@ public class dbListBox extends ListBox implements Controls {
 
 	}
 
+	/**
+	 * Fill the list with the loaded information
+	 */
 	public void Fill() {
 		// clear the list
 		this.clear();
 		for (int i = 0; i < listXD.size(); i++) {
 			this.addItem(listXD.get(i).ShowValue);
 		}
-		// setez ca este incarcata
+		// set the list is loaded - used for a timer event to check is the list
+		// is loaded.
 		isLoaded = true;
 
-		// daca am item-uri care incep cu \ le fac disabled
+		// disable the items that begin with (inactiv)
 
 		Element element = this.getElement().getFirstChildElement();
 		for (int i = 0; i < this.getItemCount(); i++) {
 			if (this.getItemText(i).startsWith("(inactiv)")) {
 				element.setAttribute("disabled", "true");
-				// this.setItemText(i, this.getItemText(i).replaceFirst("@", ""));
 			}
 			element = element.getNextSiblingElement();
 		} // for
 
 	}
 
+	/**
+	 * set the link field from R
+	 * 
+	 * @param p_strLinkedField
+	 */
 	public void SetLinkedField(String p_strLinkedField) {
 		this.strLinkedField = p_strLinkedField;
 		// change handler
@@ -150,22 +243,35 @@ public class dbListBox extends ListBox implements Controls {
 				if (dbListBox.this.R != null)
 					dbListBox.this.R.put(dbListBox.this.strLinkedField, selectedString);
 				else
-					Window.alert("Informatia nu se poate modifica sau nu este adaugata !");
+					DebugUtils.W("Informatia nu se poate modifica sau nu este adaugata !");
 			}
 		});
 	}
 
+	/**
+	 * setter for filter
+	 * 
+	 * @param strFilterText
+	 */
 	public void SetFilter(String strFilterText) {
 		this.strFilterCondition = strFilterText;
 	}
 
+	/**
+	 * setter for SQL command
+	 * 
+	 * @param strSQLCommand
+	 */
 	public void SetSQLCommand(String strSQLCommand) {
 		this.strSQLCommand = strSQLCommand;
 		// DebugUtils.D(strSQLCommand);
 	}
 
+	/**
+	 * Refresh - show in the list the value for R.colName
+	 */
 	public void Refresh() {
-		// show in the list the value for R.colName;
+
 		// Get the Value
 
 		if (this.strLinkedField.equals(""))
@@ -190,7 +296,7 @@ public class dbListBox extends ListBox implements Controls {
 				}
 			} catch (Exception e) {
 				System.out.println(e.toString());
-				Window.alert("dbListBox.Refresh() Exception");
+				DebugUtils.W("dbListBox.Refresh() Exception");
 			}
 		}
 		// not found ... set the control to the first value
@@ -201,6 +307,11 @@ public class dbListBox extends ListBox implements Controls {
 		}
 	}
 
+	/**
+	 * move to a specified item in list (by KeyValue)
+	 * 
+	 * @param KeyValue
+	 */
 	public void GoTo(String KeyValue) {
 		// show in the list the value for R.colName;
 		// Get the Value
@@ -220,17 +331,21 @@ public class dbListBox extends ListBox implements Controls {
 				}
 			} catch (Exception e) {
 				System.out.println(e.toString());
-				Window.alert("dbListBox.Refresh() Exception");
+				DebugUtils.W("dbListBox.Refresh() Exception");
 			}
 		}
 	}
 
+	/**
+	 * Load and Refresh - used for lists that depends of another informations
+	 * from GUI and need to be reloaded with different set of values
+	 */
 	public void LoadDataAndRefresh() {
 		if (this.strSQLCommand.equals(""))
-			dbService.LoadListXDFromData(this.strTableName, this.strShowField, this.strKeyField, this.strFilterCondition, this.strOrder,
-					new AsyncCallback<ListXD>() {
+			dbService.LoadListXDFromData(this.strTableName, this.strShowField, this.strKeyField,
+					this.strFilterCondition, this.strOrder, new AsyncCallback<ListXD>() {
 						public void onFailure(Throwable caught) {
-							Window.alert("Error - RPC - dbListBox");
+							DebugUtils.W("Error - RPC - dbListBox");
 						}
 
 						public void onSuccess(ListXD result) {
@@ -242,7 +357,7 @@ public class dbListBox extends ListBox implements Controls {
 		else
 			dbService.LoadListXDFromData(this.strSQLCommand, this.strFilterCondition, new AsyncCallback<ListXD>() {
 				public void onFailure(Throwable caught) {
-					Window.alert("Error - RPC - dbListBox");
+					DebugUtils.W("Error - RPC - dbListBox");
 				}
 
 				public void onSuccess(ListXD result) {
@@ -253,6 +368,11 @@ public class dbListBox extends ListBox implements Controls {
 			});
 	}
 
+	/**
+	 * return the value of the KeyField for the current selection
+	 * 
+	 * @return
+	 */
 	public String getKeyField() {
 		int i = this.getSelectedIndex();
 		if (i != -1) {
@@ -263,6 +383,11 @@ public class dbListBox extends ListBox implements Controls {
 			return "";
 	}
 
+	/**
+	 * return the value of the ShowField for the current selection
+	 * 
+	 * @return
+	 */
 	public String getShowField() {
 		int i = this.getSelectedIndex();
 		if (i != -1) {
@@ -273,6 +398,13 @@ public class dbListBox extends ListBox implements Controls {
 			return "<nedefinit>";
 	}
 
+	/**
+	 * return the String value of the Supplementary field for the current
+	 * selection
+	 * 
+	 * @return
+	 * @deprecated
+	 */
 	public String getX1Field() {
 		int i = this.getSelectedIndex();
 		if (i != -1) {
@@ -284,6 +416,13 @@ public class dbListBox extends ListBox implements Controls {
 
 	}
 
+	/**
+	 * return the Double value of the Supplementary field for the current
+	 * selection
+	 * 
+	 * @return
+	 * @deprecated
+	 */
 	public Double getX1DField() {
 		int i = this.getSelectedIndex();
 		if (i != -1) {
@@ -293,10 +432,16 @@ public class dbListBox extends ListBox implements Controls {
 			return 0d;
 	}
 
+	/**
+	 * setter for R
+	 */
 	public void SetR(DBRecord R1) {
 		this.R = R1;
 	}
 
+	/**
+	 * getter for LinkedField
+	 */
 	public String getLinkedField() {
 		return strLinkedField;
 	}

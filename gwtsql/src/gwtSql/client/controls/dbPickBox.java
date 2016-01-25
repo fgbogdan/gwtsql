@@ -1,11 +1,5 @@
 package gwtSql.client.controls;
 
-import gwtSql.client.DBService;
-import gwtSql.client.DBServiceAsync;
-import gwtSql.client.forms.DialogSelectForm;
-import gwtSql.client.forms.VForm;
-import gwtSql.shared.DBRecord;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -16,6 +10,13 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
+
+import gwtSql.client.DBService;
+import gwtSql.client.DBServiceAsync;
+import gwtSql.client.forms.DialogSelectForm;
+import gwtSql.client.forms.VForm;
+import gwtSql.shared.DBRecord;
+import gwtSql.shared.DebugUtils;
 
 public class dbPickBox extends VForm implements Controls {
 
@@ -41,8 +42,8 @@ public class dbPickBox extends VForm implements Controls {
 
 	private final DBServiceAsync dbService = GWT.create(DBService.class);
 
-	public dbPickBox(VForm f, String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition, String p_strOrder,
-			String p_strLinkedField) {
+	public dbPickBox(VForm f, String p_strTableName, String p_strShowField, String p_strKeyField,
+			String p_strFilterCondition, String p_strOrder, String p_strLinkedField) {
 		form = f;
 		this.strTableName = p_strTableName;
 		this.strShowField = p_strShowField;
@@ -97,7 +98,7 @@ public class dbPickBox extends VForm implements Controls {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					Window.alert("dbPickBox.GetDBRecord.Fail!");
+					DebugUtils.W("dbPickBox.GetDBRecord.Fail!");
 				}
 
 				@Override
@@ -121,7 +122,7 @@ public class dbPickBox extends VForm implements Controls {
 			dbPickBox.this.R.put(dbPickBox.this.strLinkedField.toUpperCase(), R.getString(strKeyField.toUpperCase()));
 			dbPickBox.this.textBox.setText(R.getString(strShowField.toUpperCase()));
 		} else
-			Window.alert("Informatia nu se poate modifica sau nu este adaugata !");
+			DebugUtils.W("The value cannot be modified !");
 
 	}
 

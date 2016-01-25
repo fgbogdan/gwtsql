@@ -1,25 +1,25 @@
 package gwtSql.client.controls;
 
-import gwtSql.client.controls.HourMinutePicker.PickerFormat;
-import gwtSql.shared.DBRecord;
-import gwtSql.shared.DateUtils;
-
 import java.util.Date;
 
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.DateTimeFormat;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.datepicker.client.DateBox;
 import com.google.gwt.user.datepicker.client.DateBox.DefaultFormat;
 
+import gwtSql.client.controls.HourMinutePicker.PickerFormat;
+import gwtSql.shared.DBRecord;
+import gwtSql.shared.DateUtils;
+import gwtSql.shared.DebugUtils;
+
 @SuppressWarnings("deprecation")
 public class dbDateTimeBox extends Composite implements Controls {
 
-	// control compus dintr-un dbDateTimeBox si doua butoane
+	// a dbDateTimeBox and 2 buttons
 	public _DateBox dateBox = null;
 	public HourMinutePicker hmp;
 	public PushButton btn1, btn2;
@@ -53,9 +53,6 @@ public class dbDateTimeBox extends Composite implements Controls {
 			}
 		});
 
-		// change for minutes
-		// this.hmp.addAttachHandler(handler)
-
 	}
 
 	public void Refresh() {
@@ -66,7 +63,6 @@ public class dbDateTimeBox extends Composite implements Controls {
 
 			try {
 				Object o = R.get(this.colName);
-				// Window.alert(o.toString());
 				if (o != null) {
 					String strDate = o.toString();
 					d = DateUtils.String2DateTime(strDate, Format);
@@ -74,8 +70,6 @@ public class dbDateTimeBox extends Composite implements Controls {
 					dateBox.setValue(d);
 					// refresh the time control
 					d = DateUtils.String2DateTime(strDate);
-					// Window.alert(d.getHours()+"");
-					// Window.alert(d.getMinutes()+"");
 					hmp.refreshWidget("", d.getHours(), d.getMinutes() / 15);
 				} else {
 					dateBox.setValue(d);
@@ -84,11 +78,11 @@ public class dbDateTimeBox extends Composite implements Controls {
 				this.setFormat(new DateBox.DefaultFormat(DateTimeFormat.getFormat(Format)));
 
 			} catch (Exception e) {
-				System.out.println(e.toString());
+				DebugUtils.W(e.toString());
 			}
 
 		} else
-			System.out.println("R is null");
+			DebugUtils.W("R is null");
 
 	}
 
@@ -107,15 +101,15 @@ public class dbDateTimeBox extends Composite implements Controls {
 	}
 
 	public void ValueChange() {
-		// in R - se pune tot timpul formatul SQL yyyy-MM-dd HH:mm
+		// in R - we have the formay YYYY-MM-DD HH:mm
 		if (R != null) {
 			Date d = dateBox.getValue();
-			// adaug minutele din hmp
+			// add minutes
 			d = DateUtils.addMinutes(d, hmp.getMinutes());
 			// update R
 			R.put(colName, DateUtils.Date2String(d, Format + " HH:mm"));
 		} else {
-			Window.alert("Informatia nu se poate modifica sau nu este adaugata !");
+			DebugUtils.W("The value cannot be modified !");
 		}
 	}
 
