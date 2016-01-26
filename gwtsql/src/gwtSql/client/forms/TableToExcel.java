@@ -1,7 +1,5 @@
 package gwtSql.client.forms;
 
-import gwtSql.shared.DBTable;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -13,6 +11,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwtSql.shared.DBTable;
+
 public class TableToExcel extends VForm {
 
 	interface MyUiBinder extends UiBinder<Widget, TableToExcel> {
@@ -20,11 +20,21 @@ public class TableToExcel extends VForm {
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	@UiField(provided = true) SimplePanel pnlXLS;
+	@UiField(provided = true)
+	SimplePanel pnlXLS;
 
-	@UiField(provided = true) FormPanel pshbtnExportXLS;
-	@UiField(provided = true) Label lbTitle;
+	@UiField(provided = true)
+	FormPanel pshbtnExportXLS;
+	@UiField(provided = true)
+	Label lbTitle;
 
+	/**
+	 * using a DBTable show the content into a table with the possibility to
+	 * export to XLS or to print
+	 * 
+	 * @param p_T
+	 * @param strTitle
+	 */
 	public TableToExcel(DBTable p_T, String strTitle) {
 
 		lbTitle = new Label(strTitle);
@@ -32,7 +42,7 @@ public class TableToExcel extends VForm {
 		pnlXLS = new SimplePanel();
 
 		final FlexTable flexTable = new FlexTable();
-		flexTable.setWidget(0, 0, new Label("Loading informations from database ... "));
+		flexTable.setWidget(0, 0, new Label("Loading information from database ... "));
 
 		// try to construct the flex table
 		flexTable.removeAllRows();
@@ -64,19 +74,6 @@ public class TableToExcel extends VForm {
 		for (int j = 0; j < flexTable.getCellCount(0); j++) {
 			flexTable.getFlexCellFormatter().setStyleName(0, j, "tab-header");
 		}
-
-		// // format...rest
-		// for (int i = 1; i < flexTable.getRowCount(); i++) {
-		// for (int j = 0; j < flexTable.getCellCount(i); j++) {
-		// if ((j % 2) == 0)
-		// flexTable.getFlexCellFormatter().setStyleName(i, j,
-		// "FlexTable-Cell");
-		// else
-		// flexTable.getFlexCellFormatter().setStyleName(i, j,
-		// "FlexTable-Cell");
-		//
-		// } // for j
-		// } // for i
 
 		/* FlexTable */
 

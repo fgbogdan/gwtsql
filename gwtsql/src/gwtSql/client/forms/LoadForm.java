@@ -12,23 +12,22 @@ public class LoadForm extends BaseDialogBox {
 	interface MyUiBinder extends UiBinder<Widget, LoadForm> {
 	}
 
-	// @UiField (provided=true) Label lbcounter;
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	@UiField(provided = true) VerticalPanel vPanel;
+	@UiField(provided = true)
+	VerticalPanel vPanel;
 
+	/**
+	 * a window showed in the Load Process (handled by TheApp.StartLoading ... )
+	 */
 	public LoadForm() {
 
 		vPanel = new VerticalPanel();
-		// setText("Loading ... ");
+
 		addStyleName("round-dialog");
-		// lbcounter = new Label();
+
 		setWidget(uiBinder.createAndBindUi(this));
 
-	}
-
-	public void Counter(int counter) {
-		// lbcounter.setText(Integer.toString(counter));
 	}
 
 	public void AddText(String text) {

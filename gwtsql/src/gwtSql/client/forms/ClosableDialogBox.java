@@ -21,10 +21,7 @@ public class ClosableDialogBox extends DialogBox {
 	private Widget closeWidget = null;
 
 	/**
-	 * You have to provide a widget here. If click on the widget the dialog box
-	 * will be closed.
-	 * 
-	 * @param closeDialogBox
+	 * Window with a closable corner
 	 */
 	public ClosableDialogBox() {
 		super();
@@ -32,14 +29,6 @@ public class ClosableDialogBox extends DialogBox {
 		b.setHTML("<span class=\"bc-button-icon\"> <img alt=\"Inchide fereastra\" src=\"css/icons/bt-cancel-small-square.png\"> </span>");
 		b.setStyleName("bc-button bc-button-icon-small");
 		closeWidget = b;
-
-		// closeWidget.setStyleName("closeY");
-
-		// <img alt="Inchide fereastra"
-		// src="css/icons/bt-cancel-small-square.png">
-
-		// empty header could case a problem!
-		// setHTML("&nbsp;");
 		setHTML("<div class=\"dialog-logo\"><img src=\"images/logo-gray.png\" width=\"208\" height=\"14\" alt=\"\"/></div>");
 	}
 

@@ -13,20 +13,27 @@ public class DialogShowForm extends ClosableDialogBox {
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	@UiField(provided = true) Composite show_form;
+	@UiField(provided = true)
+	Composite show_form;
 	String p_strType;
 	VForm p_caller = null;
 	VForm vform = null;
 
+	/**
+	 * a window to show a Widget
+	 * 
+	 * @param f-
+	 *            the widget (receive onReturn after the window is closed)
+	 */
 	public DialogShowForm(VForm f) {
 		setGlassEnabled(true);
 		show_form = f;
 		// set the dialog box and the caller
 		f.dialogbox_form = this;
 		f.caller_form = null;
-		
+
 		vform = f;
-		//vform.DBox = this;
+		// vform.DBox = this;
 		// show
 		setWidget(uiBinder.createAndBindUi(this));
 
@@ -34,7 +41,7 @@ public class DialogShowForm extends ClosableDialogBox {
 		setCenter();
 
 	}
-	
+
 	/**
 	 * call from dbPickBox
 	 * 

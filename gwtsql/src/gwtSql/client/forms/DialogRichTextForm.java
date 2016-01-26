@@ -1,9 +1,5 @@
 package gwtSql.client.forms;
 
-import gwtSql.client.DBService;
-import gwtSql.client.DBServiceAsync;
-import gwtSql.shared.DBRecord;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -16,6 +12,11 @@ import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwtSql.client.DBService;
+import gwtSql.client.DBServiceAsync;
+import gwtSql.shared.DBRecord;
+import gwtSql.shared.DebugUtils;
+
 public class DialogRichTextForm extends DialogBox {
 
 	interface MyUiBinder extends UiBinder<Widget, DialogRichTextForm> {
@@ -27,15 +28,22 @@ public class DialogRichTextForm extends DialogBox {
 
 	public DBRecord R;
 	public String p_tableName, p_keyColumn, p_keyValue, p_rtaColumn;
-	@UiField(provided = true) RichTextArea rta;
-	@UiField Button btnSave, btnCancel;
+	@UiField(provided = true)
+	RichTextArea rta;
+	@UiField
+	Button btnSave, btnCancel;
 
 	/**
+	 * a window to input a RichText (with load and save in the database)
 	 * 
-	 * @param f
-	 *           - caller
-	 * @param strType
-	 *           - type of call
+	 * @param tableName
+	 *            - name of the table
+	 * @param keyColumn
+	 *            - (to find the record)
+	 * @param keyValue
+	 *            - (to find the record)
+	 * @param rtaColumn
+	 *            - name of the column who store the text (RichText)
 	 */
 	public DialogRichTextForm(String tableName, String keyColumn, String keyValue, String rtaColumn) {
 		p_tableName = tableName;
@@ -67,12 +75,12 @@ public class DialogRichTextForm extends DialogBox {
 			@Override
 			public void onSuccess(DBRecord result) {
 				R = result;
-				// Window.alert(R.toString());
+
 				if (R.tableName.isEmpty())
 					rta.setHTML("");
 				else
 					rta.setHTML(R.getString(p_rtaColumn));
-				
+
 				DialogRichTextForm.this.center();
 			}
 		});
@@ -86,7 +94,7 @@ public class DialogRichTextForm extends DialogBox {
 
 				@Override
 				public void onFailure(Throwable caught) {
-					Window.alert("DialogRichTextForm.saveDBRecord.Fail!");
+					DebugUtils.W("DialogRichTextForm.saveDBRecord.Fail!");
 				}
 
 				@Override

@@ -17,34 +17,34 @@ public class ReportForm extends ClosableDialogBox {
 
 	public String p_fileName;
 
-	@UiField Frame f;
-	@UiField HorizontalPanel h;
+	@UiField
+	Frame f;
+	@UiField
+	HorizontalPanel h;
 
+	/**
+	 * show a html from content or from path
+	 * 
+	 * @param fileName
+	 *            - file name of the html or content
+	 */
 	public ReportForm(String fileName) {
 
-		// DebugUtils.D("--------------", 1);
-		// DebugUtils.D(fileName, 1);
 		p_fileName = fileName;
 
 		setWidget(uiBinder.createAndBindUi(this));
 
-		/* daca am fisier sau html */
+		/* if it's a file name or a html (above 250 it's a html) */
 		if (p_fileName.length() > 250) {
 			/* html */
 			h.add(new HTML(p_fileName));
-			// h.setHeight("800px");
-			// h.setWidth("1000px");
-			// f.setHeight("0px");
-			// f.setWidth("0px");
 			h.setVisible(true);
 			f.setVisible(false);
 		} else {
-			/* fisier */
+			/* file */
 			String fullPath = p_fileName;
 			int index = fullPath.lastIndexOf("\\");
 			String f1 = fullPath.substring(index + 1);
-			// DebugUtils.D("File name without path and extension .....",1);
-			// DebugUtils.D(f1,1);
 			f.setUrl("reports/" + f1);
 			f.setHeight("800px");
 			f.setWidth("1000px");

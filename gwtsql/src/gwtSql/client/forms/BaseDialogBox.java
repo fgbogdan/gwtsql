@@ -1,9 +1,9 @@
 package gwtSql.client.forms;
 
-import gwtSql.shared.DBRecord;
-
 import com.google.gwt.user.client.ui.DialogBox;
 import com.google.gwt.user.client.ui.LayoutPanel;
+
+import gwtSql.shared.DBRecord;
 
 public class BaseDialogBox extends DialogBox implements IForm {
 	public LayoutPanel baseLayoutPanel;
@@ -15,10 +15,6 @@ public class BaseDialogBox extends DialogBox implements IForm {
 	public BaseDialogBox() {
 
 		super(false, false);
-
-		//setText("BaseDialogBox");
-
-		//setSize("182px", "94px");
 
 		// Enable animation.
 		setAnimationEnabled(true);

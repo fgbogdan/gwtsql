@@ -1,10 +1,5 @@
 package gwtSql.client.forms;
 
-import gwtSql.client.DBService;
-import gwtSql.client.DBServiceAsync;
-import gwtSql.shared.DBTable;
-import gwtSql.shared.Print;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -21,6 +16,12 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwtSql.client.DBService;
+import gwtSql.client.DBServiceAsync;
+import gwtSql.shared.DBTable;
+import gwtSql.shared.DebugUtils;
+import gwtSql.shared.Print;
+
 @SuppressWarnings("deprecation")
 public class SQLToExcel extends VForm {
 
@@ -31,11 +32,21 @@ public class SQLToExcel extends VForm {
 
 	private final DBServiceAsync dbService = GWT.create(DBService.class);
 
-	@UiField(provided = true) SimplePanel pnlXLS;
+	@UiField(provided = true)
+	SimplePanel pnlXLS;
 
-	@UiField(provided = true) FormPanel pshbtnExportXLS;
-	@UiField(provided = true) Label lbTitle;
+	@UiField(provided = true)
+	FormPanel pshbtnExportXLS;
+	@UiField(provided = true)
+	Label lbTitle;
 
+	/**
+	 * process an SQL query and show the output result into a table with the
+	 * possibility to export to XLS or to print
+	 * 
+	 * @param strSQL
+	 * @param strTitle
+	 */
 	public SQLToExcel(String strSQL, String strTitle) {
 
 		lbTitle = new Label(strTitle);
@@ -43,7 +54,7 @@ public class SQLToExcel extends VForm {
 		pnlXLS = new SimplePanel();
 
 		final FlexTable flexTable = new FlexTable();
-		flexTable.setWidget(0, 0, new Label("Loading informations from database ... "));
+		flexTable.setWidget(0, 0, new Label("Loading information from database ... "));
 
 		dbService.getDBTable(strSQL, new AsyncCallback<DBTable>() {
 			public void onFailure(Throwable caught) {
@@ -62,7 +73,7 @@ public class SQLToExcel extends VForm {
 				}
 				for (int i = 0; i < result.reccount(); i++) {
 					try {
-						// DebugUtils.D(result.get(i));
+						//
 						for (int j = 0; j < result.Fields.size(); j++) {
 							try {
 								strTemp = result.get(i).get(result.Fields.get(j)).toString();
@@ -73,8 +84,8 @@ public class SQLToExcel extends VForm {
 							flexTable.setText(i + 1, j, strTemp);
 						}
 					} catch (Exception e) {
-						Window.alert(e.toString());
-						Window.alert(strTemp);
+						DebugUtils.W(e.toString());
+						DebugUtils.W(strTemp);
 					}
 				}
 
@@ -82,19 +93,6 @@ public class SQLToExcel extends VForm {
 				for (int j = 0; j < flexTable.getCellCount(0); j++) {
 					flexTable.getFlexCellFormatter().setStyleName(0, j, "tab-header");
 				}
-
-				// // format...rest
-				// for (int i = 1; i < flexTable.getRowCount(); i++) {
-				// for (int j = 0; j < flexTable.getCellCount(i); j++) {
-				// if ((j % 2) == 0)
-				// flexTable.getFlexCellFormatter().setStyleName(i, j,
-				// "FlexTable-Cell");
-				// else
-				// flexTable.getFlexCellFormatter().setStyleName(i, j,
-				// "FlexTable-Cell");
-				//
-				// } // for j
-				// } // for i
 
 			} // success
 		});
@@ -110,14 +108,13 @@ public class SQLToExcel extends VForm {
 		initWidget(uiBinder.createAndBindUi(this));
 
 	}
-	
-	
+
 	@UiHandler("lnkPrint")
 	void onprintBtnClick(ClickEvent event) {
 		Element element = DOM.getElementById("printZone_1");
-		Print.it("<link rel=\"StyleSheet\" type=text/css media=\"print\" href=\"" + GWT.getModuleBaseURL()+"../css/tables.css\" />", element);
+		Print.it("<link rel=\"StyleSheet\" type=text/css media=\"print\" href=\"" + GWT.getModuleBaseURL()
+				+ "../css/tables.css\" />", element);
 
 	}
-	
 
 }

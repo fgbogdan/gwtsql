@@ -20,17 +20,20 @@ public class DialogTextForm extends ClosableDialogBox {
 
 	String textValue, p_type;
 	VForm p_caller = null;
-	@UiField(provided = true) TextArea ta;
-	@UiField Button btnSave, btnCancel;
+	@UiField(provided = true)
+	TextArea ta;
+	@UiField
+	Button btnSave, btnCancel;
 
 	/**
+	 * a window to input a Text
 	 * 
 	 * @param f
-	 *           - caller
+	 *            - caller
 	 * @param type
-	 *           - type of call
+	 *            - type of call used for onReturn parameter
 	 * @param initialValue
-	 *           - initial value of string
+	 *            - initial value of string
 	 */
 	public DialogTextForm(VForm f, String type, String initialValue) {
 

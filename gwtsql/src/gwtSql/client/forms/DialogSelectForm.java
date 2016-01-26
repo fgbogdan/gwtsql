@@ -20,9 +20,9 @@ public class DialogSelectForm extends ClosableDialogBox {
 	String p_strType = "<DialogSelectForm>";
 
 	/**
-	 * call from another form
+	 * a window with a widget and a button (select)
 	 * 
-	 * @param f
+	 * @param f - the widget showed
 	 */
 	public DialogSelectForm(VForm f) {
 		setGlassEnabled(true);

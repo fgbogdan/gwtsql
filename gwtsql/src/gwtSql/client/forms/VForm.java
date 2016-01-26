@@ -1,48 +1,75 @@
 package gwtSql.client.forms;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.view.client.SingleSelectionModel;
+
 import gwtSql.client.DBService;
 import gwtSql.client.DBServiceAsync;
 import gwtSql.client.controls.Controls;
 import gwtSql.shared.DBException;
 import gwtSql.shared.DBRecord;
 import gwtSql.shared.DBTable;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.rpc.AsyncCallback;
-import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.view.client.SingleSelectionModel;
+import gwtSql.shared.DebugUtils;
 
 public class VForm extends Composite implements IForm {
 
 	public DBRecord R, R_BUFFER;
 
-	// reference to the dialog box ... if exists
+	// reference to the dialog box ...
 	public ClosableDialogBox dialogbox_form;
 
-	// public DialogBox DBox = null;
-
+	/**
+	 * list of all controls in the form - added with AddControl and used for
+	 * Refresh
+	 */
 	public List<Controls> MyControls = new ArrayList<Controls>();
 
+	/**
+	 * pointer to the caller form - will handle the onReturn event
+	 */
 	protected VForm caller_form = null;
 	protected String caller_varName;
-	protected SingleSelectionModel<DBRecord> selectionModel;
 
+	/**
+	 * controls used for the CellTable used in the VForm
+	 */
+	protected SingleSelectionModel<DBRecord> selectionModel;
 	protected List<DBRecord> list = null;
 	protected DBRecord selected;
+
+	/**
+	 * last insert ID - for autoincrement fields
+	 */
 	public String LAST_INSERT_ID;
+
+	/**
+	 * list fost mandatory fields, added with AddMandatoryField verified with
+	 * VerifyMandatoryField
+	 */
 	private List<String> MandatoryFields = null;
 
-	/* serviciul de comunicare cu baza de date */
+	// database connector
 	private final DBServiceAsync dbService = GWT.create(DBService.class);
 
+	/**
+	 * add a control to the list of controls (will be used in RefreshControls)
+	 * 
+	 * @param C
+	 */
 	protected void AddControl(Controls C) {
 		this.MyControls.add(C);
 	}
 
+	/**
+	 * set the R for all the controls previously added with AddControl
+	 * 
+	 * @param R
+	 */
 	protected void SetMyControls(DBRecord R) {
 		// DebugUtils.D(MyControls.size());
 		for (int i = 0; i < MyControls.size(); i++) {
@@ -51,11 +78,19 @@ public class VForm extends Composite implements IForm {
 		}
 	}
 
+	/**
+	 * set the R for all db Controls and refresh them after
+	 * 
+	 * @param R
+	 */
 	protected void RefreshMyControls(DBRecord R) {
 		this.SetMyControls(R);
 		this.RefreshMyControls();
 	}
 
+	/**
+	 * refresh all controls (previously added with AddControl)
+	 */
 	protected void RefreshMyControls() {
 		// DebugUtils.D(MyControls.size());
 		for (int i = 0; i < MyControls.size(); i++) {
@@ -63,7 +98,8 @@ public class VForm extends Composite implements IForm {
 				Controls C = MyControls.get(i);
 				C.Refresh();
 			} catch (Exception e) {
-				Window.alert("RefreshMyControls.Exception on control " + (i + 1) + " field " + MyControls.get(i).getLinkedField());
+				DebugUtils.W("RefreshMyControls.Exception on control " + (i + 1) + " field "
+						+ MyControls.get(i).getLinkedField() + " \n maybe is null ?");
 			}
 		}
 	}
@@ -76,7 +112,7 @@ public class VForm extends Composite implements IForm {
 	}
 
 	/**
-	 * Save button
+	 * save to database
 	 * 
 	 * @param R
 	 */
@@ -90,6 +126,8 @@ public class VForm extends Composite implements IForm {
 	 * 
 	 * @param R
 	 * @param key
+	 * 
+	 *            return via onReturn with DesktopForm_saveDBRecord + key
 	 */
 	public void DesktopForm_saveDBRecord(final DBRecord R, final String key) {
 		/* save */
@@ -105,23 +143,34 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert("Fail !" + ((DBException) caught).getMessage());
+					DebugUtils.W("Fail !" + ((DBException) caught).getMessage());
 				else
-					Window.alert("DesktopForm_saveDBRecord fail - " + details);
+					DebugUtils.W("DesktopForm_saveDBRecord fail - " + details);
 			}
 		});
 	}
 
 	/**
-	 * Delete button
+	 * Delete record from database
 	 * 
 	 * @param R
+	 * 
+	 *            return via onReturn with DesktopForm_deleteDBRecord
 	 */
 	public void DesktopForm_deleteDBRecord(final DBRecord R) {
 		/* delete */
 		DesktopForm_deleteDBRecord(R.tableName, R.KeyName, R.KeyValue);
 	}
 
+	/**
+	 * delete from database by column=value
+	 * 
+	 * @param tableName
+	 * @param colName
+	 * @param colValue
+	 * 
+	 *            return via onReturn with DesktopForm_deleteDBRecord
+	 */
 	public void DesktopForm_deleteDBRecord(String tableName, String colName, String colValue) {
 		dbService.deleteDBRecord(tableName, colName, colValue, new AsyncCallback<String>() {
 			@Override
@@ -132,13 +181,27 @@ public class VForm extends Composite implements IForm {
 			@Override
 			public void onFailure(Throwable caught) {
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage());
+					DebugUtils.W(((DBException) caught).getMessage());
 				else
-					Window.alert("DesktopForm_deleteDBRecord Exception");
+					DebugUtils.W("DesktopForm_deleteDBRecord Exception");
 			}
 		});
 	}
 
+	/**
+	 * create a empty R
+	 * 
+	 * @param tableName
+	 *            - table
+	 * @param colName
+	 *            - (seek column - optional)
+	 * @param colValue
+	 *            - (seek value - optional)
+	 * @param colKeyName
+	 *            - ID KeyName
+	 * 
+	 *            return via onReturn with DesktopForm_GetBlankDBRecord
+	 */
 	public void DesktopForm_GetBlankDBRecord(String tableName, String colName, String colValue, String colKeyName) {
 
 		dbService.GetBlankDBRecord(tableName, colName, colValue, colKeyName, new AsyncCallback<DBRecord>() {
@@ -153,8 +216,8 @@ public class VForm extends Composite implements IForm {
 					onReturn("DesktopForm_GetBlankDBRecord", R);
 
 				} catch (Exception e) {
-					Window.alert(e.toString());
-					Window.alert("DesktopForm_GetBlankDBRecord Exception");
+					DebugUtils.W(e.toString());
+					DebugUtils.W("DesktopForm_GetBlankDBRecord Exception");
 				}
 			}
 
@@ -162,19 +225,39 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage());
+					DebugUtils.W(((DBException) caught).getMessage());
 				else
-					Window.alert("DesktopForm_GetBlankDBRecord fail - " + details);
+					DebugUtils.W("DesktopForm_GetBlankDBRecord fail - " + details);
 			}
 		});
 
 	}
 
+	/**
+	 * get one record from the database by column=value
+	 * 
+	 * @param tableName
+	 * @param colName
+	 * @param colValue
+	 * 
+	 *            return via onReturn with DesktopForm_GetDBRecord
+	 */
 	public void DesktopForm_GetDBRecord(String tableName, String colName, String colValue) {
 		DesktopForm_GetDBRecord(tableName, colName, colValue, null, "");
 	}
 
-	public void DesktopForm_GetDBRecord(String tableName, String colName, String colValue, final DBRecord R_RETURN, final String type) {
+	/**
+	 * get one record from the database by column=value and fill the DBRecord
+	 * parameter with the result
+	 * 
+	 * @param tableName
+	 * @param colName
+	 * @param colValue
+	 * 
+	 *            return via onReturn with DesktopForm_GetDBRecord + type
+	 */
+	public void DesktopForm_GetDBRecord(String tableName, String colName, String colValue, final DBRecord R_RETURN,
+			final String type) {
 
 		dbService.GetDBRecord(tableName, colName, colValue, new AsyncCallback<DBRecord>() {
 
@@ -182,7 +265,8 @@ public class VForm extends Composite implements IForm {
 			public void onSuccess(DBRecord result) {
 				try {
 
-					// refresh - only for type empty - that means is a call for the
+					// refresh - only for type empty - that means is a call for
+					// the
 					// main form
 					if (type.isEmpty()) {
 						R = result;
@@ -192,8 +276,8 @@ public class VForm extends Composite implements IForm {
 					onReturn("DesktopForm_GetDBRecord" + type, result);
 
 				} catch (Exception e) {
-					Window.alert(e.toString());
-					Window.alert("DesktopForm_GetDBRecord Exception");
+					DebugUtils.W(e.toString());
+					DebugUtils.W("DesktopForm_GetDBRecord Exception");
 				}
 			}
 
@@ -201,17 +285,19 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage());
+					DebugUtils.W(((DBException) caught).getMessage());
 				else
-					Window.alert("DesktopForm_GetDBRecord fail - " + details);
+					DebugUtils.W("DesktopForm_GetDBRecord fail - " + details);
 			}
 		});
 
 	}
 
 	/**
+	 * get a record from the database using a specified SQL command
 	 * 
-	 * getDBRecordForCondition
+	 * return via onReturn with DesktopForm_GetDBRecordForCondition + type
+	 * 
 	 */
 	public void DesktopForm_GetDBRecordForCondition(String strSQLCommand, final String type) {
 
@@ -224,8 +310,8 @@ public class VForm extends Composite implements IForm {
 					onReturn("DesktopForm_GetDBRecordForCondition" + type, result);
 
 				} catch (Exception e) {
-					Window.alert(e.toString());
-					Window.alert("DesktopForm_GetDBRecordForCondition Exception");
+					DebugUtils.W(e.toString());
+					DebugUtils.W("DesktopForm_GetDBRecordForCondition Exception");
 				}
 			}
 
@@ -233,18 +319,22 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage());
+					DebugUtils.W(((DBException) caught).getMessage());
 				else
-					Window.alert("DesktopForm_GetDBRecord fail - " + details);
+					DebugUtils.W("DesktopForm_GetDBRecord fail - " + details);
 			}
 		});
 
 	}
 
 	/**
-	 * executeResultSetNoOutput
+	 * execute an sql script without a specified return result (using
+	 * executeUpdate) if the sql return a result, an exception will be fired
 	 * 
 	 * @param strSQLCommand
+	 * 
+	 *            return via onReturn with DesktopForm_executeResultSetNoOutput
+	 *            + key
 	 */
 	public void DesktopForm_executeResultSetNoOutput(String strSQLCommand, final String key) {
 		/* save */
@@ -259,18 +349,22 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage());
+					DebugUtils.W(((DBException) caught).getMessage());
 				else
-					Window.alert("DesktopForm_executeResultSetNoOutput fail - " + details);
+					DebugUtils.W("DesktopForm_executeResultSetNoOutput fail - " + details);
 			}
 		});
 	}
 
 	/**
-	 * executeNoResultSet
+	 * execute an sql script without a specified return result (using
+	 * executeQuery) if the sql return a result, an exception will be fired
 	 * 
 	 * @param strSQLCommand
+	 * 
+	 *            return via onReturn with DesktopForm_executeNoResultSet + key
 	 */
+
 	public void DesktopForm_executeNoResultSet(String strSQLCommand, final String key) {
 		/* save */
 		dbService.executeNoResultSet(strSQLCommand, new AsyncCallback<String>() {
@@ -284,28 +378,33 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert(((DBException) caught).getMessage());
+					DebugUtils.W(((DBException) caught).getMessage());
 				else
-					Window.alert("DesktopForm_executeNoResultSet fail - " + details);
+					DebugUtils.W("DesktopForm_executeNoResultSet fail - " + details);
 			}
 		});
 	}
 
 	/**
-	 * Save table without key
+	 * Save a table
 	 * 
 	 * @param T
+	 * 
+	 *            return via onReturn with DesktopForm_saveDBTable
 	 */
 	public void DesktopForm_saveDBTable(final DBTable T) {
 		DesktopForm_saveDBTable(T, "");
 	}
 
 	/**
+	 * Save a table with parametrised onReturn
 	 * 
 	 * @param T
-	 *           - table to save
+	 *            - table to save
 	 * @param key
-	 *           - key for onReturn text
+	 *            - key for onReturn text
+	 * 
+	 *            return via onReturn with DesktopForm_saveDBTable + key
 	 */
 	public void DesktopForm_saveDBTable(final DBTable T, final String key) {
 		/* save */
@@ -319,29 +418,25 @@ public class VForm extends Composite implements IForm {
 			public void onFailure(Throwable caught) {
 				String details = caught.getMessage();
 				if (caught instanceof DBException)
-					Window.alert("Fail !" + ((DBException) caught).getMessage());
+					DebugUtils.W("Fail !" + ((DBException) caught).getMessage());
 				else
-					Window.alert("DesktopForm_saveDBTable fail - " + details);
+					DebugUtils.W("DesktopForm_saveDBTable fail - " + details);
 			}
 
 		});
 	}
 
 	/**
-	 * select
+	 * action for the Select button ... (DialogSelectForm)
 	 */
 	public void Select() {
 
-		// DebugUtils.D(caller_form,1);
-		// DebugUtils.D(caller_varName,1);
 		selected = selectionModel.getSelectedObject();
-		// DebugUtils.D("try to send ...", 1);
-		// DebugUtils.D(selected, 1);
+
 		if (selected != null) {
 			// selected
 			if (caller_form != null) {
-				// DebugUtils.D("send ...", 1);
-				// DebugUtils.D(selected, 1);
+
 				caller_form.onReturn(caller_varName, selected);
 			}
 
@@ -369,11 +464,11 @@ public class VForm extends Composite implements IForm {
 	 * apply rights for the current class
 	 * 
 	 * @param strRights
-	 *           = TheApp.loginInfo.User.getString("RIGHTS")
+	 *            = TheApp.loginInfo.User.getString("RIGHTS")
 	 * @param className
-	 *           = this.getClass().getName() example of call :
-	 *           ApplyRights(TheApp.loginInfo.User.getString("RIGHTS"),
-	 *           this.getClass().getName());
+	 *            = this.getClass().getName() example of call :
+	 *            ApplyRights(TheApp.loginInfo.User.getString("RIGHTS"),
+	 *            this.getClass().getName());
 	 */
 	public void ApplyRights(String strRights, String className) {
 
@@ -391,7 +486,7 @@ public class VForm extends Composite implements IForm {
 		if (nPos > 0)
 			className = className.substring(0, nPos);
 		className = className.trim() + ".";
-		// Window.alert(className);
+		//
 		String right;
 		for (int i = 0; i < aRights.length; i++) {
 			// search the class name in the string
@@ -404,7 +499,7 @@ public class VForm extends Composite implements IForm {
 				lShow = true;
 			}
 
-			// Window.alert(right + "---" + className);
+			//
 			if (right.contains(className)) {
 				right = right.replaceAll(className, "");
 				if (lShow)
@@ -416,7 +511,8 @@ public class VForm extends Composite implements IForm {
 	}
 
 	/**
-	 * hide controls ...
+	 * hide controls ... with the specified id ...and more 5 ... with the id_1,
+	 * id_2, ... id_5
 	 * 
 	 * @param id
 	 */
@@ -434,7 +530,8 @@ public class VForm extends Composite implements IForm {
 	}-*/;
 
 	/**
-	 * show controls ...
+	 * show controls ...with the specified id ...and more 5 ... with the id_1,
+	 * id_2, ... id_5
 	 * 
 	 * @param id
 	 */
@@ -455,10 +552,10 @@ public class VForm extends Composite implements IForm {
 	 * Will display the given message in the messages div.
 	 * 
 	 * @param msg
-	 *           The string that we wish to display
+	 *            The string that we wish to display
 	 * @param msgClass
-	 *           The class that will be applied in the message div. "sad" for
-	 *           error messages, "happy" for successful messages
+	 *            The class that will be applied in the message div. "sad" for
+	 *            error messages, "happy" for successful messages
 	 */
 	public native void showMessage(String msg, String msgClass)
 	/*-{
@@ -494,8 +591,8 @@ public class VForm extends Composite implements IForm {
 	}
 
 	/**
-	 * test for each field in the mandatory list and return false if emty or null
-	 * is found
+	 * test for each field in the mandatory list and return false if emty or
+	 * null is found
 	 * 
 	 * @return (true or false)
 	 */
