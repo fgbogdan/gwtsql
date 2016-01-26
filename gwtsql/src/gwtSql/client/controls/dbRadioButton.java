@@ -1,11 +1,11 @@
 package gwtSql.client.controls;
 
-import gwtSql.shared.DBRecord;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RadioButton;
+
+import gwtSql.shared.DBRecord;
+import gwtSql.shared.DebugUtils;
 
 public class dbRadioButton extends RadioButton implements Controls {
 
@@ -14,6 +14,16 @@ public class dbRadioButton extends RadioButton implements Controls {
 	public double value;
 	public boolean isLoaded = false;
 
+	/**
+	 * constructor
+	 * 
+	 * @param p_name
+	 *            - name (all the buttons from a group must have the same name)
+	 * @param p_strLinkedField
+	 *            - linked field (will store the value)
+	 * @param p_value
+	 *            - value to store
+	 */
 	public dbRadioButton(String p_name, String p_strLinkedField, double p_value) {
 		super(p_name);
 		strLinkedField = p_strLinkedField;
@@ -26,7 +36,7 @@ public class dbRadioButton extends RadioButton implements Controls {
 				if (dbRadioButton.this.R != null)
 					dbRadioButton.this.R.put(dbRadioButton.this.strLinkedField, value);
 				else
-					Window.alert("Informatia nu se poate modifica sau nu este adaugata !");
+					DebugUtils.W("The value cannot be modified !");
 
 			}
 		});

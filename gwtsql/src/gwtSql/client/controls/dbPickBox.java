@@ -42,6 +42,24 @@ public class dbPickBox extends VForm implements Controls {
 
 	private final DBServiceAsync dbService = GWT.create(DBService.class);
 
+	/**
+	 * construcor
+	 * 
+	 * @param f
+	 *            - the form that will pe showed to select an item
+	 * @param p_strTableName
+	 *            - source table for items
+	 * @param p_strShowField
+	 *            - name of the showed field
+	 * @param p_strKeyField
+	 *            - name for the ID field
+	 * @param p_strFilterCondition
+	 *            - optional filter (can pe empty)
+	 * @param p_strOrder
+	 *            - optional order (can be empty)
+	 * @param p_strLinkedField
+	 *            - linked field (foreign key)
+	 */
 	public dbPickBox(VForm f, String p_strTableName, String p_strShowField, String p_strKeyField,
 			String p_strFilterCondition, String p_strOrder, String p_strLinkedField) {
 		form = f;

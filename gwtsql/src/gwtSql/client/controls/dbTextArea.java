@@ -1,33 +1,42 @@
 package gwtSql.client.controls;
 
-import gwtSql.client.DBService;
-import gwtSql.client.DBServiceAsync;
-import gwtSql.shared.DBRecord;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.TextArea;
+
+import gwtSql.client.DBService;
+import gwtSql.client.DBServiceAsync;
+import gwtSql.shared.DBRecord;
+import gwtSql.shared.DebugUtils;
 
 public class dbTextArea extends TextArea implements Controls {
 
 	public DBRecord R;
 	public String colName;
 
-	/* serviciul de comunicare cu baza de date */
+	// database connector
 	private final DBServiceAsync dbService = GWT.create(DBService.class);
 
-	/*
-	 * create and attach - onChange
+	/**
+	 * constructor
+	 * 
+	 * @param strColName
+	 *            - name of the field
 	 */
-	/* apel cu un parametru */
 	public dbTextArea(String strColName) {
 		this(strColName, false);
 	}
 
-	/* apel cu doi parametrii */
+	/**
+	 * constructor - with autosave
+	 * 
+	 * @param strColName
+	 *            - name of the field
+	 * @param bSave
+	 *            - boolean save (or not)
+	 */
 	public dbTextArea(String strColName, final Boolean bSave) {
 		colName = strColName;
 
@@ -38,26 +47,25 @@ public class dbTextArea extends TextArea implements Controls {
 				if (dbTextArea.this.R != null) {
 					dbTextArea.this.R.put(dbTextArea.this.colName, dbTextArea.this.getText());
 
-					// if save - salvez un R existent in baza de date
+					// if save - save the R
 
 					if (bSave) {
 						dbTextArea.this.R.isNew = false;
-						// salvare inregistrare
+						// save
 						dbService.saveDBRecord(R, new AsyncCallback<String>() {
 							@Override
 							public void onSuccess(String result) {
 								// nothing
-								// Window.alert("dbTextBox.onChange.saveDBRecord succes");
 							}
 
 							@Override
 							public void onFailure(Throwable caught) {
-								Window.alert("dbTextArea.onChange.saveDBRecord fail");
+								DebugUtils.D("dbTextArea.onChange.saveDBRecord fail");
 							}
 						});
 					}
 				} else
-					Window.alert("Informatia nu se poate modifica sau nu este adaugata !");
+					DebugUtils.W("The value cannot be modified !");
 			}
 
 		});
@@ -70,7 +78,7 @@ public class dbTextArea extends TextArea implements Controls {
 			Object o = R.get(this.colName);
 			this.setText(o.toString());
 		} else
-			System.out.println("R is null");
+			DebugUtils.W("R is null");
 
 	}
 

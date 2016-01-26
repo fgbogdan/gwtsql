@@ -1,7 +1,5 @@
 package gwtSql.client.controls;
 
-import gwtSql.shared.DBRecord;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -12,22 +10,29 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RichTextArea;
 import com.google.gwt.user.client.ui.Widget;
 
+import gwtSql.shared.DBRecord;
+import gwtSql.shared.DebugUtils;
+
 public class dbRichTextArea extends Composite implements Controls {
 
 	public DBRecord R;
 	public String colName;
-	@UiField(provided = true) RichTextArea rta;
-	@UiField Button btnSave, btnCancel;
+	@UiField(provided = true)
+	RichTextArea rta;
+	@UiField
+	Button btnSave, btnCancel;
 
 	interface MyUiBinder extends UiBinder<Widget, dbRichTextArea> {
 	}
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
 
-	/*
-	 * create and attach - onChange
+	/**
+	 * constructor
+	 * 
+	 * @param strColName
+	 *            - name of the field
 	 */
-	/* apel cu un parametru */
 	public dbRichTextArea(String strColName) {
 		colName = strColName;
 		rta = new RichTextArea();
@@ -40,7 +45,7 @@ public class dbRichTextArea extends Composite implements Controls {
 		if (R != null) {
 			this.rta.setHTML(R.getString(this.colName));
 		} else
-			System.out.println("R is null");
+			DebugUtils.W("R is null");
 
 	} // Refresh
 

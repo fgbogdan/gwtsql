@@ -161,7 +161,7 @@ public class dbListBox extends ListBox implements Controls {
 				if (dbListBox.this.R != null)
 					dbListBox.this.R.put(dbListBox.this.strLinkedField, selectedString);
 				else
-					DebugUtils.W("Informatia nu se poate modifica sau nu este adaugata !");
+					DebugUtils.W("The value cannot be modified !");
 
 			}
 		});
@@ -243,7 +243,7 @@ public class dbListBox extends ListBox implements Controls {
 				if (dbListBox.this.R != null)
 					dbListBox.this.R.put(dbListBox.this.strLinkedField, selectedString);
 				else
-					DebugUtils.W("Informatia nu se poate modifica sau nu este adaugata !");
+					DebugUtils.W("The value cannot be modified !");
 			}
 		});
 	}
