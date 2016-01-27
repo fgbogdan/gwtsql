@@ -36,5 +36,14 @@ public class LoadForm extends BaseDialogBox {
 		else
 			vPanel.add(new Label(text));
 	}
+	
+	/**
+	 * @deprecated
+	 * @param counter
+	 */
+	public void Counter(int counter) {
+		// lbcounter.setText(Integer.toString(counter));
+	}
+	
 
 }
