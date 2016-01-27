@@ -16,7 +16,7 @@ public class dbTextBox extends TextBox implements Controls {
 	public DBRecord R;
 	public String colName;
 
-	// database connector */
+	// database connector 
 	private final DBServiceAsync dbService = GWT.create(DBService.class);
 
 	/**
