@@ -473,7 +473,8 @@ public class DB {
 						case 3:
 							oRecord.put_original(strColname, rs.getDouble(strColname));
 							break;
-						// varchar sau text sau char
+						// varchar sau text sau char sau nchar
+						case -15:
 						case 12:
 						case -1:
 						case 1:
