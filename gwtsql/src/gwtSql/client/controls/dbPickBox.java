@@ -11,6 +11,9 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
+import bcManagerERP.client.controls.LazyCaller;
+import bcManagerERP.client.controls.dbPickBox1;
+import bcManagerERP.client.forms.configs.FrmCategorie;
 import gwtSql.client.DBService;
 import gwtSql.client.DBServiceAsync;
 import gwtSql.client.forms.DialogSelectForm;
@@ -30,7 +33,8 @@ public class dbPickBox extends VForm implements Controls {
 	String strSQLCommand = "";
 	public String strLinkedField = "";
 
-	VForm form;
+	VForm form = null;
+	LazyCaller lcaller = null;
 
 	public @UiField TextBox textBox;
 	public @UiField Button btnGet;
@@ -43,26 +47,66 @@ public class dbPickBox extends VForm implements Controls {
 	private final DBServiceAsync dbService = GWT.create(DBService.class);
 
 	/**
-	 * construcor
+	 * constructor
 	 * 
 	 * @param f
-	 *            - the form that will pe showed to select an item
+	 *           - the form that will pe showed to select an item
 	 * @param p_strTableName
-	 *            - source table for items
+	 *           - source table for items
 	 * @param p_strShowField
-	 *            - name of the showed field
+	 *           - name of the showed field
 	 * @param p_strKeyField
-	 *            - name for the ID field
+	 *           - name for the ID field
 	 * @param p_strFilterCondition
-	 *            - optional filter (can pe empty)
+	 *           - optional filter (can pe empty)
 	 * @param p_strOrder
-	 *            - optional order (can be empty)
+	 *           - optional order (can be empty)
 	 * @param p_strLinkedField
-	 *            - linked field (foreign key)
+	 *           - linked field (foreign key)
+	 * 
+	 * @example new dbPickBox(new FrmCategorie("Category1", "CATEG1", "NAME",
+	 *          "CAT1ID"), "CATEG1", "NAME", "CAT1ID", "", "", "CAT1ID");
 	 */
-	public dbPickBox(VForm f, String p_strTableName, String p_strShowField, String p_strKeyField,
-			String p_strFilterCondition, String p_strOrder, String p_strLinkedField) {
+	public dbPickBox(VForm f, String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition, String p_strOrder,
+			String p_strLinkedField) {
 		form = f;
+		this.strTableName = p_strTableName;
+		this.strShowField = p_strShowField;
+		this.strKeyField = p_strKeyField;
+		this.strFilterCondition = p_strFilterCondition;
+		this.strOrder = p_strOrder;
+		this.strLinkedField = p_strLinkedField;
+		initWidget(uiBinder.createAndBindUi(this));
+		textBox.setReadOnly(true);
+	} // dbPickBox
+
+	/**
+	 * constructor
+	 * 
+	 * @param l
+	 *           - LazyCaller object - the VForm will be created later
+	 * @param p_strTableName
+	 *           - source table for items
+	 * @param p_strShowField
+	 *           - name of the showed field
+	 * @param p_strKeyField
+	 *           - name for the ID field
+	 * @param p_strFilterCondition
+	 *           - optional filter (can pe empty)
+	 * @param p_strOrder
+	 *           - optional order (can be empty)
+	 * @param p_strLinkedField
+	 *           - linked field (foreign key)
+	 * 
+	 * @example
+	 * 
+	 * 			new dbPickBox1(new LazyCaller() { public VForm onCall() { return
+	 *          new FrmCategorie("Category1", "CATEG", "NAME", "CATID"); } },
+	 *          "CATEG", "NAME", "CATID", "", "", "CATID");
+	 */
+	public dbPickBox(LazyCaller l, String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition, String p_strOrder,
+			String p_strLinkedField) {
+		lcaller = l;
 		this.strTableName = p_strTableName;
 		this.strShowField = p_strShowField;
 		this.strKeyField = p_strKeyField;
@@ -86,7 +130,10 @@ public class dbPickBox extends VForm implements Controls {
 	 */
 	@UiHandler("btnGet")
 	void btnGet_onClick(ClickEvent e) {
-		new DialogSelectForm(form, this, "");
+		if (lcaller == null)
+			new DialogSelectForm(form, this, "");
+		else
+			new DialogSelectForm(lcaller.onCall(), this, "");
 
 	} // @UiHandler("btnGet")
 
