@@ -11,9 +11,6 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 
-import bcManagerERP.client.controls.LazyCaller;
-import bcManagerERP.client.controls.dbPickBox1;
-import bcManagerERP.client.forms.configs.FrmCategorie;
 import gwtSql.client.DBService;
 import gwtSql.client.DBServiceAsync;
 import gwtSql.client.forms.DialogSelectForm;
