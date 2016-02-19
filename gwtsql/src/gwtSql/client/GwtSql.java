@@ -17,7 +17,7 @@ public class GwtSql implements EntryPoint {
 	//@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void onModuleLoad() {
 
-		// // Window.alert(GWT.getHostPageBaseURL()+"test123");
+		// Window.alert(GWT.getHostPageBaseURL()+"test123");
 		//
 		// // playground
 		//
