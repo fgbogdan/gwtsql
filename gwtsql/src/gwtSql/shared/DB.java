@@ -785,7 +785,8 @@ public class DB {
 		GetBlankDBRecord(oUser, oRecord, tableName, colName, colValue, colKeyName, 0);
 	}
 
-	public void GetBlankDBRecord(DBRecord oUser, DBRecord oRecord, String tableName, String colName, String colValue, String colKeyName, int call_step) {
+	public void GetBlankDBRecord(DBRecord oUser, DBRecord oRecord, String tableName, String colName, String colValue, String colKeyName,
+			int call_step) {
 
 		// if is a third call ...
 		if (call_step > 1) {
@@ -894,7 +895,7 @@ public class DB {
 							System.out.println(strColname);
 							System.out.println(e.toString());
 						}
-					}// for(int intCount = 1; intCount <= intNoCols; intCount++)
+					} // for(int intCount = 1; intCount <= intNoCols; intCount++)
 
 					// set the colName = colValue
 					oRecord.put_original(oRecord.KeyName.toUpperCase(), oRecord.KeyValue);
@@ -904,7 +905,7 @@ public class DB {
 					System.out.println(e.getMessage());
 					e.printStackTrace();
 				}
-			}// if(rs.next())
+			} // if(rs.next())
 			else {
 				// nu am inregistrari ... tabela e goala ... adaug o
 				// inregistrare ... o citesc
@@ -1073,7 +1074,25 @@ public class DB {
 						// PRINT 'TABELA ' + @STRTABLENAME + 'NU EXISTA'
 						// END /* Global procedure */
 						//
-						strSQLCommand = "EXEC APPEND_BLANK '" + tableName + "' ";
+
+						/*
+						 * when the table contain database ... switch to the data ...
+						 * before append
+						 */
+						if (tableName.contains(".")) {
+							String database, table;
+							database = tableName.substring(0, tableName.indexOf("."));
+							table = tableName.substring(tableName.indexOf(".", tableName.indexOf(".") + 1) + 1);
+							strSQLCommand = "USE " + database + "; \r\n";
+							// strSQLCommand += "GO \n\r";
+							strSQLCommand += "EXEC APPEND_BLANK '" + table + "'; \r\n";
+							// strSQLCommand += "GO \n\r";
+							strSQLCommand += "USE " + DBConnection.sqlDatabase + "; \r\n";
+							// strSQLCommand += "GO \n\r";
+							// System.out.println(strSQLCommand);
+						} else {
+							strSQLCommand = "EXEC APPEND_BLANK '" + tableName + "' ";
+						}
 					}
 					st.executeUpdate(strSQLCommand);
 				} catch (Exception e) {
@@ -1101,10 +1120,11 @@ public class DB {
 					if (DBConnection.isMySQL)
 						strSQLCommand = "DELETE FROM " + tableName + ";";
 					else {
-							
-						//strSQLCommand = "DELETE FROM " + tableName + " WHERE " + colName + " = '' ";
+
+						// strSQLCommand = "DELETE FROM " + tableName + " WHERE " +
+						// colName + " = '' ";
 						// sterg tot ... deoarece oricum tabela e goala
-						strSQLCommand = "DELETE FROM " + tableName ;
+						strSQLCommand = "DELETE FROM " + tableName;
 					}
 					st.executeUpdate(strSQLCommand);
 				} catch (Exception e) {
@@ -1159,7 +1179,21 @@ public class DB {
 							if (DBConnection.isMySQL) {
 								strSQLCommand = "CALL append_blank('" + oRecord.tableName + "');";
 							} else {
-								strSQLCommand = "EXEC APPEND_BLANK '" + oRecord.tableName + "' ";
+
+								if (oRecord.tableName.contains(".")) {
+									String database, table;
+									database = oRecord.tableName.substring(0, oRecord.tableName.indexOf("."));
+									table = oRecord.tableName.substring(oRecord.tableName.indexOf(".", oRecord.tableName.indexOf(".") + 1) + 1);
+									strSQLCommand = "USE " + database + "; \r\n";
+									// strSQLCommand += "GO \n\r";
+									strSQLCommand += "EXEC APPEND_BLANK '" + table + "'; \r\n";
+									// strSQLCommand += "GO \n\r";
+									strSQLCommand += "USE " + DBConnection.sqlDatabase + "; \r\n";
+									// strSQLCommand += "GO \n\r";
+									// System.out.println(strSQLCommand);
+								} else {
+									strSQLCommand = "EXEC APPEND_BLANK '" + oRecord.tableName + "' ";
+								}
 							}
 							st1.executeUpdate(strSQLCommand);
 							st1.close();
@@ -1185,10 +1219,11 @@ public class DB {
 							if (DBConnection.isMySQL)
 								strSQLCommand = "DELETE FROM " + oRecord.tableName + ";";
 							else
-								//strSQLCommand = "DELETE FROM " + oRecord.tableName + " WHERE " + oRecord.KeyName + " = '' ";
+								// strSQLCommand = "DELETE FROM " + oRecord.tableName +
+								// " WHERE " + oRecord.KeyName + " = '' ";
 								// sterg tot ... deoarece oricum tabela e goala
-								strSQLCommand = "DELETE FROM " +  oRecord.tableName ;
-							
+								strSQLCommand = "DELETE FROM " + oRecord.tableName;
+
 							st1.executeUpdate(strSQLCommand);
 							st1.close();
 						} catch (Exception e) {
@@ -1339,7 +1374,7 @@ public class DB {
 
 									} // switch
 
-								}// if( strColvalue != null)
+								} // if( strColvalue != null)
 								else {
 									try {
 										rs.updateDate(intCount, null);
@@ -1370,7 +1405,7 @@ public class DB {
 									}
 								}
 
-							}// for all the fields except autoincrement
+							} // for all the fields except autoincrement
 						} catch (Exception e) {
 							System.out.println("Save ... conversion");
 							System.out.println(strColname);
@@ -1561,7 +1596,8 @@ public class DB {
 	 */
 
 	// apel cu tabela, camp, cheie, filtru
-	public void GetList2D(DBRecord oUser, ListXD oList, String p_strTableName, String p_strShowField, String p_strKeyField, String p_strFilterCondition) {
+	public void GetList2D(DBRecord oUser, ListXD oList, String p_strTableName, String p_strShowField, String p_strKeyField,
+			String p_strFilterCondition) {
 		GetList2D(oUser, oList, p_strTableName, p_strShowField, p_strKeyField, p_strFilterCondition, "");
 	}
 
@@ -1852,7 +1888,7 @@ public class DB {
 
 				} // while
 				rs.close();
-			}// if != null
+			} // if != null
 
 		} catch (SQLException e) {
 			System.out.println("GetDBTable ... get connection");
@@ -2342,7 +2378,7 @@ public class DB {
 						// close the result set
 						rs.close();
 
-					}// if != null
+					} // if != null
 
 				} // if(results)
 
