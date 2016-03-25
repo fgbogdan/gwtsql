@@ -98,8 +98,8 @@ public class VForm extends Composite implements IForm {
 				Controls C = MyControls.get(i);
 				C.Refresh();
 			} catch (Exception e) {
-				DebugUtils.W("RefreshMyControls.Exception on control " + (i + 1) + " field "
-						+ MyControls.get(i).getLinkedField() + " \n maybe is null ?");
+				DebugUtils
+						.W("RefreshMyControls.Exception on control " + (i + 1) + " field " + MyControls.get(i).getLinkedField() + " \n maybe is null ?");
 			}
 		}
 	}
@@ -127,7 +127,7 @@ public class VForm extends Composite implements IForm {
 	 * @param R
 	 * @param key
 	 * 
-	 *            return via onReturn with DesktopForm_saveDBRecord + key
+	 *           return via onReturn with DesktopForm_saveDBRecord + key
 	 */
 	public void DesktopForm_saveDBRecord(final DBRecord R, final String key) {
 		/* save */
@@ -155,7 +155,7 @@ public class VForm extends Composite implements IForm {
 	 * 
 	 * @param R
 	 * 
-	 *            return via onReturn with DesktopForm_deleteDBRecord
+	 *           return via onReturn with DesktopForm_deleteDBRecord
 	 */
 	public void DesktopForm_deleteDBRecord(final DBRecord R) {
 		/* delete */
@@ -169,7 +169,7 @@ public class VForm extends Composite implements IForm {
 	 * @param colName
 	 * @param colValue
 	 * 
-	 *            return via onReturn with DesktopForm_deleteDBRecord
+	 *           return via onReturn with DesktopForm_deleteDBRecord
 	 */
 	public void DesktopForm_deleteDBRecord(String tableName, String colName, String colValue) {
 		dbService.deleteDBRecord(tableName, colName, colValue, new AsyncCallback<String>() {
@@ -192,17 +192,37 @@ public class VForm extends Composite implements IForm {
 	 * create a empty R
 	 * 
 	 * @param tableName
-	 *            - table
+	 *           - table
 	 * @param colName
-	 *            - (seek column - optional)
+	 *           - (seek column - optional)
 	 * @param colValue
-	 *            - (seek value - optional)
+	 *           - (seek value - optional)
 	 * @param colKeyName
-	 *            - ID KeyName
+	 *           - ID KeyName
+	 * @param type
+	 *           - string type
 	 * 
-	 *            return via onReturn with DesktopForm_GetBlankDBRecord
+	 *           return via onReturn with DesktopForm_GetBlankDBRecord
 	 */
 	public void DesktopForm_GetBlankDBRecord(String tableName, String colName, String colValue, String colKeyName) {
+		DesktopForm_GetBlankDBRecord(tableName, colName, colValue, colKeyName, "");
+	}
+
+	/**
+	 * create a empty R
+	 * 
+	 * @param tableName
+	 *           - table
+	 * @param colName
+	 *           - (seek column - optional)
+	 * @param colValue
+	 *           - (seek value - optional)
+	 * @param colKeyName
+	 *           - ID KeyName
+	 * 
+	 *           return via onReturn with DesktopForm_GetBlankDBRecord + type
+	 */
+	public void DesktopForm_GetBlankDBRecord(String tableName, String colName, String colValue, String colKeyName, final String type) {
 
 		dbService.GetBlankDBRecord(tableName, colName, colValue, colKeyName, new AsyncCallback<DBRecord>() {
 
@@ -213,7 +233,7 @@ public class VForm extends Composite implements IForm {
 					// refresh
 					RefreshMyControls(R);
 
-					onReturn("DesktopForm_GetBlankDBRecord", R);
+					onReturn("DesktopForm_GetBlankDBRecord" + type, R);
 
 				} catch (Exception e) {
 					DebugUtils.W(e.toString());
@@ -240,7 +260,7 @@ public class VForm extends Composite implements IForm {
 	 * @param colName
 	 * @param colValue
 	 * 
-	 *            return via onReturn with DesktopForm_GetDBRecord
+	 *           return via onReturn with DesktopForm_GetDBRecord
 	 */
 	public void DesktopForm_GetDBRecord(String tableName, String colName, String colValue) {
 		DesktopForm_GetDBRecord(tableName, colName, colValue, null, "");
@@ -254,10 +274,9 @@ public class VForm extends Composite implements IForm {
 	 * @param colName
 	 * @param colValue
 	 * 
-	 *            return via onReturn with DesktopForm_GetDBRecord + type
+	 *           return via onReturn with DesktopForm_GetDBRecord + type
 	 */
-	public void DesktopForm_GetDBRecord(String tableName, String colName, String colValue, final DBRecord R_RETURN,
-			final String type) {
+	public void DesktopForm_GetDBRecord(String tableName, String colName, String colValue, final DBRecord R_RETURN, final String type) {
 
 		dbService.GetDBRecord(tableName, colName, colValue, new AsyncCallback<DBRecord>() {
 
@@ -333,8 +352,8 @@ public class VForm extends Composite implements IForm {
 	 * 
 	 * @param strSQLCommand
 	 * 
-	 *            return via onReturn with DesktopForm_executeResultSetNoOutput
-	 *            + key
+	 *           return via onReturn with DesktopForm_executeResultSetNoOutput +
+	 *           key
 	 */
 	public void DesktopForm_executeResultSetNoOutput(String strSQLCommand, final String key) {
 		/* save */
@@ -362,7 +381,7 @@ public class VForm extends Composite implements IForm {
 	 * 
 	 * @param strSQLCommand
 	 * 
-	 *            return via onReturn with DesktopForm_executeNoResultSet + key
+	 *           return via onReturn with DesktopForm_executeNoResultSet + key
 	 */
 
 	public void DesktopForm_executeNoResultSet(String strSQLCommand, final String key) {
@@ -390,7 +409,7 @@ public class VForm extends Composite implements IForm {
 	 * 
 	 * @param T
 	 * 
-	 *            return via onReturn with DesktopForm_saveDBTable
+	 *           return via onReturn with DesktopForm_saveDBTable
 	 */
 	public void DesktopForm_saveDBTable(final DBTable T) {
 		DesktopForm_saveDBTable(T, "");
@@ -400,11 +419,11 @@ public class VForm extends Composite implements IForm {
 	 * Save a table with parametrised onReturn
 	 * 
 	 * @param T
-	 *            - table to save
+	 *           - table to save
 	 * @param key
-	 *            - key for onReturn text
+	 *           - key for onReturn text
 	 * 
-	 *            return via onReturn with DesktopForm_saveDBTable + key
+	 *           return via onReturn with DesktopForm_saveDBTable + key
 	 */
 	public void DesktopForm_saveDBTable(final DBTable T, final String key) {
 		/* save */
@@ -464,11 +483,11 @@ public class VForm extends Composite implements IForm {
 	 * apply rights for the current class
 	 * 
 	 * @param strRights
-	 *            = TheApp.loginInfo.User.getString("RIGHTS")
+	 *           = TheApp.loginInfo.User.getString("RIGHTS")
 	 * @param className
-	 *            = this.getClass().getName() example of call :
-	 *            ApplyRights(TheApp.loginInfo.User.getString("RIGHTS"),
-	 *            this.getClass().getName());
+	 *           = this.getClass().getName() example of call :
+	 *           ApplyRights(TheApp.loginInfo.User.getString("RIGHTS"),
+	 *           this.getClass().getName());
 	 */
 	public void ApplyRights(String strRights, String className) {
 
@@ -552,10 +571,10 @@ public class VForm extends Composite implements IForm {
 	 * Will display the given message in the messages div.
 	 * 
 	 * @param msg
-	 *            The string that we wish to display
+	 *           The string that we wish to display
 	 * @param msgClass
-	 *            The class that will be applied in the message div. "sad" for
-	 *            error messages, "happy" for successful messages
+	 *           The class that will be applied in the message div. "sad" for
+	 *           error messages, "happy" for successful messages
 	 */
 	public native void showMessage(String msg, String msgClass)
 	/*-{
@@ -591,8 +610,8 @@ public class VForm extends Composite implements IForm {
 	}
 
 	/**
-	 * test for each field in the mandatory list and return false if emty or
-	 * null is found
+	 * test for each field in the mandatory list and return false if emty or null
+	 * is found
 	 * 
 	 * @return (true or false)
 	 */
