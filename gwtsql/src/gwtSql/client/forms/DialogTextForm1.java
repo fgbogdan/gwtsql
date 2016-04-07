@@ -11,9 +11,9 @@ import com.google.gwt.user.client.ui.Widget;
 
 import gwtSql.shared.DBRecord;
 
-public class DialogTextForm extends ClosableDialogBox {
+public class DialogTextForm1 extends ClosableDialogBox {
 
-	interface MyUiBinder extends UiBinder<Widget, DialogTextForm> {
+	interface MyUiBinder extends UiBinder<Widget, DialogTextForm1> {
 	}
 
 	private static MyUiBinder uiBinder = GWT.create(MyUiBinder.class);
@@ -35,7 +35,7 @@ public class DialogTextForm extends ClosableDialogBox {
 	 * @param initialValue
 	 *            - initial value of string
 	 */
-	public DialogTextForm(VForm f, String type, String initialValue) {
+	public DialogTextForm1(VForm f, String type, String initialValue) {
 
 		p_caller = f;
 		p_type = type;
@@ -56,7 +56,7 @@ public class DialogTextForm extends ClosableDialogBox {
 	public void Refresh() {
 
 		ta.setText(textValue);
-		DialogTextForm.this.center();
+		DialogTextForm1.this.center();
 
 	} // Refresh
 
