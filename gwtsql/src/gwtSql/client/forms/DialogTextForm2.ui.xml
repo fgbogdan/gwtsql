@@ -5,12 +5,13 @@
 		.wXxY {
 		
 		width: 600px;
-		height: 300px;
+		height: 200px;
 		}
 	</ui:style>
 	<g:HTMLPanel>
 		<div>
-			<g:TextArea ui:field="ta" styleName='{style.wXxY}'></g:TextArea>
+			<g:TextArea ui:field="ta1" styleName='{style.wXxY}'></g:TextArea>
+			<g:TextArea ui:field="ta2" styleName='{style.wXxY}'></g:TextArea>
 			<g:Button ui:field="btnSave">Save</g:Button>
 			<g:Button ui:field="btnCancel">Cancel</g:Button>
 		</div>
