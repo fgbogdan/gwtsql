@@ -9,13 +9,16 @@ import gwtSql.shared.DbManager;
 import gwtSql.shared.ListXD;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.nio.file.Files;
 import java.security.SecureRandom;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Scanner;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -467,12 +470,15 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 			// System.out.println(resultFileNameWithPath);
 
 			switch (type) {
+			
 			case "pdf":
 				JasperExportManager.exportReportToPdfFile(jasperPrint, resultFileNameWithPath);
 				break;
+				
 			case "html":
 				JasperExportManager.exportReportToHtmlFile(jasperPrint, resultFileNameWithPath);
 				break;
+				
 			case "xls":
 				JRXlsExporter exporterXLS = new JRXlsExporter();
 				exporterXLS.setParameter(JRXlsExporterParameter.JASPER_PRINT, jasperPrint);
@@ -489,6 +495,27 @@ public class DBServiceImpl extends RemoteServiceServlet implements DBService {
 				exporterXLS.exportReport();
 
 				break;
+
+			case "view":
+				// output the html string
+				type = "html";
+				JasperExportManager.exportReportToHtmlFile(jasperPrint, resultFileNameWithPath);
+
+				Scanner scanner;
+				try {
+					scanner = new Scanner(new File(resultFileNameWithPath));
+					String html = scanner.useDelimiter("\\A").next();
+					scanner.close();
+					File f = new File(resultFileNameWithPath);
+					f.delete();
+					resultFileNameWithPath = html;
+
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+
+				break;
+
 			default:
 				type = "html";
 				JasperExportManager.exportReportToHtmlFile(jasperPrint, resultFileNameWithPath);
